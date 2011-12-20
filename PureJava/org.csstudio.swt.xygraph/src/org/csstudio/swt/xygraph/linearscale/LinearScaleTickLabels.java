@@ -1,10 +1,3 @@
-/*******************************************************************************
- * Copyright (c) 2008-2009 SWTChart project. All rights reserved. 
- * 
- * This code is distributed under the terms of the Eclipse Public License v1.0
- * which is available at http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
-
 package org.csstudio.swt.xygraph.linearscale;
 
 import java.math.BigDecimal;
@@ -17,7 +10,7 @@ import org.eclipse.draw2d.FigureUtilities;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.geometry.Dimension;
 /**
- * Linear Scale tick labels. Part of code of this class is from SWTChart which is available at http://www.swtchart.org/
+ * Linear Scale tick labels.
  * @author Xihui Chen
  */
 public class LinearScaleTickLabels extends Figure {
