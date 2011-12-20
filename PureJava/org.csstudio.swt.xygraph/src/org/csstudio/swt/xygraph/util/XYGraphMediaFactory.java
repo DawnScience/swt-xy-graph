@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.draw2d.CheckBox;
 import org.eclipse.draw2d.Cursors;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
@@ -43,7 +42,6 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * A factory, which provides convenience methods for the creation of Images and
@@ -300,7 +298,7 @@ public final class XYGraphMediaFactory {
 		if (_imageRegistry.get(relativePath) == null)
 		{
 		  
-			InputStream stream = getClass().getResourceAsStream(relativePath);
+			InputStream stream = XYGraphMediaFactory.class.getResourceAsStream(relativePath);
 			Image image = new Image(Display.getCurrent(), stream);
 			try {
 				stream.close();
