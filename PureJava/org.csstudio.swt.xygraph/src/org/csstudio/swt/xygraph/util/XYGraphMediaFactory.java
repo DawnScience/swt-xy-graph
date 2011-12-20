@@ -301,7 +301,7 @@ public final class XYGraphMediaFactory {
 		{
 		  
 			InputStream stream = getClass().getResourceAsStream(relativePath);
-			Image image = new Image(null, stream);
+			Image image = new Image(Display.getCurrent(), stream);
 			try {
 				stream.close();
 			} catch (IOException ioe) {

@@ -1,0 +1,12 @@
+This is the Pure Java version of SWT XYGraph, so it can be used for pure java applications.
+
+Following packages are exactly same as RCP/RAP version of SWT XYGraph:
+
+org.csstudio.swt.xygraph.dataprovider
+org.csstudio.swt.xygraph.figures
+org.csstudio.swt.xygraph.linearscale
+org.csstudio.swt.xygraph.toolbar
+org.csstudio.swt.xygraph.undo
+
+
+Developer should keep changes on these packages always same as RCP/RAP version.
