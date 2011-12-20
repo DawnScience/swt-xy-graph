@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.csstudio.swt.xygraph.Preferences;
-import org.csstudio.swt.xygraph.util.CustomMediaFactory;
+import org.csstudio.swt.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.draw2d.FigureUtilities;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.RectangleFigure;
@@ -31,14 +31,14 @@ public class Legend extends RectangleFigure {
 	private final static int INNER_GAP = 2;
 	private final static int OUT_GAP = 5;
 	
-	private final static Font LEGEND_FONT = CustomMediaFactory.getInstance().getFont(
-			CustomMediaFactory.FONT_ARIAL);
+	private final static Font LEGEND_FONT = XYGraphMediaFactory.getInstance().getFont(
+			XYGraphMediaFactory.FONT_ARIAL);
 	
-	private final static Color WHITE_COLOR = CustomMediaFactory.getInstance().getColor(
-			CustomMediaFactory.COLOR_WHITE); 
+	private final static Color WHITE_COLOR = XYGraphMediaFactory.getInstance().getColor(
+			XYGraphMediaFactory.COLOR_WHITE); 
 	
-	private final static Color BLACK_COLOR = CustomMediaFactory.getInstance().getColor(
-			CustomMediaFactory.COLOR_BLACK);
+	private final static Color BLACK_COLOR = XYGraphMediaFactory.getInstance().getColor(
+			XYGraphMediaFactory.COLOR_BLACK);
 	
 	private final List<Trace> traceList = new ArrayList<Trace>();	
 	

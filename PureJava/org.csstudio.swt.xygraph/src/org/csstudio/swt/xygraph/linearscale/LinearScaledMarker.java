@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.csstudio.swt.xygraph.linearscale.AbstractScale.LabelSide;
-import org.csstudio.swt.xygraph.util.CustomMediaFactory;
+import org.csstudio.swt.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.FigureUtilities;
 import org.eclipse.draw2d.Graphics;
@@ -35,7 +35,7 @@ public class LinearScaledMarker extends Figure {
 	
 	private Map<String, MarkerProperties> markersMap= new LinkedHashMap<String, MarkerProperties>();
 	
-	private static final RGB DEFAULT_MARKER_COLOR = CustomMediaFactory.COLOR_RED;
+	private static final RGB DEFAULT_MARKER_COLOR = XYGraphMediaFactory.COLOR_RED;
 	
 	private String[] labels;
 	
@@ -64,7 +64,7 @@ public class LinearScaledMarker extends Figure {
 	
 	public LinearScaledMarker(LinearScale scale) {
 		this.scale = scale;
-		setFont(CustomMediaFactory.getInstance().getFont(CustomMediaFactory.FONT_TAHOMA));
+		setFont(XYGraphMediaFactory.getInstance().getFont(XYGraphMediaFactory.FONT_TAHOMA));
 	}
 	
 	/**
@@ -275,7 +275,7 @@ public class LinearScaledMarker extends Figure {
 			markerPositions[i] = scale.getValuePosition(markerValues[i], true);
 			markerLabelDimensions[i] = FigureUtilities.getTextExtents(label, getFont());
 			markerColorsList.add(
-					CustomMediaFactory.getInstance().getColor(markersMap.get(label).color));
+					XYGraphMediaFactory.getInstance().getColor(markersMap.get(label).color));
 			i++;
 		}
 	}

@@ -10,7 +10,7 @@ package org.csstudio.swt.xygraph.toolbar;
 import org.csstudio.swt.xygraph.figures.Axis;
 import org.csstudio.swt.xygraph.figures.XYGraph;
 import org.csstudio.swt.xygraph.linearscale.Range;
-import org.csstudio.swt.xygraph.util.CustomMediaFactory;
+import org.csstudio.swt.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -101,7 +101,7 @@ public class AxisConfigPage {
 					fontDialog.setFontList(titleFont.getFontData());
 				FontData fontData = fontDialog.open();
 				if(fontData != null){
-					titleFont = CustomMediaFactory.getInstance().getFont(fontData);
+					titleFont = XYGraphMediaFactory.getInstance().getFont(fontData);
 					titleFontLabel.setFont(titleFont);
 					titleFontLabel.setText("Title Font: " + fontData.getName());
 					composite.getShell().layout(true, true);
@@ -126,7 +126,7 @@ public class AxisConfigPage {
 					fontDialog.setFontList(scaleFont.getFontData());
 				FontData fontData = fontDialog.open();
 				if(fontData != null){
-					scaleFont = CustomMediaFactory.getInstance().getFont(fontData);
+					scaleFont = XYGraphMediaFactory.getInstance().getFont(fontData);
 					scaleFontLabel.setFont(scaleFont);
 					scaleFontLabel.setText("Scale Font: " + fontData.getName());
 					composite.getShell().layout(true, true);
@@ -144,9 +144,9 @@ public class AxisConfigPage {
 		axisColorSelector.getButton().setLayoutData(gd);
 		axisColorSelector.addListener(new IPropertyChangeListener(){
 			public void propertyChange(PropertyChangeEvent event) {
-				scaleFontLabel.setForeground(CustomMediaFactory.getInstance().getColor(
+				scaleFontLabel.setForeground(XYGraphMediaFactory.getInstance().getColor(
 						axisColorSelector.getColorValue()));
-				titleFontLabel.setForeground(CustomMediaFactory.getInstance().getColor(
+				titleFontLabel.setForeground(XYGraphMediaFactory.getInstance().getColor(
 						axisColorSelector.getColorValue()));
 			}
 		});
@@ -282,7 +282,7 @@ public class AxisConfigPage {
 		axis.setTitle(titleText.getText());
 		axis.setFont(scaleFont);
 		axis.setTitleFont(titleFont);
-		axis.setForegroundColor(CustomMediaFactory.getInstance().getColor(
+		axis.setForegroundColor(XYGraphMediaFactory.getInstance().getColor(
 				axisColorSelector.getColorValue()));
 		axis.setPrimarySide(primaryButton.getSelection());
 		axis.setLogScale(logButton.getSelection());
@@ -310,7 +310,7 @@ public class AxisConfigPage {
 		}
 		axis.setShowMajorGrid(showGridButton.getSelection());
 		axis.setDashGridLine(dashGridLineButton.getSelection());
-		axis.setMajorGridColor( CustomMediaFactory.getInstance().getColor(
+		axis.setMajorGridColor( XYGraphMediaFactory.getInstance().getColor(
 				gridColorSelector.getColorValue()));		
 	}
 

@@ -13,7 +13,7 @@ import org.csstudio.swt.xygraph.figures.Axis;
 import org.csstudio.swt.xygraph.figures.Trace;
 import org.csstudio.swt.xygraph.figures.XYGraph;
 import org.csstudio.swt.xygraph.figures.Annotation.CursorLineStyle;
-import org.csstudio.swt.xygraph.util.CustomMediaFactory;
+import org.csstudio.swt.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -163,7 +163,7 @@ public class AnnotationConfigPage {
 					fontDialog.setFontList(font.getFontData());
 				FontData fontData = fontDialog.open();
 				if(fontData != null){
-					font = CustomMediaFactory.getInstance().getFont(fontData);
+					font = XYGraphMediaFactory.getInstance().getFont(fontData);
 					fontLabel.setFont(font);
 					fontLabel.setText(Messages.Annotation_Font + fontData.getName());
 					composite.getShell().layout(true, true);
@@ -211,7 +211,7 @@ public class AnnotationConfigPage {
 					xyGraph.getYAxisList().get(yAxisCombo.getSelectionIndex()));
 		
 		if(!useDefaultColorButton.getSelection())
-			annotation.setAnnotationColor(CustomMediaFactory.getInstance().getColor(
+			annotation.setAnnotationColor(XYGraphMediaFactory.getInstance().getColor(
 					colorSelector.getColorValue()));
 		else
 			annotation.setAnnotationColor(null);

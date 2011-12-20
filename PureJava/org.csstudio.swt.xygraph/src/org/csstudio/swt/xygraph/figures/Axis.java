@@ -18,8 +18,8 @@ import org.csstudio.swt.xygraph.undo.SaveStateCommand;
 import org.csstudio.swt.xygraph.undo.ZoomType;
 import org.csstudio.swt.xygraph.util.GraphicsUtil;
 import org.csstudio.swt.xygraph.util.Log10;
-import org.csstudio.swt.xygraph.util.CustomMediaFactory;
-import org.csstudio.swt.xygraph.util.CustomMediaFactory.CURSOR_TYPE;
+import org.csstudio.swt.xygraph.util.XYGraphMediaFactory;
+import org.csstudio.swt.xygraph.util.XYGraphMediaFactory.CURSOR_TYPE;
 import org.eclipse.draw2d.FigureUtilities;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.MouseEvent;
@@ -48,8 +48,8 @@ public class Axis extends LinearScale{
     /** The auto zoom interval in ms.*/
     final static int ZOOM_SPEED = 200;
 
-	private static final Color GRAY_COLOR = CustomMediaFactory.getInstance().getColor(
-			CustomMediaFactory.COLOR_GRAY);
+	private static final Color GRAY_COLOR = XYGraphMediaFactory.getInstance().getColor(
+			XYGraphMediaFactory.COLOR_GRAY);
 
     private String title;
 
@@ -98,15 +98,15 @@ public class Axis extends LinearScale{
 		final AxisMouseListener panner = new AxisMouseListener();
 		addMouseListener(panner);
 		addMouseMotionListener(panner);
-		grabbing = CustomMediaFactory.getCursor(CURSOR_TYPE.GRABBING);
-		titleFont = CustomMediaFactory.getInstance().getFont(
+		grabbing = XYGraphMediaFactory.getCursor(CURSOR_TYPE.GRABBING);
+		titleFont = XYGraphMediaFactory.getInstance().getFont(
 				new FontData("Arial", 9, SWT.BOLD)); //$NON-NLS-1$
 		if(getBackgroundColor() != null){
 			RGB backRGB = getBackgroundColor().getRGB();
-			revertBackColor = CustomMediaFactory.getInstance().getColor(255- backRGB.red,
+			revertBackColor = XYGraphMediaFactory.getInstance().getColor(255- backRGB.red,
 					255 - backRGB.green, 255 - backRGB.blue);
 		}else
-			revertBackColor = CustomMediaFactory.getInstance().getColor(100,100,100);
+			revertBackColor = XYGraphMediaFactory.getInstance().getColor(100,100,100);
 
 	}
 
@@ -157,7 +157,7 @@ public class Axis extends LinearScale{
 	@Override
 	public void setBackgroundColor(Color bg) {
 		RGB backRGB = bg.getRGB();
-		revertBackColor = CustomMediaFactory.getInstance().getColor(255- backRGB.red,
+		revertBackColor = XYGraphMediaFactory.getInstance().getColor(255- backRGB.red,
 				255 - backRGB.green, 255 - backRGB.blue);
 		super.setBackgroundColor(bg);
 	}

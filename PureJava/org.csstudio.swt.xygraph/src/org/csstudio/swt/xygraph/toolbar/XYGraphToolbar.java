@@ -14,7 +14,7 @@ import org.csstudio.swt.xygraph.undo.IOperationsManagerListener;
 import org.csstudio.swt.xygraph.undo.OperationsManager;
 import org.csstudio.swt.xygraph.undo.RemoveAnnotationCommand;
 import org.csstudio.swt.xygraph.undo.ZoomType;
-import org.csstudio.swt.xygraph.util.CustomMediaFactory;
+import org.csstudio.swt.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.draw2d.ActionEvent;
 import org.eclipse.draw2d.ActionListener;
 import org.eclipse.draw2d.Button;
@@ -62,7 +62,7 @@ public class XYGraphToolbar extends Figure {
 		this.xyGraph = xyGraph;
 		setLayoutManager(new WrappableToolbarLayout());
 		
-		final Button configButton = new Button(CustomMediaFactory.getInstance().getImage("images/Configure.png"));
+		final Button configButton = new Button(XYGraphMediaFactory.getInstance().getImage("images/Configure.png"));
 		configButton.setToolTip(new Label("Configure Settings..."));
 		addButton(configButton);
 		configButton.addActionListener(new ActionListener(){
@@ -73,7 +73,7 @@ public class XYGraphToolbar extends Figure {
 			}
 		});
 			
-		final Button addAnnotationButton = new Button(CustomMediaFactory.getInstance().getImage("images/Add_Annotation.png"));
+		final Button addAnnotationButton = new Button(XYGraphMediaFactory.getInstance().getImage("images/Add_Annotation.png"));
 		addAnnotationButton.setToolTip(new Label("Add Annotation..."));		
 		addButton(addAnnotationButton);
 		addAnnotationButton.addActionListener(new ActionListener(){
@@ -88,7 +88,7 @@ public class XYGraphToolbar extends Figure {
 			}
 		});
 		
-		final Button delAnnotationButton = new Button(CustomMediaFactory.getInstance().getImage("images/Del_Annotation.png"));
+		final Button delAnnotationButton = new Button(XYGraphMediaFactory.getInstance().getImage("images/Del_Annotation.png"));
 		delAnnotationButton.setToolTip(new Label("Remove Annotation..."));
 		addButton(delAnnotationButton);
 		delAnnotationButton.addActionListener(new ActionListener(){
@@ -106,7 +106,7 @@ public class XYGraphToolbar extends Figure {
 		addSeparator();	
 		if ((flags & XYGraphFlags.STAGGER) > 0)
 		{	//stagger axes button
-    		final Button staggerButton = new Button(CustomMediaFactory.getInstance().getImage("images/stagger.png"));
+    		final Button staggerButton = new Button(XYGraphMediaFactory.getInstance().getImage("images/stagger.png"));
     		staggerButton.setToolTip(new Label("Stagger axes so they don't overlap"));
     		addButton(staggerButton);
     		staggerButton.addActionListener(new ActionListener(){
@@ -117,7 +117,7 @@ public class XYGraphToolbar extends Figure {
 		}
 		else
 		{	//auto scale button
-            final Button autoScaleButton = new Button(CustomMediaFactory.getInstance().getImage("images/AutoScale.png"));
+            final Button autoScaleButton = new Button(XYGraphMediaFactory.getInstance().getImage("images/AutoScale.png"));
             autoScaleButton.setToolTip(new Label("Perform Auto Scale"));
             addButton(autoScaleButton);
             autoScaleButton.addActionListener(new ActionListener(){
@@ -146,7 +146,7 @@ public class XYGraphToolbar extends Figure {
 	
 	
 	private void addSnapshotButton() {
-		Button snapShotButton = new Button(CustomMediaFactory.getInstance().getImage("images/camera.gif"));
+		Button snapShotButton = new Button(XYGraphMediaFactory.getInstance().getImage("images/camera.gif"));
 		snapShotButton.setToolTip(new Label("Save Snapshot to PNG file"));
 		addButton(snapShotButton);
 		snapShotButton.addActionListener(new ActionListener(){
@@ -174,7 +174,7 @@ public class XYGraphToolbar extends Figure {
 
 	private void addUndoRedoButtons() {
 		//undo button		
-		final GrayableButton undoButton = new GrayableButton(CustomMediaFactory.getInstance().getImage("images/Undo.png"));
+		final GrayableButton undoButton = new GrayableButton(XYGraphMediaFactory.getInstance().getImage("images/Undo.png"));
 		undoButton.setToolTip(new Label("Undo"));
 		undoButton.setEnabled(false);
 		addButton(undoButton);		
@@ -198,7 +198,7 @@ public class XYGraphToolbar extends Figure {
 		});
 		
 		// redo button
-		final GrayableButton redoButton = new GrayableButton(CustomMediaFactory.getInstance().getImage("images/Redo.png"));
+		final GrayableButton redoButton = new GrayableButton(XYGraphMediaFactory.getInstance().getImage("images/Redo.png"));
 		redoButton.setToolTip(new Label("Redo"));
 		redoButton.setEnabled(false);
 		addButton(redoButton);		
@@ -269,7 +269,7 @@ public class XYGraphToolbar extends Figure {
 	
 	private static class ToolbarSeparator extends Figure{
 		
-		private final Color GRAY_COLOR = CustomMediaFactory.getInstance().getColor(
+		private final Color GRAY_COLOR = XYGraphMediaFactory.getInstance().getColor(
 				new RGB(130, 130, 130));
 		
 		@Override

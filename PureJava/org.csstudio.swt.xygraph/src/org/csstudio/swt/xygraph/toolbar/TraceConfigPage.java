@@ -17,7 +17,7 @@ import org.csstudio.swt.xygraph.figures.Trace.BaseLine;
 import org.csstudio.swt.xygraph.figures.Trace.ErrorBarType;
 import org.csstudio.swt.xygraph.figures.Trace.PointStyle;
 import org.csstudio.swt.xygraph.figures.Trace.TraceType;
-import org.csstudio.swt.xygraph.util.CustomMediaFactory;
+import org.csstudio.swt.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -286,7 +286,7 @@ public class TraceConfigPage {
 		trace.setName(nameText.getText());
 		trace.setXAxis(xyGraph.getXAxisList().get(xAxisCombo.getSelectionIndex()));
 		trace.setYAxis(xyGraph.getYAxisList().get(yAxisCombo.getSelectionIndex()));
-		trace.setTraceColor(CustomMediaFactory.getInstance().getColor(
+		trace.setTraceColor(XYGraphMediaFactory.getInstance().getColor(
 				traceColorSelector.getColorValue()));
 		trace.setTraceType(TraceType.values()[traceTypeCombo.getSelectionIndex()]);
 		trace.setLineWidth(lineWidthSpinner.getSelection());
@@ -298,7 +298,7 @@ public class TraceConfigPage {
 		trace.setErrorBarEnabled(errorBarEnabledButton.getSelection());
 		trace.setXErrorBarType(ErrorBarType.values()[xErrorBarTypeCombo.getSelectionIndex()]);
 		trace.setYErrorBarType(ErrorBarType.values()[yErrorBarTypeCombo.getSelectionIndex()]);
-		trace.setErrorBarColor(CustomMediaFactory.getInstance().getColor(
+		trace.setErrorBarColor(XYGraphMediaFactory.getInstance().getColor(
 				errorBarColorSelector.getColorValue()));
 		trace.setErrorBarCapWidth(errorBarCapWidthSpinner.getSelection());
 		trace.setDrawYErrorInArea(drawYErrorInAreaButton.getSelection());

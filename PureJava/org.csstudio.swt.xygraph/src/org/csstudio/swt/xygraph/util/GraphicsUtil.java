@@ -55,7 +55,7 @@ public final class GraphicsUtil {
 					    final Color titleColor = graphics.getForegroundColor();
 					    RGB transparentRGB = new RGB(240, 240, 240);		
 										
-						gc.setBackground(CustomMediaFactory.getInstance().getColor(transparentRGB));
+						gc.setBackground(XYGraphMediaFactory.getInstance().getColor(transparentRGB));
 						gc.fillRectangle(image.getBounds());
 						gc.setForeground(titleColor);
 						gc.setFont(graphics.getFont());

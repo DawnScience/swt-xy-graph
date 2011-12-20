@@ -14,8 +14,8 @@ import org.csstudio.swt.xygraph.linearscale.Range;
 import org.csstudio.swt.xygraph.undo.SaveStateCommand;
 import org.csstudio.swt.xygraph.undo.ZoomCommand;
 import org.csstudio.swt.xygraph.undo.ZoomType;
-import org.csstudio.swt.xygraph.util.CustomMediaFactory;
-import org.csstudio.swt.xygraph.util.CustomMediaFactory.CURSOR_TYPE;
+import org.csstudio.swt.xygraph.util.XYGraphMediaFactory;
+import org.csstudio.swt.xygraph.util.XYGraphMediaFactory.CURSOR_TYPE;
 import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.MouseEvent;
@@ -57,19 +57,19 @@ public class PlotArea extends Figure {
 		setForegroundColor(XYGraph.BLACK_COLOR);
 		setOpaque(true);
 		RGB backRGB = getBackgroundColor().getRGB();
-		revertBackColor = CustomMediaFactory.getInstance().getColor(255- backRGB.red,
+		revertBackColor = XYGraphMediaFactory.getInstance().getColor(255- backRGB.red,
 				255 - backRGB.green, 255 - backRGB.blue);
 		PlotMouseListener zoomer = new PlotMouseListener();
 		addMouseListener(zoomer);
 		addMouseMotionListener(zoomer);
-		grabbing = CustomMediaFactory.getCursor(CURSOR_TYPE.GRABBING);
+		grabbing = XYGraphMediaFactory.getCursor(CURSOR_TYPE.GRABBING);
 		zoomType = ZoomType.NONE;
 	}
 
 	@Override
 	public void setBackgroundColor(final Color bg) {
 		RGB backRGB = bg.getRGB();
-		revertBackColor = CustomMediaFactory.getInstance().getColor(255- backRGB.red,
+		revertBackColor = XYGraphMediaFactory.getInstance().getColor(255- backRGB.red,
 				255 - backRGB.green, 255 - backRGB.blue);
 		super.setBackgroundColor(bg);
 

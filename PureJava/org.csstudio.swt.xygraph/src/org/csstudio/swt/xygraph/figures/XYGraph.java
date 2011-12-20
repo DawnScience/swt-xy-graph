@@ -20,7 +20,7 @@ import org.csstudio.swt.xygraph.undo.OperationsManager;
 import org.csstudio.swt.xygraph.undo.ZoomCommand;
 import org.csstudio.swt.xygraph.undo.ZoomType;
 import org.csstudio.swt.xygraph.util.Log10;
-import org.csstudio.swt.xygraph.util.CustomMediaFactory;
+import org.csstudio.swt.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.Graphics;
@@ -101,7 +101,7 @@ public class XYGraph extends Figure{
 		setOpaque(!transparent);
 		legendMap = new LinkedHashMap<Axis, Legend>();
 		titleLabel = new Label();
-		setTitleFont(CustomMediaFactory.getInstance().getFont(
+		setTitleFont(XYGraphMediaFactory.getInstance().getFont(
 				new FontData("Arial", 12, SWT.BOLD)));
 		//titleLabel.setVisible(false);
 		xAxisList = new ArrayList<Axis>();
@@ -368,7 +368,7 @@ public class XYGraph extends Figure{
 	public void addTrace(Trace trace){
 		if (trace.getTraceColor() == null)
 		{   // Cycle through default colors
-		    trace.setTraceColor(CustomMediaFactory.getInstance().getColor(
+		    trace.setTraceColor(XYGraphMediaFactory.getInstance().getColor(
 		    		DEFAULT_TRACES_COLOR[traceNum % DEFAULT_TRACES_COLOR.length]));
         	++traceNum;
 		}

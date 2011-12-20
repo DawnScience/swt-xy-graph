@@ -23,7 +23,7 @@ import org.csstudio.swt.xygraph.figures.Trace.TraceType;
 import org.csstudio.swt.xygraph.linearscale.Range;
 import org.csstudio.swt.xygraph.linearscale.AbstractScale.LabelSide;
 import org.csstudio.swt.xygraph.undo.ZoomType;
-import org.csstudio.swt.xygraph.util.CustomMediaFactory;
+import org.csstudio.swt.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.KeyEvent;
 import org.eclipse.draw2d.KeyListener;
@@ -82,7 +82,7 @@ class XYGraphTest extends Figure {
 
 		xyGraph = new XYGraph();
 		xyGraph.setTitle("XY Graph Test");
-		xyGraph.setFont(CustomMediaFactory.getInstance().getFont(CustomMediaFactory.FONT_TAHOMA));
+		xyGraph.setFont(XYGraphMediaFactory.getInstance().getFont(XYGraphMediaFactory.FONT_TAHOMA));
 		xyGraph.primaryXAxis.setTitle("Time");
 		xyGraph.primaryYAxis.setTitle("Amplitude");
 		xyGraph.primaryXAxis.setRange(new Range(0,200));
@@ -103,7 +103,7 @@ class XYGraphTest extends Figure {
 		y2Axis.setRange(10, 1000);
 		y2Axis.setLogScale(true);
 		//y2Axis.setAutoScale(true);
-		y2Axis.setForegroundColor(CustomMediaFactory.getInstance().getColor(CustomMediaFactory.COLOR_PINK));
+		y2Axis.setForegroundColor(XYGraphMediaFactory.getInstance().getColor(XYGraphMediaFactory.COLOR_PINK));
 		y2Axis.setTickLableSide(LabelSide.Secondary);
 		xyGraph.addAxis(y2Axis);
 		/*

@@ -10,7 +10,7 @@ import org.csstudio.swt.xygraph.figures.Trace;
 import org.csstudio.swt.xygraph.figures.XYGraph;
 import org.csstudio.swt.xygraph.figures.Trace.PointStyle;
 import org.csstudio.swt.xygraph.figures.Trace.TraceType;
-import org.csstudio.swt.xygraph.util.CustomMediaFactory;
+import org.csstudio.swt.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -50,7 +50,7 @@ public class BarChartExample {
 		trace.setTraceType(TraceType.AREA);
 		trace.setLineWidth(15);
 		trace.setAreaAlpha(200);
-		trace.setTraceColor(CustomMediaFactory.getInstance().getColor(CustomMediaFactory.COLOR_BLUE) );
+		trace.setTraceColor(XYGraphMediaFactory.getInstance().getColor(XYGraphMediaFactory.COLOR_BLUE) );
 		//add the trace to xyGraph
 		xyGraph.addTrace(trace);			
 	   

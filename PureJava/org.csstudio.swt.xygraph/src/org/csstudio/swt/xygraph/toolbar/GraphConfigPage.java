@@ -8,7 +8,7 @@
 package org.csstudio.swt.xygraph.toolbar;
 
 import org.csstudio.swt.xygraph.figures.XYGraph;
-import org.csstudio.swt.xygraph.util.CustomMediaFactory;
+import org.csstudio.swt.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -81,7 +81,7 @@ public class GraphConfigPage {
 					fontDialog.setFontList(titleFont.getFontData());
 				FontData fontData = fontDialog.open();
 				if(fontData != null){
-					titleFont = CustomMediaFactory.getInstance().getFont(fontData);
+					titleFont = XYGraphMediaFactory.getInstance().getFont(fontData);
 					fontLabel.setFont(titleFont);
 					fontLabel.setText("Title Font: " + fontData.getName());
 					composite.getShell().layout(true, true);
@@ -101,7 +101,7 @@ public class GraphConfigPage {
 		titleColorSelector.setColorValue(xyGraph.getTitleColor().getRGB());
 		titleColorSelector.addListener(new IPropertyChangeListener(){
 			public void propertyChange(PropertyChangeEvent event) {
-				fontLabel.setForeground(CustomMediaFactory.getInstance().getColor(
+				fontLabel.setForeground(XYGraphMediaFactory.getInstance().getColor(
 						titleColorSelector.getColorValue()));
 			}
 		});
@@ -144,10 +144,10 @@ public class GraphConfigPage {
 	public void applyChanges(){
 		xyGraph.setTitle(titleText.getText());
 		xyGraph.setTitleFont(titleFont);
-		xyGraph.setTitleColor(CustomMediaFactory.getInstance().getColor(
+		xyGraph.setTitleColor(XYGraphMediaFactory.getInstance().getColor(
 				titleColorSelector.getColorValue()));
 		xyGraph.getPlotArea().setBackgroundColor(
-				CustomMediaFactory.getInstance().getColor(
+				XYGraphMediaFactory.getInstance().getColor(
 						plotAreaColorSelector.getColorValue()));
 		xyGraph.setShowTitle(showTitle.getSelection());
 		xyGraph.setShowLegend(showLegend.getSelection());

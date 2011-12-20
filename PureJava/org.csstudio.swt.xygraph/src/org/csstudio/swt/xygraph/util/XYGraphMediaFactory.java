@@ -56,11 +56,11 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * @version $Revision$
  * 
  */
-public final class CustomMediaFactory {
+public final class XYGraphMediaFactory {
 	/**
 	 * The shared instance.
 	 */
-	private static CustomMediaFactory _instance;
+	private static XYGraphMediaFactory _instance;
 
 	/**
 	 * The color registry.
@@ -120,7 +120,7 @@ public final class CustomMediaFactory {
 	/**
 	 * Private constructor to avoid instantiation.
 	 */
-	private CustomMediaFactory() {
+	private XYGraphMediaFactory() {
 		_colorRegistry = new ColorRegistry();
 		_imageRegistry = new ImageRegistry();
 		_fontRegistry = new FontRegistry();
@@ -144,9 +144,9 @@ public final class CustomMediaFactory {
 	 * 
 	 * @return The shared instance of this class.
 	 */
-	public static synchronized CustomMediaFactory getInstance() {
+	public static synchronized XYGraphMediaFactory getInstance() {
 		if (_instance == null) {
-			_instance = new CustomMediaFactory();
+			_instance = new XYGraphMediaFactory();
 		}
 
 		return _instance;
