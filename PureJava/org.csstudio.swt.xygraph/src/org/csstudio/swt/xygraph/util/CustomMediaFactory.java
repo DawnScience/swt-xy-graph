@@ -21,11 +21,13 @@
  */
  package org.csstudio.swt.xygraph.util;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.csstudio.swt.xygraph.Activator;
+import org.eclipse.draw2d.CheckBox;
 import org.eclipse.draw2d.Cursors;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
@@ -297,22 +299,23 @@ public final class CustomMediaFactory {
 		// Is image already cached in imageRegistry?
 		if (_imageRegistry.get(relativePath) == null)
 		{
-		    // Not cached. Get from plugin (this should be the usual case)
-			if(Activator.getDefault() != null)
-			{					
-					ImageDescriptor descr = AbstractUIPlugin.imageDescriptorFromPlugin(
-							Activator.PLUGIN_ID, relativePath);
-					_imageRegistry.put(relativePath, descr);				
+		  
+			InputStream stream = getClass().getResourceAsStream(relativePath);
+			Image image = new Image(null, stream);
+			try {
+				stream.close();
+			} catch (IOException ioe) {
 			}
-			else
-			{
+			
+			
+			
 			    // Must be running as JUnit test or demo w/o plugin environment.
 			    // The following only works for test code inside this plugin,
 			    // not when called from other plugins' test code.
-				final Display display = Display.getCurrent();
-	            final Image img = new Image(display, relativePath);        
-	            _imageRegistry.put(relativePath, img);	            
-			}
+//				final Display display = Display.getCurrent();
+//	            final Image img = new Image(display, relativePath);        
+	            _imageRegistry.put(relativePath, image);	            
+			
 		}
 		return _imageRegistry.get(relativePath);
 	}
