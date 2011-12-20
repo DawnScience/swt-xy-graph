@@ -1,5 +1,8 @@
 This is the Pure Java version of SWT XYGraph, so it can be used for pure java applications.
 
+It only includes win32 version of SWT in the build path, so it only works for win32. 
+Please replace it with other platform specific SWT library for your platform.
+
 Following packages are exactly same as RCP/RAP version of SWT XYGraph:
 
 org.csstudio.swt.xygraph.dataprovider

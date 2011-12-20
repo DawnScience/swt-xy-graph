@@ -1,6 +1,7 @@
 package org.csstudio.swt.xygraph.exampleview;
 
 import org.csstudio.swt.xygraph.dataprovider.CircularBufferDataProvider;
+import org.csstudio.swt.xygraph.figures.ToolbarArmedXYGraph;
 import org.csstudio.swt.xygraph.figures.Trace;
 import org.csstudio.swt.xygraph.figures.XYGraph;
 import org.csstudio.swt.xygraph.figures.Trace.PointStyle;
@@ -21,11 +22,15 @@ public class SampleView extends ViewPart {
 		 //use LightweightSystem to create the bridge between SWT and draw2D
 		final LightweightSystem lws = new LightweightSystem(new Canvas(parent, SWT.NONE));
 		
+		
 		//create a new XY Graph.
 		XYGraph xyGraph = new XYGraph();
+		
+		ToolbarArmedXYGraph toolbarArmedXYGraph = new ToolbarArmedXYGraph(xyGraph);
+
 		xyGraph.setTitle("Simple Example");
 		//set it as the content of LightwightSystem
-		lws.setContents(xyGraph);
+		lws.setContents(toolbarArmedXYGraph);
 		
 		//create a trace data provider, which will provide the data to the trace.
 		CircularBufferDataProvider traceDataProvider = new CircularBufferDataProvider(false);
