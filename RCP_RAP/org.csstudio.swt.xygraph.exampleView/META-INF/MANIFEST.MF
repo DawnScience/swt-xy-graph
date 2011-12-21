@@ -6,7 +6,8 @@ Bundle-Version: 1.1.4.qualifier
 Bundle-Activator: org.csstudio.swt.xygraph.exampleview.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.csstudio.swt.xygraph;bundle-version="1.0.1",
  org.eclipse.draw2d;bundle-version="3.5.2"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ClassPath: lib/PureJava 1.1.4/org.csstudio.swt.xygraph.jar,
+ .
