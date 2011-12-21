@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * This program simply draw the widget figure on a shell.
+ * A Comprehensive Example
 
  * @author Xihui Chen
  */
