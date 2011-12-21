@@ -17,14 +17,34 @@
 	not creating a RAP application, you should use the Pure Java version.
 	</p>
 	<h4>1.2 Install Pure Java Version</h4>	
-	<p> 
-	    For Eclipse user, copy the org.csstudio.swt.xygraph.jar into ../eclipse/dropins directory.
-	    Restart Eclipse and include the plug-in org.csstudio.swt.xygraph in your plug-in dependencies list
-	    or add the jar files into your build path. Now you are ready to use Rock and Roll! If it reports that 
-	    you are missing org.eclipse.draw2d, you should also install draw2d plugin. 
+	<p>
+	For pure java applications, add org.csstudio.swt.xygraph.jar to your project build path. 
+	It also requires following jar files:
+	<ul>
+	<li>org.eclipse.draw2d.jar</li>
+	<li>org.eclipse.swt.jar</li>
+<li>org.eclipse.swt.win32.win32.x86.jar or other equivalent platform swt library</li>
+<li>org.eclipse.jface.jar</li>
+<li>org.eclipse.core.commands.jar</li>
+<li>org.eclipse.equinox.common.jar</li>
+<li>org.eclipse.osgi.jar</li>
+</ul>
+<p>
+These jar files are generally available with your eclipse installation under eclipse/plugins folder.
+Also add these jars to your project build path.Now you are ready to Rock and Roll! </p>
+<p>
+If you don't have org.eclipse.draw2d in your eclipse/plugins folder, you should also install draw2d plugin. 
 	    Draw2D is part of Eclipse GEF project, If you don't have GEF installed in your eclipse, 
 	    please install it following instruction here:
 	    <a href="http://www.eclipse.org/gef/downloads.php">http://www.eclipse.org/gef/downloads.php</a> 
+
+</p>
+
+	<p> 
+	    For Eclipse plugin development, add org.csstudio.swt.xygraph.jar to your project build path. 
+	    Add required jars listed above as plugin dependencies (If you already have 
+	    org.eclipse.ui and org.eclipse.core.runtime in dependencies, you only need to add org.eclipse.draw2d). 
+	    
 	</p>  
 	
 	<h4>1.3 Install RCP_RAP Version</h4>
