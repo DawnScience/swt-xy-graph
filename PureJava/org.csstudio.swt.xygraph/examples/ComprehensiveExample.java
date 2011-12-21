@@ -1,14 +1,3 @@
-package org.csstudio.swt.xygraph;
-/*******************************************************************************
- * Copyright (c) 2010 Oak Ridge National Laboratory.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- ******************************************************************************/
-
-
-
 import java.util.Calendar;
 
 import org.csstudio.swt.xygraph.dataprovider.CircularBufferDataProvider;
@@ -40,12 +29,10 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * This program simply draw the widget figure on a shell.
- * <p>
- * This is a common java program, <b>not</b> a JUnit test.
- * </p>
+
  * @author Xihui Chen
  */
-public class GraphDemo {
+public class ComprehensiveExample {
 	public static void main(final String[] args) {
 		final Shell shell = new Shell();
 		shell.setSize(800, 500);
@@ -55,14 +42,13 @@ public class GraphDemo {
 		final XYGraphTest testFigure = new XYGraphTest();
 		lws.setContents(testFigure);
 
-	    shell.setText("XY Graph Test");
+	    shell.setText("Comprehensive Example");
 	    final Display display = Display.getDefault();
 	    while (!shell.isDisposed()) {
 	      if (!display.readAndDispatch()) {
             display.sleep();
         }
 	    }
-	    //System.out.println(Calendar.getInstance().getTime());
 	}
 }
 
@@ -107,7 +93,7 @@ class XYGraphTest extends Figure {
 		y2Axis.setForegroundColor(XYGraphMediaFactory.getInstance().getColor(XYGraphMediaFactory.COLOR_PINK));
 		y2Axis.setTickLableSide(LabelSide.Secondary);
 		xyGraph.addAxis(y2Axis);
-		/*
+		
 		Axis y3Axis = new Axis("Y-3", true);
 		y3Axis.setForegroundColor(XYGraphMediaFactory.getInstance().getColor(XYGraphMediaFactory.COLOR_BLUE));
 		y3Axis.setTickLableSide(LabelSide.Secondary);
@@ -115,39 +101,7 @@ class XYGraphTest extends Figure {
 		y3Axis.setShowMajorGrid(false);
 		y3Axis.setAutoScale(true);
 		xyGraph.addAxis(y3Axis);
-
-		Axis y4Axis = new Axis("Log Scale", true);
-		y4Axis.setForegroundColor(XYGraphMediaFactory.getInstance().getColor(XYGraphMediaFactory.COLOR_ORANGE));
-
-		y4Axis.setShowMajorGrid(false);
-		y4Axis.setRange(new Range(-100, 10000));
-		y4Axis.setAutoScale(true);
-		y4Axis.setAutoScaleThreshold(0);
-		y4Axis.setLogScale(true);
-		xyGraph.addAxis(y4Axis);
-
-		//large amount of data test
-		CircularBufferDataProvider trace1Provider = new CircularBufferDataProvider(false);
-		trace1Provider.setBufferSize(100000);
-		double[] xArray = new double[100000];
-		double[] yArray = new double[100000];
-		for(int i=0; i<100000; i++){
-			xArray[i] = i;
-			yArray[i] = Math.random() * i;
-		}
-		trace1Provider.setCurrentXDataArray(xArray);
-		trace1Provider.setCurrentYDataArray(yArray);
-
-		trace1 = new Trace("Trace1-XY Plot", x2Axis, y2Axis, trace1Provider);
-		trace1.setAntiAliasing(false);
-		trace1.setTraceColor(XYGraphMediaFactory.getInstance().getColor(
-				new RGB(0,64,128)));
-		trace1.setTraceType(TraceType.POINT);
-		trace1.setPointStyle(PointStyle.POINT);
-		trace1.setPointSize(1);
-
-		xyGraph.addTrace(trace1);
-		*/
+		
 		trace2Provider = new CircularBufferDataProvider(true);
 		trace2Provider.setBufferSize(100);
 		trace2Provider.setUpdateDelay(100);
@@ -190,15 +144,19 @@ class XYGraphTest extends Figure {
 
 		//add key listener to XY-Graph. The key pressing will only be monitored when the
 		//graph gains focus.
-
-		toolbarArmedXYGraph.addMouseListener(new MouseListener.Stub(){
+		
+		xyGraph.setFocusTraversable(true);
+		xyGraph.setRequestFocusEnabled(true);
+		
+		xyGraph.getPlotArea().addMouseListener(new MouseListener.Stub(){
 			@Override
 			public void mousePressed(final MouseEvent me) {
-				toolbarArmedXYGraph.requestFocus();
+				xyGraph.requestFocus();
 			}
-		});
+		});	
 
-		toolbarArmedXYGraph.addKeyListener(new KeyListener.Stub(){
+
+		xyGraph.addKeyListener(new KeyListener.Stub(){
 			@Override
 			public void keyPressed(final KeyEvent ke) {
 				if((ke.getState() == SWT.CONTROL) && (ke.keycode == 'z')){
@@ -281,7 +239,6 @@ class XYGraphTest extends Figure {
 		};
 
 	Display.getCurrent().timerExec(1000, updater);
-		//System.out.println(Calendar.getInstance().getTime());
 		running = true;
 		t = Calendar.getInstance().getTimeInMillis();
 	}

@@ -27,7 +27,7 @@ public class BarChartExample {
 		
 		//create a new XY Graph.
 		XYGraph xyGraph = new XYGraph();
-		xyGraph.setTitle("Area Chart");
+		xyGraph.setTitle("Bar and Area Chart");
 		//set it as the content of LightwightSystem
 		lws.setContents(xyGraph);
 		
@@ -47,7 +47,7 @@ public class BarChartExample {
 				xyGraph.primaryXAxis, xyGraph.primaryYAxis, traceDataProvider);			
 		
 		//set trace property
-		trace.setTraceType(TraceType.AREA);
+		trace.setTraceType(TraceType.BAR);
 		trace.setLineWidth(15);
 		trace.setAreaAlpha(200);
 		trace.setTraceColor(XYGraphMediaFactory.getInstance().getColor(XYGraphMediaFactory.COLOR_BLUE) );
@@ -65,10 +65,11 @@ public class BarChartExample {
 				xyGraph.primaryXAxis, xyGraph.primaryYAxis, traceDataProvider2);			
 		
 		//set trace property
-		trace2.setPointStyle(PointStyle.XCROSS);
 		trace2.setPointSize(6);
 		trace2.setAreaAlpha(150);
 		trace2.setTraceType(TraceType.AREA);
+		trace2.setTraceColor(XYGraphMediaFactory.getInstance().getColor(XYGraphMediaFactory.COLOR_RED) );
+
 		//trace2.setLineWidth(5);
 		//add the trace to xyGraph
 		xyGraph.addTrace(trace2);	
