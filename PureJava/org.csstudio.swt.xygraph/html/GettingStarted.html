@@ -41,9 +41,12 @@ If you don't have org.eclipse.draw2d in your eclipse/plugins folder, you should 
 </p>
 
 	<p> 
-	    For Eclipse plugin development, add org.csstudio.swt.xygraph.jar to your project build path. 
-	    Add required jars listed above as plugin dependencies (If you already have 
-	    org.eclipse.ui and org.eclipse.core.runtime in dependencies, you only need to add org.eclipse.draw2d). 
+	    For Eclipse plugin development, add org.csstudio.swt.xygraph.jar to your target platform or project build path.
+	    You also need to make sure you have org.eclipse.draw2d in your target platform. 
+	    Add org.csstudio.swt.xygraph and required jars listed above as plugin dependencies 
+	    (If you already have 
+	    org.eclipse.ui and org.eclipse.core.runtime in dependencies, those plugins are implicitly included, 
+	    so you don't need to add them again.). 
 	    
 	</p>  
 	
