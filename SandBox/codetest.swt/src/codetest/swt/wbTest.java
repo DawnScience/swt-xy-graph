@@ -9,6 +9,8 @@ import org.eclipse.swt.custom.TableCursor;
 import org.eclipse.swt.custom.TableTree;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.RowLayout;
 
 public class wbTest extends Composite {
 	private Table table;
@@ -21,9 +23,10 @@ public class wbTest extends Composite {
 	@SuppressWarnings("deprecation")
 	public wbTest(Composite parent, int style) {
 		super(parent, style);
+		setLayout(new FillLayout(SWT.HORIZONTAL));
 		
 		table = new Table(this, SWT.BORDER | SWT.FULL_SELECTION);
-		table.setBounds(83, 10, 321, 168);
+		table.setEnabled(false);
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 		
@@ -42,11 +45,9 @@ public class wbTest extends Composite {
 		tblclmnNewColumn_1.setText("New Column");
 		
 		TableTree tableTree = new TableTree(this, SWT.BORDER | SWT.FULL_SELECTION);
-		tableTree.setBounds(10, 170, 40, 47);
 		
 		Tree tree = new Tree(this, SWT.BORDER);
 		tree.setHeaderVisible(true);
-		tree.setBounds(80, 204, 324, 85);
 		
 		TreeColumn trclmnNewColumn = new TreeColumn(tree, SWT.NONE);
 		trclmnNewColumn.setWidth(100);
