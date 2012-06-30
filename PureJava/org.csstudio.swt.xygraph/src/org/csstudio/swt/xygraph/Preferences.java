@@ -16,7 +16,8 @@ package org.csstudio.swt.xygraph;
 @SuppressWarnings("nls")
 public class Preferences
 {
-    // useAdvancedGraphics() is called from many drawing operations, so
+    public static final String PROHIBIT_ADVANCED_GRAPHICS = "prohibit_advanced_graphics"; //$NON-NLS-1$
+	// useAdvancedGraphics() is called from many drawing operations, so
     // only determine it once
     private static boolean use_advanced_graphics = true;
 
@@ -24,7 +25,7 @@ public class Preferences
     public static boolean useAdvancedGraphics()
     {
     	if(use_advanced_graphics){
-    		String value = System.getProperty("prohibit_advanced_graphics"); //$NON-NLS-1$
+    		String value = System.getProperty(PROHIBIT_ADVANCED_GRAPHICS); //$NON-NLS-1$
     		if(value == null || !value.equals("true")) //$NON-NLS-1$
     			return true;
     		return  false;

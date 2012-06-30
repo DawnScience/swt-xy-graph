@@ -143,7 +143,7 @@ public final class XYGraphMediaFactory {
 	 * @return The shared instance of this class.
 	 */
 	public static synchronized XYGraphMediaFactory getInstance() {
-		if (_instance == null) {
+ 		if (_instance == null) {
 			_instance = new XYGraphMediaFactory();
 		}
 
@@ -263,7 +263,7 @@ public final class XYGraphMediaFactory {
 	 * @return The system's default font.
 	 */
 	public Font getDefaultFont(final int style) {
-		// FIXME Die default Schriftart bzw. Schriftgrš§e hŠngt vom Betriebssystem ab 
+		// FIXME Die default Schriftart bzw. Schriftgrï¿½ï¿½e hï¿½ngt vom Betriebssystem ab 
 		return getFont("Arial", 10, style); //$NON-NLS-1$
 	}
 	

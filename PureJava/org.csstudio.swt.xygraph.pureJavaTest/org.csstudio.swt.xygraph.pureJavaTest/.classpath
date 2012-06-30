@@ -10,5 +10,7 @@
 	<classpathentry kind="lib" path="lib/org.eclipse.osgi_3.7.1.R37x_v20110808-1106.jar"/>
 	<classpathentry kind="lib" path="lib/org.eclipse.swt_3.7.1.v3738a.jar"/>
 	<classpathentry kind="lib" path="lib/org.eclipse.swt.gtk.linux.x86_64_3.7.1.v3738a.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="lib/org.csstudio.swt.widgets_1.0.0.201206301616.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
