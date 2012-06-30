@@ -32,11 +32,6 @@ public class LinearScaleTickMarks extends Figure {
     
     /**
      * Constructor.
-     * 
-     * @param chart
-     *            the chart
-     * @param style
-     *            the style
      * @param scale
      *            the scale
      */
