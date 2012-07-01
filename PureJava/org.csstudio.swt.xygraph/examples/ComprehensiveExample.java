@@ -1,3 +1,10 @@
+/*******************************************************************************
+ * Copyright (c) 2010 Oak Ridge National Laboratory.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ ******************************************************************************/
 import java.util.Calendar;
 
 import org.csstudio.swt.xygraph.dataprovider.CircularBufferDataProvider;
@@ -87,7 +94,7 @@ class XYGraphTest extends Figure {
 
 
 		final Axis y2Axis = new Axis("Log Scale", true);
-		y2Axis.setRange(10, 1000);
+		y2Axis.setRange(10, 500);
 		y2Axis.setLogScale(true);
 		//y2Axis.setAutoScale(true);
 		y2Axis.setForegroundColor(XYGraphMediaFactory.getInstance().getColor(XYGraphMediaFactory.COLOR_PINK));
@@ -100,7 +107,7 @@ class XYGraphTest extends Figure {
 		y3Axis.setRange(new Range(-2, 3));
 		y3Axis.setShowMajorGrid(false);
 		y3Axis.setAutoScale(true);
-		xyGraph.addAxis(y3Axis);
+//		xyGraph.addAxis(y3Axis);
 		
 		trace2Provider = new CircularBufferDataProvider(true);
 		trace2Provider.setBufferSize(100);
@@ -110,17 +117,17 @@ class XYGraphTest extends Figure {
 		trace2.setDataProvider(trace2Provider);
 		trace2.setTraceType(TraceType.SOLID_LINE);
 		trace2.setLineWidth(1);
-		trace2.setPointStyle(PointStyle.CIRCLE);
-		trace2.setPointSize(1);
+		trace2.setPointStyle(PointStyle.POINT);
+		trace2.setPointSize(4);
 		trace2.setBaseLine(BaseLine.NEGATIVE_INFINITY);
 		trace2.setAreaAlpha(100);
 		trace2.setAntiAliasing(true);
-		trace2.setErrorBarEnabled(true);
+		trace2.setErrorBarEnabled(false);
 		//trace2.setDrawYErrorInArea(true);
 		trace2.setYErrorBarType(ErrorBarType.BOTH);
 		trace2.setXErrorBarType(ErrorBarType.NONE);
 		trace2.setErrorBarCapWidth(3);
-		xyGraph.addTrace(trace2);
+		
 
 		final CircularBufferDataProvider trace3Provider = new CircularBufferDataProvider(true);
 		trace3 = new Trace("Trace3", xyGraph.primaryXAxis, xyGraph.primaryYAxis, trace3Provider);
@@ -129,10 +136,11 @@ class XYGraphTest extends Figure {
 		trace3.setLineWidth(4);
 		trace3Provider.setUpdateDelay(100);
 		xyGraph.addTrace(trace3);
+		xyGraph.addTrace(trace2);
 
 		final CircularBufferDataProvider trace4Provider = new CircularBufferDataProvider(false);
 		trace4 = new Trace("Trace 4-Lissajous", x2Axis, y2Axis, trace4Provider);
-		trace4.setPointStyle(PointStyle.POINT);
+//		trace4.setPointStyle(PointStyle.POINT);
 		trace4.setPointSize(2);
 
 		trace4Provider.setUpdateDelay(100);
