@@ -5,6 +5,37 @@
 <title>Getting Started with SWT XYGraph</title>
 </head>
 <body>
+<h3>Table of Contents</h3>
+<ul>
+	 <li class="toc_lvl1">
+        <a href="#Installation">1. Installations</a>
+    </li>
+     <li class="toc_lvl1">
+        <a href="#Concepts">2. Concepts</a>
+    </li>
+     <li class="toc_lvl1">
+        <a href="#firstXYGraph">3. Create your first XY Graph</a>
+    </li>
+     <li class="toc_lvl1">
+        <a href="#Examples">4. Learn from examples</a>
+    </li>
+     <li class="toc_lvl2">
+        <a href="#XYGraph">4.1 XYGraph</a>
+    </li>
+      <li class="toc_lvl2">
+        <a href="#IntensityGraph">4.2 Intensity Graph</a>
+    </li>
+      <li class="toc_lvl2">
+        <a href="#Gauge">4.3 Gauge</a>
+    </li>
+      <li class="toc_lvl2">
+        <a href="#Meter">4.4 Meter</a>
+    </li>
+      <li class="toc_lvl2">
+        <a href="#ProgressBar">4.5 Progress Bar</a>
+    </li>
+</ul>
+	<a name="Installation"></a>
 	<h3> 
    		1. Installation
 	</h3> 	 
@@ -61,7 +92,7 @@ If you don't have org.eclipse.draw2d in your eclipse/plugins folder, you should 
 	So you should add <code>org.csstudio.swt.xygraph</code> and <code>org.csstudio.swt.xygraph.rcp</code> to your RCP target platform.
 	Add <code>org.csstudio.swt.xygraph</code> and <code>org.csstudio.swt.xygraph.rap</code> to your RAP target platform.
 	</p>
-	
+	<a name="Concepts"></a>
 		<h3> 
    		2. Concepts
 	</h3> 
@@ -87,7 +118,7 @@ If you don't have org.eclipse.draw2d in your eclipse/plugins folder, you should 
 	    A default data provider <code>CircularBufferDataProvider</code> and sample <code>Sample</code>
 	    have been provided with the XYGraph plugin.
 	</p>
-	
+	<a name="firstXYGraph"></a>
 	<h3> 
     	3. Create your first XY Graph
 	</h3> 
@@ -136,11 +167,12 @@ trace.setPointStyle(PointStyle.<i>XCROSS</i>);</pre>
 	</p><p>	
 		<img src = "./img/SimpleExample.PNG" alt = "Simple Example"/>
 	</p>
-	
+	<a name="Examples"></a>
 	<h3>4. Learn from examples</h3>
 	<p>Once you have finished the first simple example, you have already mastered 90% of usage of SWT XYGraph! 
 	So now you can just learn from examples!</p>
-	<h4>4.1 XYGraph example</h4>
+	<a name="XYGraph"></a>
+	<h4>4.1 XYGraph</h4>
 	<ul>
 	<li><a href = "../examples/BarChartExample.java">Bar and Area Chart </a>
 	<p>
@@ -153,6 +185,7 @@ trace.setPointStyle(PointStyle.<i>XCROSS</i>);</pre>
 	<p><img src="./img/ComprehensiveExample.gif" alt=""></p> </li>
 	
 	</ul>
+	<a name="IntensityGraph"></a>
 	<h4>4.2 Intensity Graph</h4>
 	<p>Intensity Graph draw a 2D array data based on a color map.</p>
 	<ul>
@@ -160,19 +193,21 @@ trace.setPointStyle(PointStyle.<i>XCROSS</i>);</pre>
 	<p>
 	<img src="./img/IntensityGraph.png" alt=""></p> </li>
 	</ul>
-	
+	<a name="Gauge"></a>
 	<h4>4.3 Gauge</h4>
 	<ul>
 	<li><a href = "../../org.csstudio.swt.widgets/Examples/GaugeExample.java">GaugeExample.java</a>
 	<p>
 	<img src="./img/Gauge.png" alt=""></p> </li>
 	</ul>
+	<a name="Meter"></a>
 	<h4>4.4 Meter</h4>
 	<ul>
 	<li><a href = "../../org.csstudio.swt.widgets/Examples/MeterExample.java">MeterExample.java</a>
 	<p>
 	<img src="./img/Meter.png" alt=""></p> </li>
 	</ul>
+	<a name="ProgressBar"></a>
 	<h4>4.5 Progress Bar</h4>
 	<ul>
 	<li><a href = "../../org.csstudio.swt.widgets/Examples/ProgressBarExample.java">ProgressBarExample.java</a>
