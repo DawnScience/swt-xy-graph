@@ -27,7 +27,7 @@ public class MeterExample {
 	private static int counter = 0;
 	public static void main(String[] args) {
 		final Shell shell = new Shell();
-		shell.setSize(300, 250);
+		shell.setSize(300, 150);
 	    shell.open();
 	    
 	    //use LightweightSystem to create the bridge between SWT and draw2D

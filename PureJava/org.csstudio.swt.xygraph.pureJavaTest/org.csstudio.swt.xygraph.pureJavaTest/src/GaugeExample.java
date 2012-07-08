@@ -1,3 +1,10 @@
+/*******************************************************************************
+ * Copyright (c) 2010 Oak Ridge National Laboratory.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ ******************************************************************************/
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -20,6 +27,7 @@ public class GaugeExample {
 	public static void main(String[] args) {
 		final Shell shell = new Shell();
 		shell.setSize(300, 250);
+		shell.setBackground(XYGraphMediaFactory.getInstance().getColor(255, 255, 255));
 	    shell.open();
 	    
 	    //use LightweightSystem to create the bridge between SWT and draw2D
@@ -33,6 +41,7 @@ public class GaugeExample {
 				XYGraphMediaFactory.getInstance().getColor(0, 0, 0));
 		gaugeFigure.setForegroundColor(
 				XYGraphMediaFactory.getInstance().getColor(255, 255, 255));
+		
 		gaugeFigure.setRange(-100, 100);
 		gaugeFigure.setLoLevel(-50);
 		gaugeFigure.setLoloLevel(-80);
