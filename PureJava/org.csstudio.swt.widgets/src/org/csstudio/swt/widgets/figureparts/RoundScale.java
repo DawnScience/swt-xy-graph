@@ -68,7 +68,8 @@ public class RoundScale extends AbstractScale {
     public RoundScale() {      
     	
         tickLabels = new RoundScaleTickLabels(this);        
-        tickMarks = new RoundScaleTickMarks(this);                  
+        tickMarks = new RoundScaleTickMarks(this);      
+        setMajorTickMarkStepHint(50);
         add(tickMarks);        
         add(tickLabels);    
 //        setFont(DEFAULT_FONT);

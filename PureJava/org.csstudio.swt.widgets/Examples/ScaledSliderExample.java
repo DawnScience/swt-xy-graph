@@ -7,6 +7,7 @@
  ******************************************************************************/
 import org.csstudio.swt.widgets.datadefinition.IManualValueChangeListener;
 import org.csstudio.swt.widgets.figures.KnobFigure;
+import org.csstudio.swt.widgets.figures.ScaledSliderFigure;
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.swt.widgets.Display;
@@ -14,11 +15,11 @@ import org.eclipse.swt.widgets.Shell;
 
 
 /**
- * A live updated Gauge Example.
+ * A live Scaled Slider Example.
  * @author Xihui Chen
  *
  */
-public class KnobExample {
+public class ScaledSliderExample {
 	public static void main(String[] args) {
 		final Shell shell = new Shell();
 		shell.setSize(300, 250);
@@ -27,25 +28,25 @@ public class KnobExample {
 	    //use LightweightSystem to create the bridge between SWT and draw2D
 		final LightweightSystem lws = new LightweightSystem(shell);		
 		
-		//Create Knob
-		final KnobFigure knobFigure = new KnobFigure();
+		//Create Scaled Slider
+		final ScaledSliderFigure slider = new ScaledSliderFigure();
 		
-		//Init Knob
-		knobFigure.setRange(-100, 100);
-		knobFigure.setLoLevel(-50);
-		knobFigure.setLoloLevel(-80);
-		knobFigure.setHiLevel(60);
-		knobFigure.setHihiLevel(80);
-		knobFigure.setMajorTickMarkStepHint(50);
-		knobFigure.setThumbColor(ColorConstants.gray);
-		knobFigure.addManualValueChangeListener(new IManualValueChangeListener() {			
+		//Init Scaled Slider
+		slider.setRange(-100, 100);
+		slider.setLoLevel(-50);
+		slider.setLoloLevel(-80);
+		slider.setHiLevel(60);
+		slider.setHihiLevel(80);
+		slider.setMajorTickMarkStepHint(50);
+		slider.setThumbColor(ColorConstants.gray);
+		slider.addManualValueChangeListener(new IManualValueChangeListener() {			
 			@Override
 			public void manualValueChanged(double newValue) {
 				System.out.println("You set value to: " + newValue);
 			}
 		});
 		
-		lws.setContents(knobFigure);		
+		lws.setContents(slider);		
 		
 		
 	    Display display = Display.getDefault();
