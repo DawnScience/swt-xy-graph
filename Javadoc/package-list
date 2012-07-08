@@ -1,0 +1,13 @@
+
+org.csstudio.swt.widgets.datadefinition
+org.csstudio.swt.widgets.figureparts
+org.csstudio.swt.widgets.figures
+org.csstudio.swt.widgets.introspection
+org.csstudio.swt.widgets.util
+org.csstudio.swt.xygraph
+org.csstudio.swt.xygraph.dataprovider
+org.csstudio.swt.xygraph.figures
+org.csstudio.swt.xygraph.linearscale
+org.csstudio.swt.xygraph.toolbar
+org.csstudio.swt.xygraph.undo
+org.csstudio.swt.xygraph.util
