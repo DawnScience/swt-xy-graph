@@ -7,12 +7,10 @@
  ******************************************************************************/
 package org.csstudio.swt.xygraph;
 
-import org.eclipse.osgi.util.NLS;
-
 /** Externalized Strings
  *  @author Kay Kasemir
  */
-public class Messages extends NLS
+public class Messages
 {
     private static final String BUNDLE_NAME = "org.csstudio.swt.xygraph.messages"; //$NON-NLS-1$
     public static String Annotation_Add;
@@ -66,11 +64,7 @@ public class Messages extends NLS
     public static String Zoom_Pan;
     public static String Zoom_Rubberband;
     public static String Zoom_Vert;
-    static
-    {
-        // initialize resource bundle
-        NLS.initializeMessages(BUNDLE_NAME, Messages.class);
-    }
+
 
     private Messages()
     {
