@@ -6,7 +6,6 @@
  * http://www.eclipse.org/legal/epl-v10.html
  ******************************************************************************/
 import org.csstudio.swt.widgets.datadefinition.IManualValueChangeListener;
-import org.csstudio.swt.widgets.figures.KnobFigure;
 import org.csstudio.swt.widgets.figures.ScaledSliderFigure;
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.LightweightSystem;

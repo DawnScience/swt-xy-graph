@@ -11,7 +11,6 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.csstudio.swt.widgets.figures.TankFigure;
-import org.csstudio.swt.widgets.figures.ThermometerFigure;
 import org.csstudio.swt.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.draw2d.SchemeBorder;
