@@ -11,9 +11,9 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
-public class SampleView extends ViewPart {
+public class XYGraphExampleView extends ViewPart {
 
-	public SampleView() {
+	public XYGraphExampleView() {
 	}
 
 	@Override
