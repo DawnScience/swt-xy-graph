@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 import org.csstudio.swt.widgets.datadefinition.ColorMap;
 import org.csstudio.swt.widgets.datadefinition.ColorMap.PredefinedColorMap;
 import org.csstudio.swt.widgets.figures.IntensityGraphFigure;
+import org.csstudio.swt.widgets.figures.IntensityGraphFigure.IROIListener;
 import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -58,7 +59,14 @@ public class IntensityGraphExample {
 		intensityGraph.setDataHeight(DataHeight);
 		intensityGraph.setDataWidth(DataWidth);
 		intensityGraph.setColorMap(new ColorMap(PredefinedColorMap.JET, true,true));
-
+		intensityGraph.addROI("ROI 1",	new IROIListener() {
+			
+			@Override
+			public void roiUpdated(int xIndex, int yIndex, int width, int height) {
+				System.out.println("Region of Interest: (" + xIndex + ", " + yIndex 
+						+", " + width +", " + height +")");
+			}
+		}, null);
 		lws.setContents(intensityGraph);
 
 		// Update the graph in another thread.

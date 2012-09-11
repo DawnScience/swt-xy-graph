@@ -1,0 +1,20 @@
+
+*CVS/
+.git/*
+
+*~
+*.swp
+*.orig
+bin/
+classes/
+build/build/
+build/ext/
+
+# ignore all log files ?
+logs/*.log
+log/*.log
+
+# ignore the .settings folder
+# should it be changed to all */.settings/* ?
+
+
