@@ -241,12 +241,12 @@ class XYGraphTest extends Figure {
 				updateIndex+=0.1;
 
 				if(running) {
-                    Display.getCurrent().timerExec(1, this);
+                    Display.getCurrent().timerExec(100, this);
                 }
 			}
 		};
 
-	Display.getCurrent().timerExec(1000, updater);
+	Display.getCurrent().timerExec(100, updater);
 		running = true;
 		t = Calendar.getInstance().getTimeInMillis();
 	}
