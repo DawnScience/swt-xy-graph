@@ -15,7 +15,7 @@ Bundle-Vendor: Xihui Chen
 Bundle-Version: 1.1.0.qualifier
 Bundle-Name: XYGraph Plug-in
 Bundle-ManifestVersion: 2
-Bundle-SymbolicName: org.dawb.org.csstudio.swt.xygraph;singleton:=true
+Bundle-SymbolicName: org.csstudio.swt.xygraph;singleton:=true
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.csstudio.swt.xygraph.Activator
