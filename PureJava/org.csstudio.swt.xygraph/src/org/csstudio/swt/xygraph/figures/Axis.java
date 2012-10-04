@@ -8,6 +8,7 @@
 package org.csstudio.swt.xygraph.figures;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.csstudio.swt.xygraph.dataprovider.IDataProvider;
@@ -52,30 +53,14 @@ public class Axis extends LinearScale{
 //	private static final Color GRAY_COLOR = XYGraphMediaFactory.getInstance().getColor(
 //			XYGraphMediaFactory.COLOR_GRAY);
 
-    
-    
     private String title;
 
-    @Override
-	public void setFont(Font font) {
-		// TODO Auto-generated method stub
-		super.setFont(font);
-		this.scaleFontData = getFont().getFontData()[0];
-	}
-
-
-
-	final private List<Trace> traceList = new ArrayList<Trace>();
+    final private List<Trace> traceList = new ArrayList<Trace>();
 
 	private XYGraph xyGraph;
 	private Grid grid;
 
 	private Font titleFont;
-	//title FontData : Add because of SWT illegal thread access
-		private FontData titleFontData;
-	
-		//title FontData : Add because of SWT illegal thread access
-			private FontData scaleFontData;
 
 	private boolean autoScale = false;
 
@@ -95,25 +80,14 @@ public class Axis extends LinearScale{
 
 	private ZoomType zoomType = ZoomType.NONE;
 
+	private IAutoScaler autoScaler;
+
 	private Point start;
 	private Point end;
 	private boolean armed;
 	private Range startRange;
 	private Cursor grabbing;
 	private Color revertBackColor;
-
-	private RGB colorRGB;
-	private RGB majorGridColorRGB;
-
-	
-
-	public FontData getTitleFontData() {
-		return titleFontData;
-	}
-
-	public FontData getScaleFontData() {
-		return scaleFontData;
-	}
 
 	/**Constructor
 	 * @param title title of the axis
@@ -124,9 +98,6 @@ public class Axis extends LinearScale{
 		this.title = title;
 		if(yAxis)
 			setOrientation(Orientation.VERTICAL);
-		//Save drawing line operation in RAP.
-		if(GraphicsUtil.isRAP())
-			setMinorTicksVisible(false);
 
 		final AxisMouseListener panner = new AxisMouseListener();
 		addMouseListener(panner);
@@ -142,6 +113,7 @@ public class Axis extends LinearScale{
 		}else
 			revertBackColor = XYGraphMediaFactory.getInstance().getColor(100,100,100);
 
+		autoScaler = new NullAutoScaler();
 	}
 
 	public void addListener(final IAxisListener listener){
@@ -150,16 +122,16 @@ public class Axis extends LinearScale{
 		listeners.add(listener);
 	}
 
-	public boolean removeListenr(final IAxisListener listener){
+	public boolean removeListener(final IAxisListener listener){
 		return listeners.remove(listener);
 	}
 
-	private void fireRevalidated(){
+	protected void fireRevalidated(){
 		for(IAxisListener listener : listeners)
 			listener.axisRevalidated(this);
 	}
 
-	private void fireAxisRangeChanged(final Range old_range, final Range new_range){
+	protected void fireAxisRangeChanged(final Range old_range, final Range new_range){
 		for(IAxisListener listener : listeners)
 			listener.axisRangeChanged(this, old_range, new_range);
 	}
@@ -167,6 +139,10 @@ public class Axis extends LinearScale{
 	@Override
 	public void setRange(final double lower, final double upper) {
 		Range old_range = getRange();
+		if (old_range.getLower() == lower && old_range.getUpper() == upper) {
+			return;
+		}
+		setTicksAtEnds(false);
 		super.setRange(lower, upper);
 		fireAxisRangeChanged(old_range, getRange());
 	}
@@ -183,35 +159,11 @@ public class Axis extends LinearScale{
 		revalidate();
 	}
 	@Override
-	public void setForegroundColor(final Color color) {	
-		Color oldColor = getForegroundColor();
+	public void setForegroundColor(final Color color) {
 		super.setForegroundColor(color);
-		colorRGB = color.getRGB();
 		if(xyGraph != null)
 			xyGraph.repaint();
-		fireAxisForegroundColorChanged(oldColor, color);
 	}
-	
-	@Override
-	public void setMinorTicksVisible(boolean minorTicksVisible) {
-		//Save line operation in RAP.
-		if(GraphicsUtil.isRAP())
-			super.setMinorTicksVisible(false);
-		else
-			super.setMinorTicksVisible(minorTicksVisible);
-	}
-	
-	
-	public RGB getForegroundColorRGB(){
-		return colorRGB;
-	}
-	
-	private void fireAxisForegroundColorChanged(Color oldColor,
-			Color newColor) {
-		for(IAxisListener listener : listeners)
-			listener.axisForegroundColorChanged(this, oldColor, newColor);	
-	}
-	
 	@Override
 	public void setBackgroundColor(Color bg) {
 		RGB backRGB = bg.getRGB();
@@ -250,7 +202,7 @@ public class Axis extends LinearScale{
 		graphics.setFont(titleFont);
 		final Dimension titleSize = FigureUtilities.getTextExtents(title, titleFont);
 		if(isHorizontal()){
-			if(getTickLablesSide() == LabelSide.Primary)
+			if(getTickLabelSide() == LabelSide.Primary)
 				graphics.drawText(title,
 						bounds.x + bounds.width/2 - titleSize.width/2,
 						bounds.y + bounds.height - titleSize.height);
@@ -262,7 +214,7 @@ public class Axis extends LinearScale{
 		    final int w = titleSize.height;
 		    final int h = titleSize.width +1;
 
-			if(getTickLablesSide() == LabelSide.Primary){
+			if(getTickLabelSide() == LabelSide.Primary){
 				GraphicsUtil.drawVerticalText(graphics, title,
 							bounds.x, bounds.y + bounds.height/2 - h/2, false);
 			}else {
@@ -293,7 +245,7 @@ public class Axis extends LinearScale{
 
 	/** @return Range that reflects the minimum and maximum value of all
 	 *          traces on this axis.
-	 *          Returns <code>null</code> if there is no trace data.
+	 *          Returns <code>null</code> if there is no trace data or all trace ranges have NaNs or infinities.
 	 */
     public Range getTraceDataRange()
     {
@@ -301,7 +253,7 @@ public class Axis extends LinearScale{
         double high = Double.NEGATIVE_INFINITY;
         for (Trace trace : traceList)
         {
-            if (trace.getDataProvider() == null || !trace.isVisible())
+            if (trace.getDataProvider() == null)
                 continue;
             final Range range;
             if (isHorizontal())
@@ -309,16 +261,18 @@ public class Axis extends LinearScale{
             else
                 range = trace.getDataProvider().getYDataMinMax();
             if (range == null)
+            	continue;
+
+            final double l = range.getLower();
+            final double h = range.getUpper();
+            
+            if (Double.isInfinite(l) || Double.isInfinite(h)
+                    || Double.isNaN(l) || Double.isNaN(h))
                 continue;
-            if (Double.isInfinite(range.getLower())
-                    || Double.isInfinite(range.getUpper())
-                    || Double.isNaN(range.getLower())
-                    || Double.isNaN(range.getUpper()))
-                continue;
-            if (low > range.getLower())
-                low = range.getLower();
-            if (high < range.getUpper())
-                high = range.getUpper();
+            if (low > l)
+                low = l;
+            if (high < h)
+                high = h;
         }
         if (Double.isInfinite(low) || Double.isInfinite(high))
             return null;
@@ -338,68 +292,22 @@ public class Axis extends LinearScale{
 	 *
 	 *  @see #autoScaleThreshold
 	 */
-	public boolean performAutoScale(final boolean force){
+	public boolean performAutoScale(final boolean force) {
 	    // Anything to do? Autoscale not enabled nor forced?
 		if (traceList.size() <= 0  ||  !(force || autoScale))
 		    return false;
-		if(!force && xyGraph.getZoomType() != ZoomType.NONE)
-			return false;
 
 	    // Get range of data in all traces
         final Range range = getTraceDataRange();
-        if (range == null)
-            return false;
-		double tempMin = range.getLower();
-		double tempMax = range.getUpper();
+        if (range == null) return false;
 
-		// Get current axis range, determine how 'different' they are
-		double max = getRange().getUpper();
-		double min = getRange().getLower();
+        Range newRange = autoScaler.calculateNewRange(range, getRange(), isLogScaleEnabled(), autoScaleThreshold);
+        if (newRange == null)
+        	return false;
 
-		if (isLogScaleEnabled())
-		{   // Transition into log space
-		    tempMin = Log10.log10(tempMin);
-		    tempMax = Log10.log10(tempMax);
-		    max = Log10.log10(max);
-		    min = Log10.log10(min);
-		}
-//Give extra space in plot area
-//		double extraSpace = (tempMax-tempMin)*0.05;
-//		double tempMin2 = tempMin -extraSpace;
-//		double tempMax2 = tempMax + extraSpace;
-		
-		final double thr = (max - min)*autoScaleThreshold;
-
-		//if both the changes are lower than threshold, return
-		if(((tempMin - min)>=0 && (tempMin - min)<thr)
-				&& ((max - tempMax)>=0 && (max - tempMax)<thr)){
-			return false;
-		}else { //expand more space than needed
-			if((tempMin - min)<0)
-				tempMin -= thr;
-			if((tempMax - max) > 0)
-				tempMax += thr;
-		}
-	
-//		if(tempMin>tempMin2)
-//			tempMin=tempMin2;
-//		if(tempMax<tempMax2)
-//			tempMax = tempMax2;
-		// Any change at all?
-		if((Double.doubleToLongBits(tempMin) == Double.doubleToLongBits(min)
-				&& Double.doubleToLongBits(tempMax) == Double.doubleToLongBits(max)) ||
-				Double.isInfinite(tempMin) || Double.isInfinite(tempMax) ||
-				Double.isNaN(tempMin) || Double.isNaN(tempMax))
-			return false;
-
-        if (isLogScaleEnabled())
-        {   // Revert from log space
-            tempMin = Log10.pow10(tempMin);
-            tempMax = Log10.pow10(tempMax);
-        }
-
-		// Update axis
-		setRange(tempMin, tempMax, true);
+        // Update axis
+		setRange(newRange.getLower(), newRange.getUpper());
+		setTicksAtEnds(true);
 		repaint();
 		return true;
 	}
@@ -429,19 +337,10 @@ public class Axis extends LinearScale{
 	 * @param title the title to set
 	 */
 	public void setTitle(final String title) {
-		
-		String oldTitle = this.title;
 		this.title = title;
 		if(xyGraph != null)
 			xyGraph.repaint();
-		fireAxisTitleChanged(oldTitle, title);
 	}
-	
-	private void fireAxisTitleChanged(String oldTitle, String newTitle) {
-		for(IAxisListener listener : listeners)
-			listener.axisTitleChanged(this, oldTitle, newTitle);
-	}
-
 
 	/**
 	 * @return the title
@@ -461,18 +360,8 @@ public class Axis extends LinearScale{
 	 * @param autoScale the autoScale to set
 	 */
 	public void setAutoScale(final boolean autoScale) {
-	
-		boolean oldAutoScale = this.autoScale;
 		this.autoScale = autoScale;
 		performAutoScale(false);
-		fireAxisAutoScaleChanged(oldAutoScale, this.autoScale);
-	}
-
-	private void fireAxisAutoScaleChanged(boolean oldAutoScale,
-			boolean newAutoScale) {
-		for(IAxisListener listener : listeners)
-			listener.axisAutoScaleChanged(this, oldAutoScale, newAutoScale);
-		
 	}
 
 	/**
@@ -522,15 +411,8 @@ public class Axis extends LinearScale{
 	 */
 	public void setMajorGridColor(final Color majorGridColor) {
 		this.majorGridColor = majorGridColor;
-		this.majorGridColorRGB = majorGridColor.getRGB();
 		if(xyGraph != null)
 			xyGraph.repaint();
-	}
-
-	
-	
-	public RGB getMajorGridColorRGB() {
-		return majorGridColorRGB;
 	}
 
 	/**
@@ -557,7 +439,6 @@ public class Axis extends LinearScale{
 	 */
 	public void setTitleFont(final Font titleFont) {
 		this.titleFont = titleFont;
-		this.titleFontData = titleFont.getFontData()[0];
 		repaint();
 	}
 
@@ -670,7 +551,7 @@ public class Axis extends LinearScale{
 	 * false if it is not on the primary side of xy graph(Top/Right).
 	 */
 	public void setPrimarySide(boolean onPrimarySide){
-		setTickLableSide(onPrimarySide ? LabelSide.Primary : LabelSide.Secondary);
+		setTickLabelSide(onPrimarySide ? LabelSide.Primary : LabelSide.Secondary);
 	}
 
 	/**
@@ -685,7 +566,7 @@ public class Axis extends LinearScale{
 	 * false if it is on the secondary side(Top/Right).
 	 */
 	public boolean isOnPrimarySide(){
-		return getTickLablesSide() == LabelSide.Primary;
+		return getTickLabelSide() == LabelSide.Primary;
 	}
 
 	/** Pan axis according to start/end from mouse listener */
@@ -704,13 +585,13 @@ public class Axis extends LinearScale{
 	 *  @param t1 Start of the panning move
 	 *  @param t2 End of the panning move
 	 */
-	void pan(final Range temp, double t1, double t2)
+	protected void pan(final Range temp, double t1, double t2)
     {
         if (isLogScaleEnabled())
         {
-            final double m = Math.log10(t2) - Math.log10(t1);
-            t1 = Math.pow(10,Math.log10(temp.getLower()) - m);
-            t2 = Math.pow(10,Math.log10(temp.getUpper()) - m);
+            final double m = Log10.log10(t2) - Math.log10(t1);
+            t1 = Log10.pow10(Log10.log10(temp.getLower()) - m);
+            t2 = Log10.pow10(Log10.log10(temp.getUpper()) - m);
         }
         else
         {
@@ -725,25 +606,21 @@ public class Axis extends LinearScale{
 	 *  @param center Axis position at the 'center' of the zoom
 	 *  @param factor Zoom factor. Positive to zoom 'in', negative 'out'.
 	 */
-	void zoomInOut(final double center, final double factor)
+	public void zoomInOut(double center, final double factor)
     {
 	    final double t1, t2;
-	    if (isLogScaleEnabled())
-	    {
-	        final double l = Math.log10(getRange().getUpper()) -
-                    Math.log10(getRange().getLower());
-	        final double r1 = (Math.log10(center) - Math.log10(getRange().getLower()))/l;
-	        final double r2 = (Math.log10(getRange().getUpper()) - Math.log10(center))/l;
-            t1 = Math.pow(10, Math.log10(getRange().getLower()) + r1 * factor * l);
-            t2 = Math.pow(10, Math.log10(getRange().getUpper()) - r2 * factor * l);
-        }else{
-            final double l = getRange().getUpper() - getRange().getLower();
-            final double r1 = (center - getRange().getLower())/l;
-            final double r2 = (getRange().getUpper() - center)/l;
-            t1 = getRange().getLower() + r1 * factor * l;
-            t2 = getRange().getUpper() - r2 * factor * l;
-        }
-        setRange(t1, t2, true);
+	    final Range range = getRange();
+	    final double cfactor = 1.0 - factor;
+		if (isLogScaleEnabled()) {
+			center = Log10.log10(center) * factor;
+			t1 = Log10.pow10(Log10.log10(range.getLower()) * cfactor + center);
+			t2 = Log10.pow10(Log10.log10(range.getUpper()) * cfactor + center);
+		} else {
+			center = center * factor;
+			t1 = range.getLower() * cfactor + center;
+			t2 = range.getUpper() * cfactor + center;
+		}
+        setRange(t1, t2);
     }
 
     /**
@@ -759,26 +636,6 @@ public class Axis extends LinearScale{
 	public Grid getGrid() {
 		return grid;
 	}
-
-
-
-	@Override
-	public void setLogScale(boolean enabled) throws IllegalStateException {
-		// TODO Auto-generated method stub
-		boolean old = isLogScaleEnabled();
-		super.setLogScale(enabled);
-		fireAxisLogScaleChanged(old, logScaleEnabled);
-	}
-	
-	private void fireAxisLogScaleChanged(boolean old, boolean logScale) {
-		
-		if(old == logScale)
-			return;
-		
-		for(IAxisListener listener : listeners)
-			listener.axisLogScaleChanged(this, old, logScale);
-	}
-
 
 
 	/** Listener to mouse events, performs panning and some zooms
@@ -933,14 +790,17 @@ public class Axis extends LinearScale{
 			command = null;
             start = null;
             end = null;
-		}
+ 		}
 
 		/** Perform the zoom to mouse start/end */
         private void performStartEndZoom()
         {
             final double t1 = getPositionValue(isHorizontal() ? start.x : start.y, false);
             final double t2 = getPositionValue(isHorizontal() ? end.x   : end.y,   false);
-            setRange(t1, t2, true);
+            if(getRange().isMinBigger()){
+            	setRange(t1>t2? t1:t2, t1>t2?t2:t1);
+			}else
+				setRange(t1>t2? t2:t1, t1>t2?t1:t2);
         }
 
 		/** Perform the in or out zoom according to zoomType */
@@ -959,5 +819,11 @@ public class Axis extends LinearScale{
             default:                   // NOP
             }
         }
+	}
+	public void clear() {
+		for (Iterator<IAxisListener> it = listeners.iterator(); it.hasNext();) {
+			if (traceList.contains(it.next())) it.remove();	
+		}
+		traceList.clear();
 	}
 }

@@ -8,32 +8,30 @@
 package org.csstudio.swt.xygraph.figures;
 
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.csstudio.swt.xygraph.linearscale.AbstractScale.LabelSide;
-import org.csstudio.swt.xygraph.linearscale.LinearScale.Orientation;
 import org.csstudio.swt.xygraph.linearscale.Range;
 import org.csstudio.swt.xygraph.undo.OperationsManager;
-import org.csstudio.swt.xygraph.undo.XYGraphMemento;
 import org.csstudio.swt.xygraph.undo.ZoomCommand;
 import org.csstudio.swt.xygraph.undo.ZoomType;
 import org.csstudio.swt.xygraph.util.Log10;
 import org.csstudio.swt.xygraph.util.SingleSourceHelper;
 import org.csstudio.swt.xygraph.util.XYGraphMediaFactory;
-import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.Label;
+import org.eclipse.draw2d.Layer;
+import org.eclipse.draw2d.SWTGraphics;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
@@ -42,63 +40,8 @@ import org.eclipse.swt.widgets.Display;
  * XY-Graph Figure.
  * @author Xihui Chen
  * @author Kay Kasemir (performStagger)
- * @author Laurent PHILIPPE (property change support)
  */
-public class XYGraph extends Figure{
-	
-	/**
-	 * Add property change support to XYGraph
-	 * Use for inform listener of xyGraphMem property changed
-	 * @author L.PHILIPPE (GANIL)
-	 */
-	private PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
-
-	
-	@Override
-	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		changeSupport.addPropertyChangeListener(listener);
-	}
-
-	@Override
-	public void addPropertyChangeListener(String property,
-			PropertyChangeListener listener) {
-		changeSupport.addPropertyChangeListener(property, listener);
-	}
-
-	@Override
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		changeSupport.removePropertyChangeListener(listener);
-	}
-
-	@Override
-	public void removePropertyChangeListener(String property,
-			PropertyChangeListener listener) {
-		changeSupport.removePropertyChangeListener(property, listener);
-	}
-	
-	public void fireConfigChanged() {
-		changeSupport.firePropertyChange("config", null, this);
-	}
-
-
-	/**
-	 * Save the Graph settings
-	 * Send a property changed event when changed
-	 * @author L.PHILIPPE (GANIL)
-	 */
-	private XYGraphMemento xyGraphMem;
-	
-	public XYGraphMemento getXyGraphMem() {
-		return xyGraphMem;
-	}
-
-	public void setXyGraphMem(XYGraphMemento xyGraphMem) {
-		XYGraphMemento old = this.xyGraphMem;
-		this.xyGraphMem = xyGraphMem;
-		changeSupport.firePropertyChange("xyGraphMem", old, this.xyGraphMem);
-	
-		System.out.println("**** XYGraph.setXyGraphMem() ****");
-	}
+public class XYGraph extends Layer{
 
 	private static final int GAP = 2;
 //	public final static Color WHITE_COLOR = ColorConstants.white;
@@ -115,7 +58,7 @@ public class XYGraph extends Figure{
         new RGB(242,  26,  26), // red
         new RGB( 33, 179,  33), // green
         new RGB(  0,   0,   0), // black
-        new RGB(128,   0, 255), // violett
+        new RGB(128,   0, 255), // violet
         new RGB(255, 170,   0), // (darkish) yellow
         new RGB(255,   0, 240), // pink
         new RGB(243, 132, 132), // peachy
@@ -127,7 +70,7 @@ public class XYGraph extends Figure{
 
 	private int traceNum = 0;
 	private boolean transparent = false;
-	private boolean showLegend = true;
+	protected boolean showLegend = true;
 
 	private Map<Axis, Legend> legendMap;
 
@@ -136,17 +79,9 @@ public class XYGraph extends Figure{
 	 *  can crash.
 	 */
 	private String title = "";
-
-
-
 	private Color titleColor;
-
 	private Label titleLabel;
 
-	//ADD BECAUSE OF SWT invalid Thread acess on getTitleColor()
-	private FontData titleFontData;
-	private RGB titleColorRgb; 
-	
 	private List<Axis> xAxisList;
 	private List<Axis> yAxisList;
 	private PlotArea plotArea;
@@ -157,8 +92,7 @@ public class XYGraph extends Figure{
 
 	private OperationsManager operationsManager;
 
-	private ZoomType zoomType = ZoomType.NONE;
-
+	private ZoomType zoomType;
 
 	/**
 	 * Constructor.
@@ -174,23 +108,25 @@ public class XYGraph extends Figure{
 		//titleLabel.setVisible(false);
 		xAxisList = new ArrayList<Axis>();
 		yAxisList = new ArrayList<Axis>();
-		plotArea = new PlotArea(this);
+		plotArea = createPlotArea(this);
 		getPlotArea().setOpaque(!transparent);
 
 		add(titleLabel);
 		add(plotArea);
 		primaryYAxis = new Axis("Y-Axis", true);
-		primaryYAxis.setOrientation(Orientation.VERTICAL);
-		primaryYAxis.setTickLableSide(LabelSide.Primary);
+		primaryYAxis.setTickLabelSide(LabelSide.Primary);
 		primaryYAxis.setAutoScaleThreshold(0.1);
 		addAxis(primaryYAxis);
 
 		primaryXAxis = new Axis("X-Axis", false);
-		primaryXAxis.setOrientation(Orientation.HORIZONTAL);
-		primaryXAxis.setTickLableSide(LabelSide.Primary);
+		primaryXAxis.setTickLabelSide(LabelSide.Primary);
 		addAxis(primaryXAxis);
 
 		operationsManager = new OperationsManager();
+	}
+
+	protected PlotArea createPlotArea(XYGraph xyGraph) {
+		return new PlotArea(xyGraph);
 	}
 
 	@Override
@@ -269,7 +205,7 @@ public class XYGraph extends Figure{
 		for(int i=xAxisList.size()-1; i>=0; i--){
 			Axis xAxis = xAxisList.get(i);
 			Dimension xAxisSize = xAxis.getPreferredSize(clientArea.width, clientArea.height);
-			if(xAxis.getTickLablesSide() == LabelSide.Primary){
+			if(xAxis.getTickLabelSide() == LabelSide.Primary){
 				if(xAxis.isVisible())
 					hasBottomXAxis = true;
 				xAxis.setBounds(new Rectangle(clientArea.x,
@@ -289,13 +225,13 @@ public class XYGraph extends Figure{
 
 		for(int i=yAxisList.size()-1; i>=0; i--){
 			Axis yAxis = yAxisList.get(i);
-			int hintHeight = clientArea.height + (hasTopXAxis ? 1 :0) *yAxis.getMargin()
-				+ (hasBottomXAxis ? 1 :0) *yAxis.getMargin();
+			int hintHeight = clientArea.height + (hasTopXAxis ? yAxis.getMargin() :0)
+				+ (hasBottomXAxis ? yAxis.getMargin() :0);
 			if(hintHeight > getClientArea().height)
 				hintHeight = clientArea.height;
 			Dimension yAxisSize = yAxis.getPreferredSize(clientArea.width,
 					hintHeight);
-			if(yAxis.getTickLablesSide() == LabelSide.Primary){ // on the left
+			if(yAxis.getTickLabelSide() == LabelSide.Primary){ // on the left
 				if(yAxis.isVisible())
 					hasLeftYAxis = true;
 				yAxis.setBounds(new Rectangle(clientArea.x,
@@ -313,7 +249,7 @@ public class XYGraph extends Figure{
 			}
 		}
 
-		//re-adjust xAxis boundss
+		//re-adjust xAxis bounds
 		for(int i=xAxisList.size()-1; i>=0; i--){
 			Axis xAxis = xAxisList.get(i);
 			Rectangle r = xAxis.getBounds().getCopy();
@@ -329,8 +265,8 @@ public class XYGraph extends Figure{
 			Rectangle plotAreaBound = new Rectangle(
 					primaryXAxis.getBounds().x + primaryXAxis.getMargin(),
 					primaryYAxis.getBounds().y + primaryYAxis.getMargin(),
-					primaryXAxis.getBounds().width - 2*primaryXAxis.getMargin(),
-					primaryYAxis.getBounds().height - 2*primaryYAxis.getMargin()
+					primaryXAxis.getTickLength(),
+					primaryYAxis.getTickLength()
 					);
 			plotArea.setBounds(plotAreaBound);
 
@@ -464,6 +400,14 @@ public class XYGraph extends Figure{
 				remove(legendMap.remove(trace.getYAxis()));
 			}
 		}
+		try {
+			for (Axis axis : getAxisList()) {
+				axis.removeTrace(trace);
+			}
+		} catch (Throwable ne) {
+			// Ignored, this is a bug fix for Dawn 1.0
+			// to make the plots rescale after a plot is deleted.
+		}
 		plotArea.removeTrace(trace);
 		revalidate();
 		repaint();
@@ -488,7 +432,6 @@ public class XYGraph extends Figure{
 	 */
 	public void setTitleFont(Font titleFont) {
 		titleLabel.setFont(titleFont);
-		titleFontData = titleFont.getFontData()[0];
 	}
 
 	/**
@@ -497,12 +440,6 @@ public class XYGraph extends Figure{
 	public Font getTitleFont(){
 		return titleLabel.getFont();
 	}
-	
-	
-
-	public FontData getTitleFontData() {
-		return titleFontData;
-	}
 
 	/**
 	 * @param titleColor the titleColor to set
@@ -510,7 +447,6 @@ public class XYGraph extends Figure{
 	public void setTitleColor(Color titleColor) {
 		this.titleColor = titleColor;
 		titleLabel.setForegroundColor(titleColor);
-		this.titleColorRgb = titleColor.getRGB();
 	}
 
 	/**
@@ -563,11 +499,6 @@ public class XYGraph extends Figure{
 		if(titleColor == null)
 			return getForegroundColor();
 		return titleColor;
-	}
-	
-	
-	public RGB getTitleColorRgb() {
-		return titleColorRgb;
 	}
 
 	/**
@@ -698,4 +629,39 @@ public class XYGraph extends Figure{
         command.saveState();
         operationsManager.addCommand(command);
     }
+  	
+	/** @param trim 
+	 * @return Image of the XYFigure. Receiver must dispose. */
+	public Image getImage(org.eclipse.swt.graphics.Rectangle size){
+		
+		Rectangle orig = new Rectangle(bounds);
+
+		try {
+			setBounds(new Rectangle(0,0,size.width,size.height));
+			layout();
+			plotArea.layout();
+			plotArea.layout();
+			primaryYAxis.layout();
+			primaryXAxis.layout();
+			
+			Image image = new Image(null, bounds.width + 6, bounds.height + 6);
+			GC gc = new GC(image);
+			SWTGraphics graphics = new SWTGraphics(gc); 
+			graphics.translate(-bounds.x + 3, -bounds.y + 3);
+			graphics.setForegroundColor(getForegroundColor());
+			graphics.setBackgroundColor(getBackgroundColor());		
+			paint(graphics);
+			gc.dispose();
+			return image;
+			
+		} finally {
+			setBounds(orig);
+			layout();
+			plotArea.layout();
+			plotArea.layout();
+			primaryYAxis.layout();
+			primaryXAxis.layout();
+		}
+	}
+
 }

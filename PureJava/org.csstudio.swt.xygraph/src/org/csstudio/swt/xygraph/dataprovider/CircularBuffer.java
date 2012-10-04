@@ -11,6 +11,8 @@ import java.util.AbstractCollection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import org.eclipse.core.runtime.Assert;
+
 /**A particular circular buffer. New arrived data will be appended to the tail of the buffer. 
  * When buffer is full, the oldest data will be deleted when new data arrived. 
  * 
@@ -24,8 +26,7 @@ public class CircularBuffer<T> extends AbstractCollection<T> {
 	private int count;
 	
 	public CircularBuffer(int bufferSize) {
-		if(bufferSize <=0)
-			throw new IllegalArgumentException("Buffer size must be larger than zero.");
+		Assert.isTrue(bufferSize > 0, "Buffer size must be greater than zero.");
 		this.setBufferSize(bufferSize, true);
 	}
 	
@@ -98,7 +99,8 @@ public class CircularBuffer<T> extends AbstractCollection<T> {
 	@SuppressWarnings("unchecked")
 	public synchronized void setBufferSize(int bufferSize, boolean clear) {
 		assert bufferSize > 0;		
-		if(this.bufferSize != bufferSize){			
+		if(this.bufferSize != bufferSize){
+			this.bufferSize = bufferSize;
 			if(clear){//clear 
 				buffer = (T[]) new Object[bufferSize];
 				clear();
@@ -111,8 +113,7 @@ public class CircularBuffer<T> extends AbstractCollection<T> {
 				count = Math.min(bufferSize, count);
 				head =0;
 				tail = count%bufferSize;
-			}	
-			this.bufferSize = bufferSize;
+			}			
 		}		
 	}
 

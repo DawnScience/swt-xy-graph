@@ -15,7 +15,6 @@ import org.csstudio.swt.xygraph.figures.Axis;
 import org.csstudio.swt.xygraph.figures.Trace;
 import org.csstudio.swt.xygraph.figures.XYGraph;
 import org.csstudio.swt.xygraph.undo.XYGraphConfigCommand;
-import org.csstudio.swt.xygraph.undo.XYGraphMementoUtil;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
@@ -42,11 +41,13 @@ import org.eclipse.swt.widgets.TabItem;
 public class XYGraphConfigDialog extends Dialog {
 	
 	private GraphConfigPage graphConfigPage;
-	private List<AnnotationConfigPage> annotationConfigPageList;
+	protected List<AnnotationConfigPage> annotationConfigPageList;
 	private List<AxisConfigPage> axisConfigPageList;
-	private List<TraceConfigPage> traceConfigPageList;
-	private XYGraph xyGraph;
-	private XYGraphConfigCommand command;
+	protected Combo traceCombo;
+	protected Combo annotationsCombo;
+	protected List<TraceConfigPage> traceConfigPageList;
+	protected XYGraph xyGraph;
+	protected XYGraphConfigCommand command;
 	private boolean changed = false;
 	
 	protected XYGraphConfigDialog(Shell parentShell, XYGraph xyGraph) {
@@ -140,7 +141,7 @@ public class XYGraphConfigDialog extends Dialog {
 	    			SWT.FILL, SWT.FILL,true, false));
 	    	traceSelectGroup.setText("Select Trace");
 	    	traceSelectGroup.setLayout(new GridLayout(1, false));    	        
-	    	final Combo traceCombo = new Combo(traceSelectGroup, SWT.DROP_DOWN);
+	    	this.traceCombo = new Combo(traceSelectGroup, SWT.DROP_DOWN);
 	    	traceCombo.setLayoutData(new GridData(SWT.FILL, 0, true, false));
 		    for(Trace trace : xyGraph.getPlotArea().getTraceList())
 		        traceCombo.add(trace.getName());	   
@@ -186,7 +187,7 @@ public class XYGraphConfigDialog extends Dialog {
         			SWT.FILL, SWT.FILL,true, false));
         	annoSelectGroup.setText("Select Annotation");
         	annoSelectGroup.setLayout(new GridLayout(1, false));    	        
-        	final Combo annotationsCombo = new Combo(annoSelectGroup, SWT.DROP_DOWN);
+        	this.annotationsCombo = new Combo(annoSelectGroup, SWT.DROP_DOWN);
         	annotationsCombo.setLayoutData(new GridData(SWT.FILL, 0, true, false));
  	        for(Annotation annotation : xyGraph.getPlotArea().getAnnotationList())
  	        	annotationsCombo.add(annotation.getName());
@@ -253,7 +254,7 @@ public class XYGraphConfigDialog extends Dialog {
 		super.okPressed();
 	}
 	
-	private void applyChanges(){	
+	protected void applyChanges(){	
 		changed = true;
 		graphConfigPage.applyChanges();
 		for(AxisConfigPage axisConfigPage : axisConfigPageList)
@@ -261,10 +262,7 @@ public class XYGraphConfigDialog extends Dialog {
 		for(TraceConfigPage traceConfigPage : traceConfigPageList)
 			traceConfigPage.applyChanges();
 		for(AnnotationConfigPage annotationConfigPage : annotationConfigPageList)
-			annotationConfigPage.applyChanges();	
-		
-		//Add L.PHILIPPE
-		xyGraph.fireConfigChanged();
+			annotationConfigPage.applyChanges();					
 	}
 	
 	@Override

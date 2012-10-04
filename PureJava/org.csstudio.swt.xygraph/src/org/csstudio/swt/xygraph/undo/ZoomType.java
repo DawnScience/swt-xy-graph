@@ -154,4 +154,8 @@ public enum ZoomType{
 		public String toString() {
 			return description;
 		}
+
+		public String getId() {
+			return getClass().getName()+"."+name();
+		}
 	}

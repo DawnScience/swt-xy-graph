@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.csstudio.swt.xygraph.Activator;
 import org.eclipse.draw2d.Cursors;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
@@ -143,7 +144,7 @@ public final class XYGraphMediaFactory {
 	 * @return The shared instance of this class.
 	 */
 	public static synchronized XYGraphMediaFactory getInstance() {
- 		if (_instance == null) {
+		if (_instance == null) {
 			_instance = new XYGraphMediaFactory();
 		}
 
@@ -263,7 +264,7 @@ public final class XYGraphMediaFactory {
 	 * @return The system's default font.
 	 */
 	public Font getDefaultFont(final int style) {
-		// FIXME Die default Schriftart bzw. Schriftgrï¿½ï¿½e hï¿½ngt vom Betriebssystem ab 
+		// FIXME Die default Schriftart bzw. Schriftgrš§e hŠngt vom Betriebssystem ab 
 		return getFont("Arial", 10, style); //$NON-NLS-1$
 	}
 	
@@ -299,10 +300,15 @@ public final class XYGraphMediaFactory {
 		{
 		  
 			InputStream stream = XYGraphMediaFactory.class.getResourceAsStream(relativePath);
-			Image image = new Image(Display.getCurrent(), stream);
-			try {
-				stream.close();
-			} catch (IOException ioe) {
+			Image image;
+			if (stream==null) {
+				image = Activator.getImageDescriptor(relativePath).createImage();
+			} else {
+			    image = new Image(Display.getCurrent(), stream);
+				try {
+					stream.close();
+				} catch (IOException ioe) {
+				}
 			}
 			
 			

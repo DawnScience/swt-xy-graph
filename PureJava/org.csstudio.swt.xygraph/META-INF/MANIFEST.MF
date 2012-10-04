@@ -6,14 +6,19 @@ Export-Package: org.csstudio.swt.xygraph,
  org.csstudio.swt.xygraph.toolbar,
  org.csstudio.swt.xygraph.undo,
  org.csstudio.swt.xygraph.util
-Require-Bundle: org.eclipse.draw2d;bundle-version="3.4.0",
- org.eclipse.jface;bundle-version="3.7.0",
- org.eclipse.core.runtime;bundle-version="3.7.0"
-Bundle-Vendor: Xihui Chen<chenx1@ornl.gov> - SNS
-Bundle-Version: 2.1.0.qualifier
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.draw2d;bundle-version="3.4.0",
+ org.junit4,
+ org.eclipse.core.resources;bundle-version="3.7.100"
+Bundle-Vendor: Xihui Chen
+Bundle-Version: 1.1.0.qualifier
 Bundle-Name: XYGraph Plug-in
 Bundle-ManifestVersion: 2
-Bundle-Description: Plotting library for draw2d and SWT applications
-Bundle-SymbolicName: org.csstudio.swt.xygraph
+Bundle-SymbolicName: org.dawb.org.csstudio.swt.xygraph;singleton:=true
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-ActivationPolicy: lazy
+Bundle-Activator: org.csstudio.swt.xygraph.Activator
+Import-Package: org.eclipse.emf.common.ui.dialogs,
+ org.eclipse.ui.part
 

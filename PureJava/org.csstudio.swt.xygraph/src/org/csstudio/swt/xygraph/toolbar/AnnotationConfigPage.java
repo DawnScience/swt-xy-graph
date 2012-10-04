@@ -215,7 +215,6 @@ public class AnnotationConfigPage {
 					colorSelector.getColorValue()));
 		else
 			annotation.setAnnotationColor(null);
-		
 		annotation.setFont(font);
 		annotation.setCursorLineStyle(CursorLineStyle.values()[
 				cursorLineCombo.getSelectionIndex()]);

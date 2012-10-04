@@ -12,7 +12,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.csstudio.swt.xygraph.Preferences;
+import org.csstudio.swt.xygraph.preference.XYPreferences;
 import org.csstudio.swt.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.draw2d.FigureUtilities;
 import org.eclipse.draw2d.Graphics;
@@ -74,7 +74,9 @@ public class Legend extends RectangleFigure {
 	
 	@Override
 	protected void outlineShape(Graphics graphics) {
-		graphics.setForegroundColor(traceList.get(0).getYAxis().getForegroundColor());
+		if (!traceList.isEmpty()) {
+		    graphics.setForegroundColor(traceList.get(0).getYAxis().getForegroundColor());
+		}
 		super.outlineShape(graphics);
 		
 	}
@@ -100,16 +102,16 @@ public class Legend extends RectangleFigure {
 		//	Rectangle rect = new Rectangle(hPos, vPos-INNER_GAP/2, hwidth - OUT_GAP,ICON_WIDTH-INNER_GAP);
 		//	graphics.fillRectangle(rect);
 		//	graphics.drawRectangle(rect);
-			drawTraceLagend(trace, graphics, hPos, vPos);			
+			drawTraceLegend(trace, graphics, hPos, vPos);			
 			hPos = hEnd;
 			i++;
 		}
 		
 	}
 	
-	private void drawTraceLagend(Trace trace, Graphics graphics, int hPos, int vPos){
+	private void drawTraceLegend(Trace trace, Graphics graphics, int hPos, int vPos){
 		graphics.pushState();
-        if (Preferences.useAdvancedGraphics())
+        if (XYPreferences.useAdvancedGraphics())
             graphics.setAntialias(SWT.ON);
 		graphics.setForegroundColor(trace.getTraceColor());
 		//draw symbol
@@ -121,14 +123,14 @@ public class Legend extends RectangleFigure {
 			break;
 		case AREA:
 			graphics.setBackgroundColor(trace.getTraceColor());
-	        if (Preferences.useAdvancedGraphics())
+	        if (XYPreferences.useAdvancedGraphics())
 	            graphics.setAlpha(trace.getAreaAlpha());
 			graphics.fillPolygon(new int[]{hPos, vPos + ICON_WIDTH/2,
 					hPos + ICON_WIDTH/2, vPos + trace.getPointSize()/2, 
 					hPos + ICON_WIDTH, vPos + ICON_WIDTH/2,
 					hPos + ICON_WIDTH, vPos + ICON_WIDTH,
 					hPos, vPos + ICON_WIDTH});
-	        if (Preferences.useAdvancedGraphics())
+	        if (XYPreferences.useAdvancedGraphics())
 	            graphics.setAlpha(255);
 			trace.drawPoint(graphics, new Point(hPos + ICON_WIDTH/2, vPos+ trace.getPointSize()/2));
 			break;

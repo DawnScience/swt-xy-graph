@@ -1,0 +1,16 @@
+Current branch adapted from 1.1.4
+
+
+Main classes with changes:
+=========================
+Trace.java              - TODO Make RegionTrace extending Trace and override, therefore reduce changes
+XYGraphToolbar.java
+
+Small changes:
+==============
+XYGraphConfigCommand.java
+Annoation.java
+XYGraph.java 
+Legend.java
+
+Others have changes to make methods protected not private etc.

@@ -7,9 +7,6 @@
  ******************************************************************************/
 package org.csstudio.swt.xygraph.figures;
 
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.RGB;
-
 import org.csstudio.swt.xygraph.linearscale.Range;
 import org.csstudio.swt.xygraph.util.SWTConstants;
 import org.eclipse.draw2d.Figure;
@@ -23,14 +20,12 @@ public class Grid extends Figure implements IAxisListener{
 
 	private Axis axis;
 
-
 	public Grid(Axis axis) {
 		axis.addListener(this);
 		this.axis = axis;
 		axis.setGrid(this);
 
 	}
-
 
 	@Override
 	protected void paintFigure(Graphics graphics) {
@@ -40,7 +35,7 @@ public class Grid extends Figure implements IAxisListener{
 			graphics.setLineStyle(axis.isDashGridLine()? SWTConstants.LINE_DASH : SWTConstants.LINE_SOLID);
 			graphics.setForegroundColor(axis.getMajorGridColor());
 			graphics.setLineWidth(1);
-			for(int pos: axis.getScaleTickLabels().getTickLabelPositions()){
+			for(int pos: axis.getTicksProvider().getPositions()){
 				if(axis.isHorizontal())
 					graphics.drawLine(axis.getBounds().x + pos, bounds.y + bounds.height,
 							axis.getBounds().x + pos, bounds.y);
@@ -60,28 +55,4 @@ public class Grid extends Figure implements IAxisListener{
     public void axisRangeChanged(Axis axis, Range old_range, Range new_range) {
 		//do nothing
 	}
-
-	public void axisForegroundColorChanged(Axis axis, Color oldColor,
-			Color newColor) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void axisTitleChanged(Axis axis, String oldTitle, String newTitle) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void axisAutoScaleChanged(Axis axis, boolean oldAutoScale,
-			boolean newAutoScale) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void axisLogScaleChanged(Axis axis, boolean old, boolean logScale) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
 }

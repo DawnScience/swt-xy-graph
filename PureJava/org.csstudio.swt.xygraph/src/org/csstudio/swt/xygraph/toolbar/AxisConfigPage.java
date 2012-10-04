@@ -60,6 +60,7 @@ public class AxisConfigPage {
 	private Button showGridButton;
 	private Button dashGridLineButton;
 	private ColorSelector gridColorSelector;
+	private Button showAxisButton;
 	
 	private Composite composite;
 	
@@ -258,7 +259,10 @@ public class AxisConfigPage {
 		
 		gridColorSelector = new ColorSelector(composite);
 		gd = new GridData(SWT.BEGINNING, SWT.CENTER, false, false, 1, 1);
-		gridColorSelector.getButton().setLayoutData(gd);			
+		gridColorSelector.getButton().setLayoutData(gd);
+		
+		showAxisButton = new Button(composite, SWT.CHECK);
+		configCheckButton(showAxisButton, "Show Axis");
 		initialize();
 	}
 
@@ -280,10 +284,8 @@ public class AxisConfigPage {
 
 	public void applyChanges(){
 		axis.setTitle(titleText.getText());
-		
 		axis.setFont(scaleFont);
 		axis.setTitleFont(titleFont);
-		
 		axis.setForegroundColor(XYGraphMediaFactory.getInstance().getColor(
 				axisColorSelector.getColorValue()));
 		axis.setPrimarySide(primaryButton.getSelection());
@@ -313,7 +315,8 @@ public class AxisConfigPage {
 		axis.setShowMajorGrid(showGridButton.getSelection());
 		axis.setDashGridLine(dashGridLineButton.getSelection());
 		axis.setMajorGridColor( XYGraphMediaFactory.getInstance().getColor(
-				gridColorSelector.getColorValue()));		
+				gridColorSelector.getColorValue()));
+		axis.setVisible(showAxisButton.getSelection());
 	}
 
 
@@ -359,7 +362,8 @@ public class AxisConfigPage {
 		
 		showGridButton.setSelection(axis.isShowMajorGrid());
 		dashGridLineButton.setSelection(axis.isDashGridLine());
-		gridColorSelector.setColorValue(axis.getMajorGridColor().getRGB());		
+		gridColorSelector.setColorValue(axis.getMajorGridColor().getRGB());
+		showAxisButton.setSelection(axis.isVisible());
 	}
 	
 	

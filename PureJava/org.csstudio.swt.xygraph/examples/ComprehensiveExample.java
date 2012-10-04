@@ -46,7 +46,7 @@ public class ComprehensiveExample {
 	    shell.open();
 
 		final LightweightSystem lws = new LightweightSystem(shell);
-		final XYGraphTest testFigure = new XYGraphTest();
+		final ComprehensiveExampleGraph testFigure = new ComprehensiveExampleGraph();
 		lws.setContents(testFigure);
 
 	    shell.setText("Comprehensive Example");
@@ -60,7 +60,7 @@ public class ComprehensiveExample {
 }
 
 
-class XYGraphTest extends Figure {
+class ComprehensiveExampleGraph extends Figure {
 	public Trace trace1;
 	public Trace trace2;
 	public Trace trace3;
@@ -72,7 +72,7 @@ class XYGraphTest extends Figure {
 	private long t;
 	private final Trace trace4;
 	private final ToolbarArmedXYGraph toolbarArmedXYGraph;
-	public XYGraphTest() {
+	public ComprehensiveExampleGraph() {
 
 		xyGraph = new XYGraph();
 		xyGraph.setTitle("XY Graph Test");
@@ -88,7 +88,7 @@ class XYGraphTest extends Figure {
 		xyGraph.primaryXAxis.setAutoScaleThreshold(0);
 
 		final Axis x2Axis = new Axis("X-2", false);
-		x2Axis.setTickLableSide(LabelSide.Secondary);
+		x2Axis.setTickLabelSide(LabelSide.Secondary);
 		//x2Axis.setAutoScale(true);
 		xyGraph.addAxis(x2Axis);
 
@@ -98,12 +98,12 @@ class XYGraphTest extends Figure {
 		y2Axis.setLogScale(true);
 		//y2Axis.setAutoScale(true);
 		y2Axis.setForegroundColor(XYGraphMediaFactory.getInstance().getColor(XYGraphMediaFactory.COLOR_PINK));
-		y2Axis.setTickLableSide(LabelSide.Secondary);
+		y2Axis.setTickLabelSide(LabelSide.Secondary);
 		xyGraph.addAxis(y2Axis);
 		
 		Axis y3Axis = new Axis("Y-3", true);
 		y3Axis.setForegroundColor(XYGraphMediaFactory.getInstance().getColor(XYGraphMediaFactory.COLOR_BLUE));
-		y3Axis.setTickLableSide(LabelSide.Secondary);
+		y3Axis.setTickLabelSide(LabelSide.Secondary);
 		y3Axis.setRange(new Range(-2, 3));
 		y3Axis.setShowMajorGrid(false);
 		y3Axis.setAutoScale(true);

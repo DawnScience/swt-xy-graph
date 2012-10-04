@@ -11,6 +11,9 @@ public class Range {
 
     /** the upper value of range */
     final private double upper;
+    
+    /** the range between the upper and lower */
+    final private double range;
 
     /** Initialize with start...end values, sorting them to get lower...upper.
      * 
@@ -20,18 +23,11 @@ public class Range {
      *            the end value of range
      */
     public Range(final double start, final double end) {
-    	//if(end == start)
-    	//	end = start + 1;
-//        if (start <= end)
-//        {
-            lower = start;
-            upper = end;
-//        }
-//        else
-//        {
-//            lower = end;
-//            upper = start;
-//        }
+
+        lower = start;
+        upper = end;
+        range =  Math.abs(lower-upper);
+
     }
 
     /**If a value in the range or not.
@@ -63,6 +59,21 @@ public class Range {
     		return value >= lower && value <= upper;
     	else
     		return value >= upper && value <= lower;  			
+    }
+    
+    /**
+     * If a value is inside the range assuming it it rangeMultiplier times bigger
+     * @param value The value to check
+     * @param rangeMultiplier The multiplier to apply to the range.
+     * @return
+     */
+    public boolean inExtendedRange(final double value, final double rangeMultiplier) {
+    	double extention = range*rangeMultiplier;   	
+    	
+    	if(lower <= upper)
+    		return value >= (lower-extention) && value <= (upper+extention);
+    	else
+    		return value >= (upper-extention) && value <= (lower+extention);
     }
     
     public boolean isMinBigger(){

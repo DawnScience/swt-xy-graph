@@ -8,8 +8,16 @@
 package org.csstudio.swt.xygraph.toolbar;
 
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.csstudio.swt.xygraph.dataprovider.IDataProvider;
+import org.csstudio.swt.xygraph.dataprovider.ISample;
 import org.csstudio.swt.xygraph.figures.Axis;
 import org.csstudio.swt.xygraph.figures.Trace;
 import org.csstudio.swt.xygraph.figures.Trace.BaseLine;
@@ -18,6 +26,13 @@ import org.csstudio.swt.xygraph.figures.Trace.PointStyle;
 import org.csstudio.swt.xygraph.figures.Trace.TraceType;
 import org.csstudio.swt.xygraph.figures.XYGraph;
 import org.csstudio.swt.xygraph.util.XYGraphMediaFactory;
+import org.eclipse.emf.common.ui.dialogs.WorkspaceResourceDialog;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -27,10 +42,15 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.part.FileEditorInput;
 
 /**This will help to create the necessary widgets 
  * to configure an axis's properties.
@@ -206,6 +226,26 @@ public class TraceConfigPage {
 		antiAliasing.setLayoutData(
 				new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false, 3, 1));		
 		
+		Button export = new Button(traceCompo, SWT.NONE);
+		export.setText("Export data...");	
+		export.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false, 2, 1));		
+		export.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				IFile exportTo = WorkspaceResourceDialog.openNewFile(Display.getDefault().getActiveShell(), 
+						                            "Create file to export to", 
+						                            "Export data from "+trace.getName()+"'", 
+						                            null, null);
+				
+				if (exportTo!=null) {
+				    try {
+						exportToCSV(exportTo, trace.getDataProvider());
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
+				}
+			}
+		});
+		
 		//error bar settings...
 		errorBarEnabledButton = new Button(errorBarGroup, SWT.CHECK);
 		errorBarEnabledButton.setText("Error Bar Enabled");
@@ -275,6 +315,30 @@ public class TraceConfigPage {
 	
 
 	
+	protected void exportToCSV(IFile exportTo, IDataProvider dataProvider) throws Exception {
+
+		final IFile csv  = getUniqueFile(exportTo, null, "csv");
+		final StringBuilder contents = new StringBuilder();
+		final IDataProvider prov = trace.getDataProvider();
+		final NumberFormat format = new DecimalFormat("##0.#####E0");
+		for (int i = 0; i < prov.getSize(); i++) {
+			final ISample isample = prov.getSample(i);
+			contents.append(format.format(isample.getXValue()));
+			contents.append(",\t");
+			contents.append(format.format(isample.getYValue()));
+			contents.append("\n");
+		}
+
+		InputStream stream = new ByteArrayInputStream(contents.toString().getBytes());
+		csv.create(stream, true, new NullProgressMonitor());
+		csv.getParent().refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+
+		final IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		IEditorDescriptor desc = PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(csv.getName());
+        if (desc == null) desc =  PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(csv.getName()+".txt");
+		page.openEditor(new FileEditorInput(csv), desc.getId());
+	}
+
 	/**
 	 * @return the composite
 	 */
@@ -344,5 +408,56 @@ public class TraceConfigPage {
 				Arrays.asList(TraceType.values()).indexOf(TraceType.AREA));		
 	}
 	
-	
+	/**
+	 * Gets a unique file. The file must have a parent of IFolder.
+	 * @param file
+	 * @return new file, not created.
+	 */
+	public static IFile getUniqueFile(IFile file, final String conjunctive, final String extension) {
+		
+		final String name = file.getName();
+		final Matcher matcher = Pattern.compile("(.+)(\\d+)\\."+extension, Pattern.CASE_INSENSITIVE).matcher(name);
+		int start   = 0;
+		String frag=name;
+		try {
+			frag = name.substring(0,name.lastIndexOf("."));
+		} catch (Throwable ignored) {
+			// Nowt
+		}
+		if (matcher.matches()) {
+			frag  = matcher.group(1);
+			start = Integer.parseInt(matcher.group(2));
+		}
+		
+		if (conjunctive!=null) {
+			frag = frag+conjunctive;
+		}
+		
+		// First try without a start position
+		final IContainer parent = file.getParent();
+		final IFile newFile;
+		if (parent instanceof IFolder) {
+			newFile = ((IFolder)parent).getFile(frag+"."+extension);
+		} else if (parent instanceof IProject) {
+			newFile = ((IProject)parent).getFile(frag+"."+extension);
+		} else {
+			newFile = null;
+		}
+		if (newFile!=null&&!newFile.exists()) return newFile;
+		
+		return getUniqueFile(parent, frag, ++start, extension);
+	}
+
+	private static IFile getUniqueFile(IContainer parent, String frag, int start, final String extension) {
+		final IFile file;
+		if (parent instanceof IFolder) {
+			file = ((IFolder)parent).getFile(frag+start+"."+extension);
+		} else if (parent instanceof IProject) {
+			file = ((IProject)parent).getFile(frag+start+"."+extension);
+		} else {
+			throw new RuntimeException("The parent is neither a project nor a folder.");
+		}
+		if (!file.exists()) return file;
+		return getUniqueFile(parent, frag, ++start, extension);
+	}
 }

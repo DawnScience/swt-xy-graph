@@ -28,7 +28,7 @@ public class RemoveAnnotationDialog extends Dialog {
 	private Combo annotationsCombo;
 	private Annotation removedAnnotation;
 	
-	protected RemoveAnnotationDialog(Shell parentShell, XYGraph xyGraph) {
+	public RemoveAnnotationDialog(Shell parentShell, XYGraph xyGraph) {
 		super(parentShell);	
 		this.xyGraph = xyGraph;
         // Allow resize

@@ -7,16 +7,17 @@
  ******************************************************************************/
 package org.csstudio.swt.xygraph.figures;
 
-import org.csstudio.swt.xygraph.Preferences;
 import org.csstudio.swt.xygraph.dataprovider.IDataProvider;
 import org.csstudio.swt.xygraph.dataprovider.IDataProviderListener;
 import org.csstudio.swt.xygraph.dataprovider.ISample;
 import org.csstudio.swt.xygraph.linearscale.Range;
+import org.csstudio.swt.xygraph.preference.XYPreferences;
 import org.csstudio.swt.xygraph.undo.MovingAnnotationCommand;
 import org.csstudio.swt.xygraph.undo.MovingAnnotationLabelCommand;
 import org.eclipse.draw2d.Cursors;
 import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.Graphics;
+import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.InputEvent;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.MouseEvent;
@@ -28,8 +29,6 @@ import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.RGB;
 
 /**
  * Annotation Figure. Annotation could be used to indicate the information for a particular
@@ -77,13 +76,11 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 		
 	}
 	
-	
+	private IAnnotationLabelProvider labelProvider = null;
 	
 	private Axis xAxis;	
 	private Axis yAxis;	
 	private String name;
-	private FontData fontData;
-	
 	private CursorLineStyle cursorLineStyle = CursorLineStyle.NONE;
 	private Point currentPosition;
 
@@ -98,8 +95,7 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 	private boolean showSampleInfo = true;
 	private boolean showPosition = true;
 	
-	private Color annotationColor = null;
-	private RGB annotationColorRGB = null;
+	private Color annotationColor = null;	
 	
 	private Label infoLabel;
 	//label's relative position to currentPosition
@@ -169,7 +165,7 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 		if(trace != null && currentSnappedSample == null &&!pointerDragged)
 			updateToDefaultPosition();
 			
-        if (Preferences.useAdvancedGraphics())
+        if (XYPreferences.useAdvancedGraphics())
             graphics.setAntialias(SWT.ON);
 		Color tempColor;
 		if(annotationColor == null){
@@ -182,7 +178,7 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 		Dimension size = infoLabel.getPreferredSize();
 		updateX0Y0Fromdxdy(size);	
 		//System.out.println(x0 +": " +y0 + " ");
-
+		
 		Rectangle infoBounds = new Rectangle((int) (currentPosition.x + x0 - size.width/2.0), 
 				(int) (currentPosition.y +y0 - size.height/2.0), size.width, size.height);
 		
@@ -388,15 +384,23 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 	/**
 	 * 
 	 */
-	private void updateInfoLableText(boolean updateX0Y0) {
-		String info = "";		
-		if(showName)
-			info = name;
-		if(showSampleInfo && currentSnappedSample != null && !currentSnappedSample.getInfo().equals(""))
-			info += "\n" + currentSnappedSample.getInfo();
-		if(showPosition)
-				info += "\n" + "(" + xAxis.format(xValue) + ", " + 
-				(Double.isNaN(yValue) ? "NaN" : yAxis.format(yValue)) + ")";				
+	protected void updateInfoLableText(boolean updateX0Y0) {
+		String info = null;		
+		if (labelProvider!=null) {
+			info = labelProvider.getInfoText(xValue, yValue);
+		}
+		
+		if (info==null) {
+			info = "";
+			if(showName)
+				info = name;
+			if(showSampleInfo && currentSnappedSample != null && !currentSnappedSample.getInfo().equals(""))
+				info += "\n" + currentSnappedSample.getInfo();
+			if(showPosition)
+					info += "\n" + "(" + xAxis.format(xValue) + ", " + 
+					(Double.isNaN(yValue) ? "NaN" : yAxis.format(yValue)) + ")";
+		}
+			
 		infoLabel.setText(info);
 		knowX0Y0 = !updateX0Y0;
 		
@@ -434,23 +438,6 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 		this.name = name;
 		updateInfoLableText();
 	}
-	
-	
-	
-	
-	@Override
-	public void setFont(Font f) {
-		// TODO Auto-generated method stub
-		super.setFont(f);
-		
-		if(f != null)
-			this.fontData = getFont().getFontData()[0];
-	}
-
-	public FontData getFontData() {
-		return fontData;
-	}
-
 	/**
 	 * @param trace the trace to set
 	 */
@@ -519,10 +506,6 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 	 */
 	public void setAnnotationColor(Color annotationColor) {
 		this.annotationColor = annotationColor;
-		
-		if(annotationColor != null)
-			this.annotationColorRGB = annotationColor.getRGB();
-		
 		infoLabel.setForegroundColor(annotationColor);
 		pointer.setForegroundColor(annotationColor);
 	}
@@ -532,6 +515,9 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 	 */
 	public void setAnnotationFont(Font annotationFont) {
 		infoLabel.setFont(annotationFont);
+	}
+	public Font getAnnotationFont() {
+		return infoLabel.getFont();
 	}
 
 	/**
@@ -545,7 +531,7 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 	/**
 	 * @param currentPosition the currentPosition to set
 	 */
-	public void setCurrentPosition(Point currentPosition, boolean keepLablePosition, boolean calcValueFromPosition) {
+	public void setCurrentPosition(Point currentPosition, boolean keepLablePosition) {
 		if(keepLablePosition){
 			int deltaX = this.currentPosition.x - currentPosition.x;
 			int deltaY = this.currentPosition.y - currentPosition.y;
@@ -558,17 +544,12 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 			//System.out.println(x0 + ":" + y0 +" " + dx + ": " + dy + " " + this.currentPosition + " " +currentPosition);
 		}
 		this.currentPosition = currentPosition;
-		if(calcValueFromPosition){
-			xValue = xAxis.getPositionValue(currentPosition.x, false);
-			yValue = yAxis.getPositionValue(currentPosition.y, false);
-		}
+		xValue = xAxis.getPositionValue(currentPosition.x, false);
+		yValue = yAxis.getPositionValue(currentPosition.y, false);
+		
 		updateInfoLableText(keepLablePosition);
 		
 		repaint();	
-	}
-	
-	public void setCurrentPosition(Point currentPosition, boolean keepLablePosition){
-		setCurrentPosition(currentPosition, keepLablePosition, true);
 	}
 
 	/**
@@ -586,7 +567,7 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 			yValue = currentSnappedSample.getYValue();
 			if(Double.isNaN(currentSnappedSample.getXPlusError()))
 				yValue = Double.NaN;
-			setCurrentPosition(newPosition, keepLabelPosition, false);
+			setCurrentPosition(newPosition, keepLabelPosition);
 		}
 		repaint();
 	}
@@ -607,20 +588,9 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 		if(trace == null)
 			return;
 		if(trace.getHotSampleList().contains(currentSnappedSample)){
-			if (yValue != currentSnappedSample.getYValue())
-			{	// When waveform index is changed, Y value of the 
-				// snapped sample is also changed. In that case,
-				// the position of this annotation must be updated
-				// accordingly.
-				yValue = currentSnappedSample.getYValue(); 
-			}
-			if (xValue != currentSnappedSample.getXValue())
-			{
-				xValue = currentSnappedSample.getXValue();
-			}
 			currentPosition = new Point(xAxis.getValuePosition(xValue, false),
 				yAxis.getValuePosition(yValue, false));			
-		} 
+		}
 		else if(trace.getHotSampleList().size() > 0){
 			updateToDefaultPosition();	
 			pointerDragged = false;
@@ -641,7 +611,11 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 		repaint();
 	}
 
-
+	public void setLocation(double x, double y) {
+		this.xValue = x;
+		this.yValue = y;
+		repaint();
+	}
 
 /**
 	 * @return the xAxis
@@ -758,8 +732,6 @@ class Pointer extends Figure{
 		private MovingAnnotationCommand command;
 		@Override
 		public void mouseDragged(MouseEvent me) {
-			//System.out.println("Annotation.Pointer.PointerDragger.mouseDragged()");
-			
 			//free
 			if(trace == null){
 				setCurrentPosition(me.getLocation(), 
@@ -827,7 +799,7 @@ class Pointer extends Figure{
 	@Override
 	protected void paintClientArea(Graphics graphics) {
 		super.paintClientArea(graphics);
-        if (Preferences.useAdvancedGraphics())
+        if (XYPreferences.useAdvancedGraphics())
             graphics.setAntialias(SWT.ON);
 		//draw X-cross point		
 		Rectangle clientArea = getClientArea().getCopy().shrink(POINT_SIZE/2, POINT_SIZE/2);		
@@ -837,33 +809,25 @@ class Pointer extends Figure{
 				clientArea.x, clientArea.y + clientArea.height);
 				
 	}
-}  
-
-public void axisForegroundColorChanged(Axis axis, Color oldColor,
-		Color newColor) {
-	// TODO Auto-generated method stub
-	
 }
 
-public void axisTitleChanged(Axis axis, String oldTitle, String newTitle) {
-	// TODO Auto-generated method stub
-	
+public IAnnotationLabelProvider getLabelProvider() {
+	return labelProvider;
 }
 
-public void axisAutoScaleChanged(Axis axis, boolean oldAutoScale,
-		boolean newAutoScale) {
-	// TODO Auto-generated method stub
-	
+public void setLabelProvider(IAnnotationLabelProvider labelProvider) {
+	this.labelProvider = labelProvider;
 }
 
-public void axisLogScaleChanged(Axis axis, boolean old, boolean logScale) {
-	// TODO Auto-generated method stub
-	
-}
-
-public RGB getAnnotationColorRGB() {
-	// TODO Auto-generated method stub
-	return annotationColorRGB;
+public void toFront() {
+	final IFigure par = getParent();
+	if (par!=null) {
+		par.remove(this);
+		final int end = par.getChildren()!=null 
+				? par.getChildren().size()
+						: 0;
+		par.add(this, end);
+	}
 }
 
 
