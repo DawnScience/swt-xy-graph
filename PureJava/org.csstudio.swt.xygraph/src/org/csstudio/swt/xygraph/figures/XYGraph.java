@@ -383,6 +383,17 @@ public class XYGraph extends Layer{
 			legendMap.get(trace.getYAxis()).addTrace(trace);
 			add(legendMap.get(trace.getYAxis()));
 		}
+		
+		
+		try {
+			for (Axis axis : getAxisList()) {
+				axis.addTrace(trace);
+			}
+		} catch (Throwable ne) {
+			// Ignored, this is a bug fix for Dawn 1.0
+			// to make the plots rescale after a plot is deleted.
+		}
+		
 		plotArea.addTrace(trace);
 		trace.setXYGraph(this);
 		trace.dataChanged(null);
