@@ -80,8 +80,6 @@ public class Axis extends LinearScale{
 
 	private ZoomType zoomType = ZoomType.NONE;
 
-	private IAutoScaler autoScaler;
-
 	private Point start;
 	private Point end;
 	private boolean armed;
@@ -112,8 +110,6 @@ public class Axis extends LinearScale{
 					255 - backRGB.green, 255 - backRGB.blue);
 		}else
 			revertBackColor = XYGraphMediaFactory.getInstance().getColor(100,100,100);
-
-		autoScaler = new NullAutoScaler();
 	}
 
 	public void addListener(final IAxisListener listener){
@@ -301,12 +297,8 @@ public class Axis extends LinearScale{
         final Range range = getTraceDataRange();
         if (range == null) return false;
 
-        Range newRange = autoScaler.calculateNewRange(range, getRange(), isLogScaleEnabled(), autoScaleThreshold);
-        if (newRange == null)
-        	return false;
-
         // Update axis
-		setRange(newRange.getLower(), newRange.getUpper());
+		setRange(range.getLower(), range.getUpper());
 		setTicksAtEnds(true);
 		repaint();
 		return true;
