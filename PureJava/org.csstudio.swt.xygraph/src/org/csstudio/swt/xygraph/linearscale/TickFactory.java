@@ -52,11 +52,9 @@ public class TickFactory {
 	private TickFormatting formatOfTicks;
 	private final static BigDecimal EPSILON = new BigDecimal("1.0E-20");
 	
-	private double internalGraphmin;
-	private double realGraphmin;
-	private double graphmax;
+	private double graphMin;
+	private double graphMax;
 	private String tickFormat;
-	private boolean overwriteMinAnyway = false;
 	private IScaleProvider scale;
 	
 	/**
@@ -260,8 +258,6 @@ public class TickFactory {
 	 */
 
 	private double determineNumTicks(int size, double min, double max, int maxTicks, boolean allowMinMaxOver) {
-		overwriteMinAnyway = false;
-	
 		BigDecimal bMin = BigDecimal.valueOf(min);
 		BigDecimal bMax = BigDecimal.valueOf(max);
 		BigDecimal bRange = bMax.subtract(bMin);
@@ -291,25 +287,16 @@ public class TickFactory {
 
 		double tickUnit = isReverse ? -bUnit.doubleValue() : bUnit.doubleValue();
 		if (allowMinMaxOver) {
-			internalGraphmin = roundDown(bMin, bUnit);
-
-			// check if difference is too large
-			if ((bMin.doubleValue() - internalGraphmin) > 1000) {
-				overwriteMinAnyway = true;
-				realGraphmin = min;
-			} else
-				realGraphmin = internalGraphmin;
-			graphmax = roundUp(bMax, bUnit);
+			graphMin = roundDown(bMin, bUnit);
+			graphMax = roundUp(bMax, bUnit);
 		} else {
-			internalGraphmin = min;
-			realGraphmin = min;
-			graphmax = max;
+			graphMin = min;
+			graphMax = max;
 		}
 		if (isReverse) {
-			double t = internalGraphmin;
-			internalGraphmin = graphmax;
-			realGraphmin = graphmax;
-			graphmax = t;
+			double t = graphMin;
+			graphMin = graphMax;
+			graphMax = t;
 		}
 	
 		createFormatString((int) Math.max(-Math.floor(Math.log10(Math.abs(tickUnit))), 0));
@@ -330,18 +317,15 @@ public class TickFactory {
 	{
 		LinkedList<Tick> ticks = new LinkedList<Tick>();
 		double tickUnit = determineNumTicks(displaySize, min, max, maxTicks, allowMinMaxOver);
-		double p = internalGraphmin;
+		double p = graphMin;
 		if (tickUnit > 0) {
-			final double pmax = graphmax + 0.5 * tickUnit;
+			final double pmax = graphMax + 0.5 * tickUnit;
 			while (p < pmax) {
 				if (!tight || (p >= min && p <= max))
 					if (allowMinMaxOver || p <= max) {
 						Tick newTick = new Tick();
-						if (p == internalGraphmin && overwriteMinAnyway)
-							newTick.setValue(realGraphmin);
-						else
-							newTick.setValue(p);
-						newTick.setText(getTickString(newTick.getValue()));
+						newTick.setValue(p);
+						newTick.setText(getTickString(p));
 						ticks.add(newTick);
 					}
 				double newTickValue = p + tickUnit;
@@ -361,16 +345,13 @@ public class TickFactory {
 				}
 			}
 		} else if (tickUnit < 0) {
-			final double pmin = graphmax + 0.5 * tickUnit;
+			final double pmin = graphMax + 0.5 * tickUnit;
 			while (p > pmin) {
 				if (!tight || (p >= max && p <= min))
 					if (allowMinMaxOver || p <= max) {
 						Tick newTick = new Tick();
-						if (p == internalGraphmin && overwriteMinAnyway)
-							newTick.setValue(realGraphmin);
-						else
-							newTick.setValue(p);
-						newTick.setText(getTickString(newTick.getValue()));
+						newTick.setValue(p);
+						newTick.setText(getTickString(p));
 						ticks.add(newTick);
 					}
 				double newTickValue = p + tickUnit;
@@ -395,8 +376,6 @@ public class TickFactory {
 
 
 	private double determineNumLogTicks(int size, double min, double max, int maxTicks, boolean allowMinMaxOver) {
-		overwriteMinAnyway = false;
-	
 		final boolean isReverse = min > max;
 		final int loDecade; // lowest decade (or power of ten)
 		final int hiDecade;
@@ -418,19 +397,16 @@ public class TickFactory {
 
 		double tickUnit = isReverse ? Math.pow(10, -unit) : Math.pow(10, unit);
 		if (allowMinMaxOver) {
-			internalGraphmin = Math.pow(10, loDecade);
-			realGraphmin = internalGraphmin;
-			graphmax = Math.pow(10, hiDecade);
+			graphMin = Math.pow(10, loDecade);
+			graphMax = Math.pow(10, hiDecade);
 		} else {
-			internalGraphmin = min;
-			realGraphmin = min;
-			graphmax = max;
+			graphMin = min;
+			graphMax = max;
 		}
 		if (isReverse) {
-			double t = internalGraphmin;
-			internalGraphmin = graphmax;
-			realGraphmin = graphmax;
-			graphmax = t;
+			double t = graphMin;
+			graphMin = graphMax;
+			graphMax = t;
 		}
 	
 		createFormatString((int) Math.max(-Math.floor(loDecade), 0));
@@ -451,18 +427,15 @@ public class TickFactory {
 	{
 		LinkedList<Tick> ticks = new LinkedList<Tick>();
 		double tickUnit = determineNumLogTicks(displaySize, min, max, maxTicks, allowMinMaxOver);
-		double p = internalGraphmin;
+		double p = graphMin;
 		if (tickUnit > 1) {
-			final double pmax = graphmax * Math.sqrt(tickUnit);
+			final double pmax = graphMax * Math.sqrt(tickUnit);
 			while (p < pmax) {
 				if (!tight || (p >= min && p <= max))
 				if (allowMinMaxOver || p <= max) {
 					Tick newTick = new Tick();
-					if (p == internalGraphmin && overwriteMinAnyway)
-						newTick.setValue(realGraphmin);
-					else
-						newTick.setValue(p);
-					newTick.setText(getTickString(newTick.getValue()));
+					newTick.setValue(p);
+					newTick.setText(getTickString(p));
 					ticks.add(newTick);
 				}
 				double newTickValue = p * tickUnit;
@@ -482,17 +455,13 @@ public class TickFactory {
 				}
 			}
 		} else {
-			final double pmin = graphmax * Math.sqrt(tickUnit);
+			final double pmin = graphMax * Math.sqrt(tickUnit);
 			while (p > pmin) {
 				if (!tight || (p >= max && p <= min))
 				if (allowMinMaxOver || p <= max) {
 					Tick newTick = new Tick();
-					if (p == internalGraphmin && overwriteMinAnyway)
-						newTick.setValue(realGraphmin);
-					else
-						newTick.setValue(p);
-					newTick.setText(getTickString(newTick.getValue()));
-					ticks.add(newTick);
+					newTick.setValue(p);
+					newTick.setText(getTickString(p));
 				}
 				double newTickValue = p * tickUnit;
 				if (p == newTickValue)
