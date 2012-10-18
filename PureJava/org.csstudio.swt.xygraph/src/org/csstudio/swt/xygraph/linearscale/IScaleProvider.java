@@ -62,10 +62,4 @@ public interface IScaleProvider {
 	 * @return true if scale line starts and ends with ticks
 	 */
 	public boolean hasTicksAtEnds();
-
-	/**
-	 * Set scale so that there are ticks on the start and end
-	 * @param ticksAtEnds if true then place ticks on scale ends
-	 */
-	public void setTicksAtEnds(boolean ticksAtEnds);
 }

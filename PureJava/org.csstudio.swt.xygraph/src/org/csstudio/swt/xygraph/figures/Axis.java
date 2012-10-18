@@ -299,7 +299,7 @@ public class Axis extends LinearScale{
 
         // Update axis
 		setRange(range.getLower(), range.getUpper());
-		setTicksAtEnds(true);
+		setTicksAtEnds(true); // override the implicit setting to false in setRange
 		repaint();
 		return true;
 	}
