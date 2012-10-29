@@ -238,7 +238,7 @@ public class TraceConfigPage {
 				
 				if (exportTo!=null) {
 				    try {
-						exportToCSV(exportTo, trace.getDataProvider());
+						exportToDat(exportTo, trace.getDataProvider());
 					} catch (Exception e1) {
 						e1.printStackTrace();
 					}
@@ -315,28 +315,28 @@ public class TraceConfigPage {
 	
 
 	
-	protected void exportToCSV(IFile exportTo, IDataProvider dataProvider) throws Exception {
+	protected void exportToDat(IFile exportTo, IDataProvider dataProvider) throws Exception {
 
-		final IFile csv  = getUniqueFile(exportTo, null, "csv");
+		final IFile dat  = getUniqueFile(exportTo, null, "dat");
 		final StringBuilder contents = new StringBuilder();
 		final IDataProvider prov = trace.getDataProvider();
 		final NumberFormat format = new DecimalFormat("##0.#####E0");
 		for (int i = 0; i < prov.getSize(); i++) {
 			final ISample isample = prov.getSample(i);
 			contents.append(format.format(isample.getXValue()));
-			contents.append(",\t");
+			contents.append("\t");
 			contents.append(format.format(isample.getYValue()));
 			contents.append("\n");
 		}
 
 		InputStream stream = new ByteArrayInputStream(contents.toString().getBytes());
-		csv.create(stream, true, new NullProgressMonitor());
-		csv.getParent().refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+		dat.create(stream, true, new NullProgressMonitor());
+		dat.getParent().refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
 
 		final IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		IEditorDescriptor desc = PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(csv.getName());
-        if (desc == null) desc =  PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(csv.getName()+".txt");
-		page.openEditor(new FileEditorInput(csv), desc.getId());
+		IEditorDescriptor desc = PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(dat.getName());
+        if (desc == null) desc =  PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(dat.getName()+".txt");
+		page.openEditor(new FileEditorInput(dat), desc.getId());
 	}
 
 	/**
