@@ -365,11 +365,18 @@ public class XYGraph extends Layer{
 		else
 			return yAxisList.remove(axis);
 	}
-
+	
 	/**Add a trace
 	 * @param trace
 	 */
 	public void addTrace(Trace trace){
+        addTrace(trace, null, null);
+	}
+
+	/**Add a trace
+	 * @param trace
+	 */
+	public void addTrace(Trace trace, Axis xAxis, Axis yAxis){
 		if (trace.getTraceColor() == null)
 		{   // Cycle through default colors
 		    trace.setTraceColor(XYGraphMediaFactory.getInstance().getColor(
@@ -384,14 +391,19 @@ public class XYGraph extends Layer{
 			add(legendMap.get(trace.getYAxis()));
 		}
 		
-		
-		try {
-			for (Axis axis : getAxisList()) {
-				axis.addTrace(trace);
+
+		if (xAxis==null || yAxis==null) {
+			try {
+				for (Axis axis : getAxisList()) {
+					axis.addTrace(trace);
+				}
+			} catch (Throwable ne) {
+				// Ignored, this is a bug fix for Dawn 1.0
+				// to make the plots rescale after a plot is deleted.
 			}
-		} catch (Throwable ne) {
-			// Ignored, this is a bug fix for Dawn 1.0
-			// to make the plots rescale after a plot is deleted.
+		} else {
+			xAxis.addTrace(trace);
+			yAxis.addTrace(trace);
 		}
 		
 		plotArea.addTrace(trace);
@@ -564,9 +576,11 @@ public class XYGraph extends Layer{
 	public void performAutoScale(){
 	    final ZoomCommand command = new ZoomCommand("Auto Scale", xAxisList, yAxisList);
 		for(Axis axis : xAxisList){
+			if (!axis.isVisible()) continue;
 			axis.performAutoScale(true);
 		}
 		for(Axis axis : yAxisList){
+			if (!axis.isVisible()) continue;
 			axis.performAutoScale(true);
 		}
 		command.saveState();
