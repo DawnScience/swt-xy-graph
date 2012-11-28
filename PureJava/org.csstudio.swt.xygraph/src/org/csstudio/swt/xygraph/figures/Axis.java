@@ -250,6 +250,7 @@ public class Axis extends LinearScale{
         double high = Double.NEGATIVE_INFINITY;
         for (Trace trace : traceList)
         {
+        	if (!trace.isVisible()) continue;
             if (trace.getDataProvider() == null)
                 continue;
             final Range range;
