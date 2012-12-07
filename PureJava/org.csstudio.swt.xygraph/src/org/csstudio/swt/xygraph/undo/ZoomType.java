@@ -89,7 +89,7 @@ public enum ZoomType{
 		
 		final private Image iconImage;
 		final private String description;
-		final private Cursor cursor;
+		private Cursor cursor;
 		final private int flags;
 		
 		/** Initialize
@@ -157,5 +157,9 @@ public enum ZoomType{
 
 		public String getId() {
 			return getClass().getName()+"."+name();
+		}
+
+		public void setCursor(Cursor cursor) {
+			this.cursor = cursor;
 		}
 	}

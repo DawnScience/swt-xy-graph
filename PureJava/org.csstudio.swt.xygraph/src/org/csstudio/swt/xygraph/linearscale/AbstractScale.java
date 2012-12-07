@@ -54,7 +54,7 @@ public abstract class AbstractScale extends Figure{
 
 
     /** the default minimum value of log scale range */
-    public final static double DEFAULT_LOG_SCALE_MIN = 0.1d;
+    public final static double DEFAULT_LOG_SCALE_MIN = 0.0001d;
 
     /** the default maximum value of log scale range */
     public final static double DEFAULT_LOG_SCALE_MAX = 100d;
@@ -329,8 +329,11 @@ public abstract class AbstractScale extends Figure{
         		min = DEFAULT_LOG_SCALE_MIN;
         		max = DEFAULT_LOG_SCALE_MAX;       			
         	}
+        	if(max <= 0) {
+        		max = DEFAULT_LOG_SCALE_MAX;
+        	}
         	if(min <= 0) {
-        		min = DEFAULT_LOG_SCALE_MIN;
+        		min = DEFAULT_LOG_SCALE_MIN * max;
         	}
         	if(max <= min) {
         		max = min + DEFAULT_LOG_SCALE_MAX;
@@ -397,8 +400,11 @@ public abstract class AbstractScale extends Figure{
                 throw new IllegalArgumentException("Illegal range: lower=" + lower + ", upper=" + upper);
         }
 
-        if (logScaleEnabled && lower <= 0) {
-        	lower = DEFAULT_LOG_SCALE_MIN;
+        if (logScaleEnabled) {
+        	if (upper <= 0)
+        		upper = DEFAULT_LOG_SCALE_MAX;
+        	if (lower <= 0)
+        		lower = DEFAULT_LOG_SCALE_MIN * upper;
         }
 
         min = lower;
