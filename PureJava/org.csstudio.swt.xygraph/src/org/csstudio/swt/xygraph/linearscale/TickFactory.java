@@ -51,6 +51,8 @@ public class TickFactory {
 
 	private TickFormatting formatOfTicks;
 	private final static BigDecimal EPSILON = new BigDecimal("1.0E-20");
+	private static final int DIGITS_UPPER_LIMIT = 6; // limit for number of digits to display left of decimal point
+	private static final int DIGITS_LOWER_LIMIT = -6; // limit for number of zeros to display right of decimal point
 	
 	private double graphMin;
 	private double graphMax;
@@ -236,10 +238,10 @@ public class TickFactory {
 		return x[0].add(BigDecimal.ONE).multiply(d).doubleValue();
 	}
 
-	private void createFormatString(final int precision) {
+	private void createFormatString(final int precision, final boolean b) {
 		switch (formatOfTicks) {
 		case plainMode:
-			tickFormat = String.format("%%.%df", precision);
+			tickFormat = b ? String.format("%%.%de", precision) : String.format("%%.%df", precision);
 			break;
 		case useExponent:
 			tickFormat = String.format("%%.%de", precision);
@@ -298,8 +300,15 @@ public class TickFactory {
 			graphMin = graphMax;
 			graphMax = t;
 		}
-	
-		createFormatString((int) Math.max(-Math.floor(Math.log10(Math.abs(tickUnit))), 0));
+
+		int d = (int) Math.floor(Math.log10(Math.abs(tickUnit))); // number of digits required
+		if (d <= DIGITS_LOWER_LIMIT || d >= DIGITS_UPPER_LIMIT) {
+			int p = (int) Math.max(Math.floor(Math.log10(Math.abs(min))),
+					Math.floor(Math.log10(Math.abs(max))));
+			createFormatString(Math.max(p - d, 0), true);
+		} else {
+			createFormatString(Math.max(-d, 0), false);
+		}
 		return tickUnit;
 	}
 
@@ -320,6 +329,7 @@ public class TickFactory {
 		double p = graphMin;
 		if (tickUnit > 0) {
 			final double pmax = graphMax + 0.5 * tickUnit;
+			int i = 0;
 			while (p < pmax) {
 				if (!tight || (p >= min && p <= max))
 					if (allowMinMaxOver || p <= max) {
@@ -328,10 +338,13 @@ public class TickFactory {
 						newTick.setText(getTickString(p));
 						ticks.add(newTick);
 					}
-				double newTickValue = p + tickUnit;
+				double newTickValue = graphMin + (++i)*tickUnit;
 				if (p == newTickValue)
 					break;
-				p = newTickValue;
+				else if (p < graphMax && newTickValue > graphMax)
+					p = graphMax; // if slightly exceed maximum (zero corner case)
+				else
+					p = newTickValue;
 			}
 			final int imax = ticks.size();
 			if (imax == 1) {
@@ -357,7 +370,10 @@ public class TickFactory {
 				double newTickValue = p + tickUnit;
 				if (p == newTickValue)
 					break;
-				p = newTickValue;
+				else if (p < graphMax && newTickValue > graphMax)
+					p = graphMax; // if slightly exceed maximum (zero corner case)
+				else
+					p = newTickValue;
 			}
 			final int imax = ticks.size();
 			if (imax == 1) {
@@ -409,7 +425,7 @@ public class TickFactory {
 			graphMax = t;
 		}
 	
-		createFormatString((int) Math.max(-Math.floor(loDecade), 0));
+		createFormatString((int) Math.max(-Math.floor(loDecade), 0), false);
 		return tickUnit;
 	}
 
