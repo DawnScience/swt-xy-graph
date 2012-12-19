@@ -523,6 +523,7 @@ public class Trace extends Figure implements IDataProviderListener,
         protected void paintFigure(Graphics graphics) {
                 super.paintFigure(graphics);
                 graphics.pushState();
+                try {
                 if (use_advanced_graphics)
                         graphics.setAntialias(antiAliasing ? SWT.ON : SWT.OFF);
                 graphics.setForegroundColor(traceColor);
@@ -912,7 +913,11 @@ public class Trace extends Figure implements IDataProviderListener,
                                 }
                         }
                 }
-                graphics.popState();
+                } catch (Throwable ne) {
+                	ne.printStackTrace();
+                } finally {
+                    graphics.popState();
+                }
         }
 
         /**
