@@ -373,9 +373,13 @@ public class Trace extends Figure implements IDataProviderListener,
                                         - pointSize / 2, pointSize, pointSize));
                         break;
                 case CIRCLE:
-                        graphics.drawOval(new Rectangle(pos.x - pointSize / 2, pos.y
-                                        - pointSize / 2, pointSize, pointSize));
-                        break;
+                    graphics.drawOval(new Rectangle(pos.x - pointSize / 2, pos.y
+                                    - pointSize / 2, pointSize, pointSize));
+                    break;
+                case FILLED_CIRCLE:
+                    graphics.fillOval(new Rectangle(pos.x - pointSize / 2, pos.y
+                                    - pointSize / 2, pointSize, pointSize));
+                    break;
                 case TRIANGLE:
                         graphics.drawPolygon(new int[] { pos.x - pointSize / 2,
                                         pos.y + pointSize / 2, pos.x, pos.y - pointSize / 2,
