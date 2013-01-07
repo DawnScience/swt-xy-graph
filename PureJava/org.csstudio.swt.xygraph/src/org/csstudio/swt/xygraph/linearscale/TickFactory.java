@@ -63,19 +63,15 @@ public class TickFactory {
 	 * @param format
 	 */
 	public TickFactory(IScaleProvider scale) {
-		formatOfTicks = TickFormatting.useCustom;
-		this.scale = scale;
+		this(TickFormatting.useCustom, scale);
 	}
 
 	/**
 	 * @param format
 	 */
-	public TickFactory(TickFormatting format) {
+	public TickFactory(TickFormatting format, IScaleProvider scale) {
 	   formatOfTicks = format;
-	   if (formatOfTicks == TickFormatting.useCustom)
-		   throw new IllegalArgumentException("Use TickFactory(IScaleProvider) constructor");
-
-	   scale = null;
+	   this.scale = scale;
 	}
 
 	private String getTickString(double value) {
