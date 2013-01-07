@@ -79,6 +79,9 @@ public class TickFactory {
 	}
 
 	private String getTickString(double value) {
+		
+		if (scale!=null) value = scale.getLabel(value);
+		
 		String returnString = "";
 		switch (formatOfTicks) {
 		case plainMode:

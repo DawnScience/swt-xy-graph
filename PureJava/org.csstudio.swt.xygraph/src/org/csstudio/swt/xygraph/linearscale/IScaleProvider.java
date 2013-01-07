@@ -62,4 +62,11 @@ public interface IScaleProvider {
 	 * @return true if scale line starts and ends with ticks
 	 */
 	public boolean hasTicksAtEnds();
+
+	/**
+	 * If the scale has labels, this will return the label for the tick value
+	 * @param value
+	 * @return
+	 */
+	public double getLabel(double value);
 }

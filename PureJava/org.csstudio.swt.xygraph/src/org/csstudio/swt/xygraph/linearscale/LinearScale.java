@@ -365,4 +365,12 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 	public boolean isPrimary() {
 		return getTickLabelSide() == LabelSide.Primary;
 	}
+
+	/**
+	 * Override to provide custom axis labels.
+	 */
+	@Override
+	public double getLabel(double value) {
+		return value;
+	}
 }
