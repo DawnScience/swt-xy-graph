@@ -209,9 +209,9 @@ public class LinearScaleTicks2 implements ITicksProvider {
 		// loop until labels fit
 		do {
 			if (scale.isLogScaleEnabled()) {
-				ticks = tf.generateLogTicks(length, min, max, numTicks, scale.isPrimary(), !scale.hasTicksAtEnds());
+				ticks = tf.generateLogTicks(length, min, max, numTicks, true, !scale.hasTicksAtEnds());
 			} else {
-				ticks = tf.generateTicks(length, min, max, numTicks, scale.isPrimary(), !scale.hasTicksAtEnds());
+				ticks = tf.generateTicks(length, min, max, numTicks, true, !scale.hasTicksAtEnds());
 			}
 		} while (!updateLabelPositionsAndCheckGaps(length, hMargin, tMargin) && numTicks-- > 2);
 
