@@ -17,6 +17,8 @@
 package org.csstudio.swt.xygraph.linearscale;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.Format;
 import java.util.LinkedList;
 
 /**
@@ -56,7 +58,7 @@ public class TickFactory {
 	
 	private double graphMin;
 	private double graphMax;
-	private String tickFormat;
+	private Object tickFormat; // Could be String or SimpleDecimalFormat
 	private IScaleProvider scale;
 	
 	/**
@@ -81,10 +83,14 @@ public class TickFactory {
 		String returnString = "";
 		switch (formatOfTicks) {
 		case plainMode:
-			returnString = String.format(tickFormat, value);
+			returnString = tickFormat instanceof Format
+			             ? ((Format)tickFormat).format(value)
+			             : String.format((String)tickFormat, value);
 			break;
 		case useExponent:
-			returnString = String.format(tickFormat, value);
+			returnString = tickFormat instanceof Format
+                         ? ((Format)tickFormat).format(value)
+                         : String.format((String)tickFormat, value);
 			break;
 		case roundAndChopMode:
 			returnString = String.format("%d", Math.round(value));
@@ -237,9 +243,14 @@ public class TickFactory {
 		return x[0].add(BigDecimal.ONE).multiply(d).doubleValue();
 	}
 
+	
 	private void createFormatString(final int precision, final boolean b) {
 		switch (formatOfTicks) {
 		case plainMode:
+			if (precision==0) { // 
+				tickFormat = new DecimalFormat("#####0.###");
+				break;
+			}
 			tickFormat = b ? String.format("%%.%de", precision) : String.format("%%.%df", precision);
 			break;
 		case useExponent:
@@ -304,12 +315,12 @@ public class TickFactory {
 		 * We get the labelled max and minf for determining the 
 		 * precision which the ticks should be shown at.
 		 */
-		if (scale!=null) {
-			max = scale.getLabel(max);
-			min = scale.getLabel(min);		
-		}
-		int d = (int) Math.floor(Math.log10(Math.abs(tickUnit))); // number of digits required
+		double scaleUnit = scale.getLabel(tickUnit);
+		// Following block seems to replicate part of what DecimalFormat does...
+		int d = (int) Math.floor(Math.log10(Math.abs(scaleUnit))); // number of digits required
 		if (d <= DIGITS_LOWER_LIMIT || d >= DIGITS_UPPER_LIMIT) {
+			max = scale.getLabel(max);
+			min = scale.getLabel(min);
 			int p = (int) Math.max(Math.floor(Math.log10(Math.abs(min))),
 					               Math.floor(Math.log10(Math.abs(max))));
 			createFormatString(Math.max(p - d, 0), true);

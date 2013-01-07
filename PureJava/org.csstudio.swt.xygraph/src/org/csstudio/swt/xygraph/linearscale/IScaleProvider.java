@@ -31,8 +31,6 @@ public interface IScaleProvider {
 
 	public void setAutoFormat(boolean autoFormat);
 
-	public void setDefaultFormatPattern(String formatPattern);
-
 	public int getMargin();
 
 	public boolean isHorizontal();
