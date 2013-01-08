@@ -300,8 +300,10 @@ public class Axis extends LinearScale{
         if (range == null) return false;
 
         // Update axis
+        boolean ticksAtEnd = hasTicksAtEnds();
 		setRange(range.getLower(), range.getUpper());
-		setTicksAtEnds(true); // override the implicit setting to false in setRange
+		if (ticksAtEnd)
+			setTicksAtEnds(true); // override the implicit setting to false in setRange
 		repaint();
 		return true;
 	}
