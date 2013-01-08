@@ -79,6 +79,7 @@ public class TickFactory {
 	private String getTickString(double value) {
 		
 		if (scale!=null) value = scale.getLabel(value);
+		if (Double.isNaN(value)) return "";
 		
 		String returnString = "";
 		switch (formatOfTicks) {
