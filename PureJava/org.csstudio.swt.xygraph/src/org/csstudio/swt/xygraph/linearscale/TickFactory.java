@@ -316,12 +316,9 @@ public class TickFactory {
 		 * We get the labelled max and minf for determining the 
 		 * precision which the ticks should be shown at.
 		 */
-		double scaleUnit = scale.getLabel(tickUnit);
 		// Following block seems to replicate part of what DecimalFormat does...
-		int d = (int) Math.floor(Math.log10(Math.abs(scaleUnit))); // number of digits required
+		int d = (int) Math.floor(Math.log10(Math.abs(tickUnit))); // number of digits required
 		if (d <= DIGITS_LOWER_LIMIT || d >= DIGITS_UPPER_LIMIT) {
-			max = scale.getLabel(max);
-			min = scale.getLabel(min);
 			int p = (int) Math.max(Math.floor(Math.log10(Math.abs(min))),
 					               Math.floor(Math.log10(Math.abs(max))));
 			createFormatString(Math.max(p - d, 0), true);
