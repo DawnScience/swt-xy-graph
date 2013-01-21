@@ -18,6 +18,7 @@ import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Display;
 
 /**The color map figure which can be used as the ramp of intensity graph.
@@ -33,6 +34,7 @@ public class ColorMapRamp extends Figure {
 	private ColorMap colorMap;
 	private LinearScale scale;
 	private ColorMapFigure colorMapFigure;
+
 	private final static int RAMP_WIDTH = 25;
 	public ColorMapRamp() {
 		mapData = new double[256];
@@ -112,17 +114,29 @@ public class ColorMapRamp extends Figure {
 		scale.setFont(f);
 	}
 	
+	private ImageData imageData;
+	
 	class ColorMapFigure extends Figure{
 		
 		@Override
 		protected void paintClientArea(Graphics graphics) {
 			super.paintClientArea(graphics);
 			Rectangle clientArea = getClientArea();
-			Image image = new Image(Display.getCurrent(), colorMap.drawImage(mapData, 1, 256, max, min));
+			Image image = imageData==null
+					    ? new Image(Display.getCurrent(), colorMap.drawImage(mapData, 1, 256, max, min))
+			            : new Image(Display.getCurrent(), imageData);
 			graphics.drawImage(image, new Rectangle(image.getBounds()), clientArea);
 			image.dispose();
 		}		
 		
+	}
+
+	/**
+	 * Sets the overriden image imageData
+	 * @param imageData
+	 */
+	public void setImageData(ImageData imageData) {
+		this.imageData = imageData;
 	}
 	
 	

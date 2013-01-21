@@ -21,9 +21,9 @@ import org.csstudio.swt.xygraph.undo.ZoomType;
 import org.csstudio.swt.xygraph.util.Log10;
 import org.csstudio.swt.xygraph.util.SingleSourceHelper;
 import org.csstudio.swt.xygraph.util.XYGraphMediaFactory;
+import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.Label;
-import org.eclipse.draw2d.Layer;
 import org.eclipse.draw2d.SWTGraphics;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
@@ -41,7 +41,7 @@ import org.eclipse.swt.widgets.Display;
  * @author Xihui Chen
  * @author Kay Kasemir (performStagger)
  */
-public class XYGraph extends Layer{
+public class XYGraph extends Figure{
 
 	private static final int GAP = 2;
 //	public final static Color WHITE_COLOR = ColorConstants.white;
