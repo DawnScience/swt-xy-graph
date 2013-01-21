@@ -1470,10 +1470,10 @@ public class IntensityGraphFigure extends Figure implements Introspectable {
 			
 			t1 = xAxis.getPositionValue(start.x, false);
 			t2 = xAxis.getPositionValue(end.x, false);
-			xAxis.setRange(t1, t2, true);			
+			xAxis.setRange(t1, t2);			
 			t1 = yAxis.getPositionValue(start.y, false);
 			t2 = yAxis.getPositionValue(end.y, false);
-			yAxis.setRange(t1, t2,true);	
+			yAxis.setRange(t1, t2);	
 	}
 	
 	public BeanInfo getBeanInfo() throws IntrospectionException {

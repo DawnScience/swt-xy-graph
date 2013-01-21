@@ -66,7 +66,7 @@ public class GaugeFigure extends AbstractRoundRampedFigure {
 		super();
 		transparent = true;
 		scale.setScaleLineVisible(false);
-		scale.setTickLableSide(LabelSide.Secondary);
+		scale.setTickLabelSide(LabelSide.Secondary);
 		ramp.setRampWidth(10);
 		
 		valueLabel = new Label();	
