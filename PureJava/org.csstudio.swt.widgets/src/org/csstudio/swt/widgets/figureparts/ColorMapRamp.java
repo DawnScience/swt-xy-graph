@@ -45,7 +45,7 @@ public class ColorMapRamp extends Figure {
 		
 		scale = new LinearScale();
 		scale.setOrientation(Orientation.VERTICAL);
-		scale.setScaleLineVisible(false);
+		scale.setScaleLineVisible(true);
 		scale.setTickLabelSide(LabelSide.Secondary);
 		scale.setMinorTicksVisible(false);
 		scale.setRange(min, max);
@@ -57,8 +57,7 @@ public class ColorMapRamp extends Figure {
 
 
 	private void updateMapData() {
-		for(int j=0; j<256; j++)
-			mapData[j] = max-j*(max-min)/255.0;
+		for(int j=0; j<256; j++) mapData[j] = max-j*(max-min)/255.0;
 	}
 	
 	
@@ -67,10 +66,11 @@ public class ColorMapRamp extends Figure {
 		Rectangle clientArea = getClientArea();
 		Dimension scaleSize = scale.getPreferredSize(clientArea.width, clientArea.height);		
 		scale.setBounds(new Rectangle(clientArea.x + clientArea.width - scaleSize.width, clientArea.y,
-				scaleSize.width, clientArea.height));
+				                      scaleSize.width, clientArea.height));
 		
-		colorMapFigure.setBounds(new Rectangle(clientArea.x, scale.getValuePosition(max, false),
-				clientArea.width - scaleSize.width, scale.getTickLength()));
+		final int maxPos = scale.getValuePosition(max, false);
+		colorMapFigure.setBounds(new Rectangle(clientArea.x, maxPos,
+				                               clientArea.width - scaleSize.width, scale.getTickLength()-maxPos+scale.getMargin()+6));
 		super.layout();
 		
 	}
@@ -90,6 +90,7 @@ public class ColorMapRamp extends Figure {
 		this.min = min;
 		scale.setRange(min, max);
 		updateMapData();
+		repaint();
 	}
 
 	/**
@@ -99,6 +100,7 @@ public class ColorMapRamp extends Figure {
 		this.max = max;
 		scale.setRange(min, max);
 		updateMapData();
+		repaint();
 	}
 
 	/**
@@ -121,18 +123,22 @@ public class ColorMapRamp extends Figure {
 		@Override
 		protected void paintClientArea(Graphics graphics) {
 			super.paintClientArea(graphics);
-			Rectangle clientArea = getClientArea();
-			Image image = imageData==null
-					    ? new Image(Display.getCurrent(), colorMap.drawImage(mapData, 1, 256, max, min))
-			            : new Image(Display.getCurrent(), imageData);
-			graphics.drawImage(image, new Rectangle(image.getBounds()), clientArea);
+			ImageData data = imageData==null
+					       ? colorMap.drawImage(mapData, 1, 256, max, min)
+			               : imageData;
+		
+			final Rectangle ca = getClientArea();
+			data = data.scaledTo(ca.width, ca.height);
+			
+		    final Image image = new Image(Display.getDefault(), data);
+			graphics.drawImage(image, ca.x, ca.y);
 			image.dispose();
 		}		
 		
 	}
 
 	/**
-	 * Sets the overriden image imageData
+	 * Sets the overridden image imageData
 	 * @param imageData
 	 */
 	public void setImageData(ImageData imageData) {
