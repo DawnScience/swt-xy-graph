@@ -49,6 +49,7 @@ public class ColorMapRamp extends Figure {
 		scale.setTickLabelSide(LabelSide.Secondary);
 		scale.setMinorTicksVisible(false);
 		scale.setRange(min, max);
+		scale.setTicksAtEnds(false);
 		scale.setMajorTickMarkStepHint(50);
 		colorMapFigure = new ColorMapFigure();
 		add(colorMapFigure);
