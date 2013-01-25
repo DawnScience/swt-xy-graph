@@ -213,7 +213,7 @@ public class LinearScaleTicks2 implements ITicksProvider {
 			} else {
 				ticks = tf.generateTicks(length, min, max, numTicks, true, !scale.hasTicksAtEnds());
 			}
-		} while (!updateLabelPositionsAndCheckGaps(length, hMargin, tMargin) && numTicks-- > 2);
+		} while (!updateLabelPositionsAndCheckGaps(length, hMargin, tMargin, min > max) && numTicks-- > 2);
 
 		updateMinorTicks(hMargin+length);
 		if (scale.hasTicksAtEnds() && ticks.size() > 1)
@@ -281,7 +281,7 @@ public class LinearScaleTicks2 implements ITicksProvider {
 	 * 
 	 * @return true if there is no overlaps
 	 */
-	private boolean updateLabelPositionsAndCheckGaps(int length, final int hMargin, final int tMargin) {
+	private boolean updateLabelPositionsAndCheckGaps(int length, final int hMargin, final int tMargin, final boolean isReversed) {
 		for (Tick t : ticks) {
 			t.setPosition(length * t.getPosition() + hMargin);
 		}
@@ -316,32 +316,56 @@ public class LinearScaleTicks2 implements ITicksProvider {
 //		System.err.println("Max labels have w:" + maxWidth + ", h:" + maxHeight);
 		length += hMargin + tMargin; // re-expand length (so labels can flow into margins)
 		if (scale.isHorizontal()) {
-			double last = 0;
-			for (Tick t : ticks) {
-				final Dimension d = scale.calculateDimension(t.getText());
-				double p = t.getPosition() - d.width * 0.5;
-				if (p < 0) {
-					p = 0;
-				} else if (p + d.width >= length) {
-					p = length - 1 - d.width;
-				}
-				if (last > p) {
-					if (ticks.indexOf(t) == (imax-1)) {
-						t.setTextPosition((int) Math.ceil(p));
+			if (isReversed) {
+				double last = length;
+				for (Tick t : ticks) {
+					final Dimension d = scale.calculateDimension(t.getText());
+					int w = d.width;
+					double p = t.getPosition() - w * 0.5;
+					if (p < 0) {
+						p = 0;
+					} else if (p + w >= length) {
+						p = length - 1 - w;
 					}
-					return false;
+					if (last < p + w) {
+						if (ticks.indexOf(t) == (imax - 1)) {
+							t.setTextPosition((int) Math.ceil(p));
+						}
+						return false;
+					}
+					last = p;
+					t.setTextPosition((int) Math.ceil(p));
 				}
-				last = p + d.width;
-				t.setTextPosition((int) Math.ceil(p));
+			} else {
+				double last = 0;
+				for (Tick t : ticks) {
+					final Dimension d = scale.calculateDimension(t.getText());
+					int w = d.width;
+					double p = t.getPosition() - w * 0.5;
+					if (p < 0) {
+						p = 0;
+					} else if (p + w >= length) {
+						p = length - 1 - w;
+					}
+					if (last > p) {
+						if (ticks.indexOf(t) == (imax - 1)) {
+							t.setTextPosition((int) Math.ceil(p));
+						}
+						return false;
+					}
+					last = p + w;
+					t.setTextPosition((int) Math.ceil(p));
+				}
 			}
 		} else {
 			for (Tick t : ticks) {
 				final Dimension d = scale.calculateDimension(t.getText());
-				double p = length - 1 - t.getPosition() - d.height * 0.5;
+				int h = d.height;
+				double p = length - 1 - t.getPosition() - h * 0.5;
 				if (p < 0) {
 					p = 0;
-				} else if (p + d.height >= length) {
-					p = length - 1 - d.height;
+				} else if (p + h >= length) {
+					p = length - 1 - h;
 				}
 				t.setTextPosition((int) Math.ceil(p));
 			}
