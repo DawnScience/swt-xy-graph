@@ -173,7 +173,7 @@ public class LinearScaleTicks2 implements ITicksProvider {
 		return maxHeight;
 	}
 
-	private final static int TICKMINDIST_IN_PIXELS_X = 60;
+	private final static int TICKMINDIST_IN_PIXELS_X = 40;
 	private final static int TICKMINDIST_IN_PIXELS_Y = 30;
 
 	@Override
