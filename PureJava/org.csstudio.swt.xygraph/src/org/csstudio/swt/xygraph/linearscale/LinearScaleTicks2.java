@@ -90,7 +90,7 @@ class Tick {
 
 	@Override
 	public String toString() {
-		return text + " (" + position + ", " + tPosition + ")";
+		return text + " (" + value + ", " + position + ", " + tPosition + ")";
 	}
 }
 
