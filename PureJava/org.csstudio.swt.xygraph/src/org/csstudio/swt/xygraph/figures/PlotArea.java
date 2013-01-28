@@ -263,13 +263,24 @@ public class PlotArea extends Figure {
 	public List<Annotation> getAnnotationList() {
 		return annotationList;
 	}
+	
+	/**
+	 * Alternative listener which will be notified 
+	 * in addition to processing the internal tools.
+	 */
+	private MouseMotionListener auxilliaryMotionListener;
+	/**
+	 * Alternative listener which will be notified 
+	 * in addition to processing the internal tools.
+	 */
+	private MouseListener       auxilliaryClickListener;
+	
 
     /** Listener to mouse events, performs panning and some zooms
      *  Is very similar to the Axis.AxisMouseListener, but unclear
      *  how easy/useful it would be to base them on the same code.
      */
-	class PlotMouseListener extends MouseMotionListener.Stub implements MouseListener
-	{
+	class PlotMouseListener implements MouseListener, MouseMotionListener {
 	    final private List<Range> xAxisStartRangeList = new ArrayList<Range>();
 	    final private List<Range> yAxisStartRangeList = new ArrayList<Range>();
 
@@ -277,9 +288,11 @@ public class PlotArea extends Figure {
 
         public void mousePressed(final MouseEvent me)
         {
+        	if (auxilliaryClickListener!=null)auxilliaryClickListener.mousePressed(me);
+        	
             // Only react to 'main' mouse button, only react to 'real' zoom
-            if (me.button != 1  ||  zoomType == ZoomType.NONE)
-        		return;
+            if (me.button != 1  ||  zoomType == ZoomType.NONE) return;
+            
         	armed = true;
         	// get start position
         	switch (zoomType)
@@ -337,11 +350,15 @@ public class PlotArea extends Figure {
         	me.consume();
         }
 
-        public void mouseDoubleClicked(final MouseEvent me) { /* Ignored */ }
+        public void mouseDoubleClicked(final MouseEvent me) { 
+        	if (auxilliaryClickListener!=null)auxilliaryClickListener.mouseDoubleClicked(me);
+        }
 
         @Override
 		public void mouseDragged(final MouseEvent me)
 		{
+        	if (auxilliaryMotionListener!=null)auxilliaryMotionListener.mouseDragged(me);
+
 			if(!armed)
 				return;
 			switch (zoomType) {
@@ -367,6 +384,7 @@ public class PlotArea extends Figure {
 		@Override
 		public void mouseExited(final MouseEvent me)
 		{
+	       	if (auxilliaryMotionListener!=null)auxilliaryMotionListener.mouseExited(me);
 			// Treat like releasing the button to stop zoomIn/Out timer
 		    switch (zoomType)
             {
@@ -383,6 +401,7 @@ public class PlotArea extends Figure {
 
         public void mouseReleased(final MouseEvent me)
 		{
+        	if (auxilliaryClickListener!=null)auxilliaryClickListener.mouseReleased(me);
             if (! armed)
                 return;
             armed = false;
@@ -500,5 +519,37 @@ public class PlotArea extends Figure {
             default:                   // NOP
             }
         }
+
+		@Override
+		public void mouseEntered(MouseEvent me) {
+        	if (auxilliaryMotionListener!=null)auxilliaryMotionListener.mouseEntered(me);
+		}
+
+		@Override
+		public void mouseHover(MouseEvent me) {
+        	if (auxilliaryMotionListener!=null)auxilliaryMotionListener.mouseHover(me);
+		}
+
+		@Override
+		public void mouseMoved(MouseEvent me) {
+        	if (auxilliaryMotionListener!=null)auxilliaryMotionListener.mouseMoved(me);
+		}
+	}
+
+	public MouseMotionListener getAuxilliaryMotionListener() {
+		return auxilliaryMotionListener;
+	}
+
+	public void setAuxilliaryMotionListener(
+			MouseMotionListener auxilliaryMotionListener) {
+		this.auxilliaryMotionListener = auxilliaryMotionListener;
+	}
+
+	public MouseListener getAuxilliaryClickListener() {
+		return auxilliaryClickListener;
+	}
+
+	public void setAuxilliaryClickListener(MouseListener auxilliaryClickListener) {
+		this.auxilliaryClickListener = auxilliaryClickListener;
 	}
 }
