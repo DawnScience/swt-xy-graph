@@ -8,6 +8,8 @@
 package org.csstudio.swt.xygraph.figures;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 import org.csstudio.swt.xygraph.linearscale.Range;
@@ -268,12 +270,12 @@ public class PlotArea extends Figure {
 	 * Alternative listener which will be notified 
 	 * in addition to processing the internal tools.
 	 */
-	private MouseMotionListener auxilliaryMotionListener;
+	private Collection<MouseListener>       auxilliaryClickListeners;
 	/**
 	 * Alternative listener which will be notified 
 	 * in addition to processing the internal tools.
 	 */
-	private MouseListener       auxilliaryClickListener;
+	private Collection<MouseMotionListener> auxilliaryMotionListeners;
 	
 
     /** Listener to mouse events, performs panning and some zooms
@@ -288,7 +290,7 @@ public class PlotArea extends Figure {
 
         public void mousePressed(final MouseEvent me)
         {
-        	if (auxilliaryClickListener!=null)auxilliaryClickListener.mousePressed(me);
+        	fireMousePressed(me);
         	
             // Only react to 'main' mouse button, only react to 'real' zoom
             if (me.button != 1  ||  zoomType == ZoomType.NONE) return;
@@ -351,13 +353,13 @@ public class PlotArea extends Figure {
         }
 
         public void mouseDoubleClicked(final MouseEvent me) { 
-        	if (auxilliaryClickListener!=null)auxilliaryClickListener.mouseDoubleClicked(me);
+        	fireMouseDoubleClicked(me);
         }
 
         @Override
 		public void mouseDragged(final MouseEvent me)
 		{
-        	if (auxilliaryMotionListener!=null)auxilliaryMotionListener.mouseDragged(me);
+        	fireMouseDragged(me);
 
 			if(!armed)
 				return;
@@ -384,7 +386,7 @@ public class PlotArea extends Figure {
 		@Override
 		public void mouseExited(final MouseEvent me)
 		{
-	       	if (auxilliaryMotionListener!=null)auxilliaryMotionListener.mouseExited(me);
+        	fireMouseExited(me);
 			// Treat like releasing the button to stop zoomIn/Out timer
 		    switch (zoomType)
             {
@@ -401,7 +403,7 @@ public class PlotArea extends Figure {
 
         public void mouseReleased(final MouseEvent me)
 		{
-        	if (auxilliaryClickListener!=null)auxilliaryClickListener.mouseReleased(me);
+        	fireMouseReleased(me);
             if (! armed)
                 return;
             armed = false;
@@ -522,34 +524,80 @@ public class PlotArea extends Figure {
 
 		@Override
 		public void mouseEntered(MouseEvent me) {
-        	if (auxilliaryMotionListener!=null)auxilliaryMotionListener.mouseEntered(me);
+        	fireMouseEntered(me);
 		}
 
 		@Override
 		public void mouseHover(MouseEvent me) {
-        	if (auxilliaryMotionListener!=null)auxilliaryMotionListener.mouseHover(me);
+        	fireMouseHover(me);
 		}
 
 		@Override
 		public void mouseMoved(MouseEvent me) {
-        	if (auxilliaryMotionListener!=null)auxilliaryMotionListener.mouseMoved(me);
+        	fireMouseMoved(me);
 		}
 	}
 
-	public MouseMotionListener getAuxilliaryMotionListener() {
-		return auxilliaryMotionListener;
+	public void addAuxilliaryMotionListener(MouseMotionListener auxilliaryMotionListener) {
+		if (this.auxilliaryMotionListeners==null) auxilliaryMotionListeners = new HashSet<MouseMotionListener>();
+		auxilliaryMotionListeners.add(auxilliaryMotionListener);
+	}
+	
+	public void removeAuxilliaryClickListener(MouseListener auxilliaryClickListener) {
+		if (this.auxilliaryClickListeners==null)  return;
+		auxilliaryClickListeners.remove(auxilliaryClickListener);
 	}
 
-	public void setAuxilliaryMotionListener(
-			MouseMotionListener auxilliaryMotionListener) {
-		this.auxilliaryMotionListener = auxilliaryMotionListener;
+	public void removeAuxilliaryMotionListener(MouseMotionListener auxilliaryMotionListener) {
+		if (this.auxilliaryMotionListeners==null) return;
+		auxilliaryMotionListeners.remove(auxilliaryMotionListener);
+	}
+	
+	public void addAuxilliaryClickListener(MouseListener auxilliaryClickListener) {
+		if (this.auxilliaryClickListeners==null)  auxilliaryClickListeners = new HashSet<MouseListener>();
+		auxilliaryClickListeners.add(auxilliaryClickListener);
+	}
+	
+	public void fireMouseReleased(MouseEvent me) {
+		if (this.auxilliaryClickListeners==null)  return;
+		for (MouseListener l : auxilliaryClickListeners) l.mouseReleased(me);
 	}
 
-	public MouseListener getAuxilliaryClickListener() {
-		return auxilliaryClickListener;
+	public void fireMouseDoubleClicked(MouseEvent me) {
+		if (this.auxilliaryClickListeners==null)  return;
+		for (MouseListener l : auxilliaryClickListeners) l.mouseDoubleClicked(me);
 	}
 
-	public void setAuxilliaryClickListener(MouseListener auxilliaryClickListener) {
-		this.auxilliaryClickListener = auxilliaryClickListener;
+	public void fireMousePressed(MouseEvent me) {
+		if (this.auxilliaryClickListeners==null)  return;
+		for (MouseListener l : auxilliaryClickListeners) l.mousePressed(me);		
 	}
+
+
+	public void fireMouseMoved(MouseEvent me) {
+		if (this.auxilliaryMotionListeners==null)  return;
+		for (MouseMotionListener l : auxilliaryMotionListeners) l.mouseMoved(me);		
+	}
+
+	public void fireMouseHover(MouseEvent me) {
+		if (this.auxilliaryMotionListeners==null)  return;
+		for (MouseMotionListener l : auxilliaryMotionListeners) l.mouseHover(me);		
+	}
+
+	public void fireMouseEntered(MouseEvent me) {
+		if (this.auxilliaryMotionListeners==null)  return;
+		for (MouseMotionListener l : auxilliaryMotionListeners) l.mouseEntered(me);		
+	}
+
+	public void fireMouseExited(MouseEvent me) {
+		if (this.auxilliaryMotionListeners==null)  return;
+		for (MouseMotionListener l : auxilliaryMotionListeners) l.mouseExited(me);		
+	}
+
+	public void fireMouseDragged(MouseEvent me) {
+		if (this.auxilliaryMotionListeners==null)  return;
+		for (MouseMotionListener l : auxilliaryMotionListeners) l.mouseDragged(me);		
+	}
+
+
 }
