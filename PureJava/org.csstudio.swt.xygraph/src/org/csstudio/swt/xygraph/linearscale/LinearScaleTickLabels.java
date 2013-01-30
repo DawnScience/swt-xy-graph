@@ -14,34 +14,33 @@ public class LinearScaleTickLabels extends Figure {
 
 	private ITicksProvider ticks;
 
-    private IScaleProvider scale;
+	private IScaleProvider scale;
 
-    /**
-     * Constructor.
-     * 
-     * @param linearScale
-     *            the scale
-     */
-    protected LinearScaleTickLabels(IScaleProvider linearScale) {
-    	
-    	this.scale = linearScale;
+	/**
+	 * Constructor.
+	 * 
+	 * @param linearScale
+	 *            the scale
+	 */
+	protected LinearScaleTickLabels(IScaleProvider linearScale) {
+		scale = linearScale;
+		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
+		String provider = store.isDefault(XYPreferences.TICKS_PROVIDER) ? store
+				.getDefaultString(XYPreferences.TICKS_PROVIDER) : store.getString(XYPreferences.TICKS_PROVIDER);
 
-        IPreferenceStore store = Activator.getDefault().getPreferenceStore();
-        String provider = store.isDefault(XYPreferences.TICKS_PROVIDER) ? store.getDefaultString(XYPreferences.TICKS_PROVIDER) :
-            store.getString(XYPreferences.TICKS_PROVIDER);
+		if (XYPreferences.TICKS_PROVIDER_ORIGINAL.equals(provider))
+			ticks = new LinearScaleTicks(scale);
+		else
+			ticks = new LinearScaleTicks2(scale);
 
-        if (XYPreferences.TICKS_PROVIDER_ORIGINAL.equals(provider))
-            ticks = new LinearScaleTicks(scale);
-        else
-            ticks = new LinearScaleTicks2(scale);
+		setTicksIndexBased(scale.isTicksIndexBased());
+		setFont(scale.getFont());
+		setForegroundColor(scale.getForegroundColor());
+	}
 
-        setFont(this.scale.getFont());
-        setForegroundColor(this.scale.getForegroundColor());
-    }
-
-    public ITicksProvider getTicksProvider() {
-    	return ticks;
-    }
+	public ITicksProvider getTicksProvider() {
+		return ticks;
+	}
 
     /**
      * Updates the tick labels.
@@ -129,4 +128,12 @@ public class LinearScaleTickLabels extends Figure {
 		this.scale = scale;
 	}
 
+	/**
+	 * @param isTicksIndexBased if true, make ticks based on axis dataset indexes
+	 */
+	public void setTicksIndexBased(boolean isTicksIndexBased) {
+		if (ticks instanceof LinearScaleTicks2) {
+			((LinearScaleTicks2) ticks).setTicksIndexBased(isTicksIndexBased);
+		}
+	}
 }

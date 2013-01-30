@@ -67,4 +67,9 @@ public interface IScaleProvider {
 	 * @return
 	 */
 	public double getLabel(double value);
+
+	/**
+	 * @return true if ticks need to based on axis dataset indexes
+	 */
+	public boolean isTicksIndexBased();
 }

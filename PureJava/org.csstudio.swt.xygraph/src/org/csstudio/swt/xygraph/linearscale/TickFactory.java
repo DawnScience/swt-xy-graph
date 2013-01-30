@@ -17,6 +17,7 @@
 package org.csstudio.swt.xygraph.linearscale;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,14 +58,14 @@ public class TickFactory {
 	private static final double ROUND_FRACTION = 2e-6; // fraction of denominator to round to
 	private static final BigDecimal BREL_ERROR = new BigDecimal("1e-15");
 	private static final double REL_ERROR = BREL_ERROR.doubleValue();
-	
+
 	private double graphMin;
 	private double graphMax;
 	private String tickFormat;
 	private IScaleProvider scale;
 	private int intervals; // number of intervals
 	private boolean isReversed;
-	
+
 	/**
 	 * @param format
 	 */
@@ -284,7 +285,8 @@ public class TickFactory {
 		return BigDecimal.valueOf(BigDecimal.valueOf(nf).scaleByPowerOfTen(expv).doubleValue());
 	}
 
-	private double determineNumTicks(int size, double min, double max, int maxTicks, boolean allowMinMaxOver) {
+	private double determineNumTicks(int size, double min, double max, int maxTicks,
+			boolean allowMinMaxOver, boolean isIndexBased) {
 		BigDecimal bMin = BigDecimal.valueOf(min);
 		BigDecimal bMax = BigDecimal.valueOf(max);
 		BigDecimal bRange = bMax.subtract(bMin);
@@ -342,17 +344,33 @@ public class TickFactory {
 		}
 		double tickUnit = isReversed ? -bUnit.doubleValue() : bUnit.doubleValue();
 
-		/**
-		 * We get the labelled max and min for determining the 
-		 * precision which the ticks should be shown at.
-		 */
-		int d = bUnit.scale() == bUnit.precision() ?  -bUnit.scale() : bUnit.precision() - bUnit.scale() - 1;
-		int p = (int) Math.max(Math.floor(Math.log10(Math.abs(min))), Math.floor(Math.log10(Math.abs(max))));
-//		System.err.println("P: " + bUnit.precision() + ", S: " + bUnit.scale() + " => " + d + ", " + p);
-		if (p <= DIGITS_LOWER_LIMIT || p >= DIGITS_UPPER_LIMIT) {
-			createFormatString(Math.max(p - d, 0), true);
+		if (isIndexBased) {
+			switch (formatOfTicks) {
+			case plainMode:
+				tickFormat = "%g";
+				break;
+			case useExponent:
+				tickFormat = "%e";
+				break;
+			default:
+				tickFormat = null;
+				break;
+			}
 		} else {
-			createFormatString(Math.max(-d, 0), false);
+			/**
+			 * We get the labelled max and min for determining the precision
+			 * which the ticks should be shown at.
+			 */
+			int d = bUnit.scale() == bUnit.precision() ? -bUnit.scale() : bUnit.precision() - bUnit.scale() - 1;
+			int p = (int) Math.max(Math.floor(Math.log10(Math.abs(graphMin))),
+					Math.floor(Math.log10(Math.abs(graphMax))));
+			// System.err.println("P: " + bUnit.precision() + ", S: " +
+			// bUnit.scale() + " => " + d + ", " + p);
+			if (p <= DIGITS_LOWER_LIMIT || p >= DIGITS_UPPER_LIMIT) {
+				createFormatString(Math.max(p - d, 0), true);
+			} else {
+				createFormatString(Math.max(-d, 0), false);
+			}
 		}
 		return tickUnit;
 	}
@@ -363,6 +381,8 @@ public class TickFactory {
 		}
 		return x >= min && x <= max;
 	}
+
+	private static final DecimalFormat INDEX_FORMAT = new DecimalFormat("#####0.###");
 
 	/**
 	 * Generate a list of ticks that span range given by min and max. The maximum number of
@@ -376,10 +396,9 @@ public class TickFactory {
 	 * @return a list of the ticks for the axis
 	 */
 	public List<Tick> generateTicks(int displaySize, double min, double max, int maxTicks,
-										  boolean allowMinMaxOver, final boolean tight)
-	{
+			boolean allowMinMaxOver, final boolean tight, final boolean isIndexBased) {
 		List<Tick> ticks = new ArrayList<Tick>();
-		double tickUnit = determineNumTicks(displaySize, min, max, maxTicks, allowMinMaxOver);
+		double tickUnit = determineNumTicks(displaySize, min, max, maxTicks, allowMinMaxOver, isIndexBased);
 		if (tickUnit == 0)
 			return ticks;
 
@@ -453,10 +472,29 @@ public class TickFactory {
 				}
 			}
 		}
+		if (isIndexBased && formatOfTicks == TickFormatting.plainMode) {
+			double vmin = Double.POSITIVE_INFINITY;
+			double vmax = Double.NEGATIVE_INFINITY;
+			for (Tick t : ticks) {
+				double v = Math.abs(scale.getLabel(t.getValue()));
+				if (v < vmin && v > 0)
+					vmin = v;
+				if (v > vmax)
+					vmax = v;
+			}
+			if (Math.log10(vmin) < DIGITS_LOWER_LIMIT || Math.log10(vmax) > DIGITS_UPPER_LIMIT) {
+				// override labels
+				for (Tick t : ticks) {
+					double v = scale.getLabel(t.getValue());
+					t.setText(INDEX_FORMAT.format(v));
+				}
+			}
+		}
 		return ticks;
 	}
 
-	private double determineNumLogTicks(int size, double min, double max, int maxTicks, boolean allowMinMaxOver) {
+	private double determineNumLogTicks(int size, double min, double max, int maxTicks,
+			boolean allowMinMaxOver) {
 		final boolean isReverse = min > max;
 		final int loDecade; // lowest decade (or power of ten)
 		final int hiDecade;
@@ -504,8 +542,7 @@ public class TickFactory {
 	 * @return a list of the ticks for the axis
 	 */
 	public List<Tick> generateLogTicks(int displaySize, double min, double max, int maxTicks,
-										  boolean allowMinMaxOver, final boolean tight)
-	{
+			boolean allowMinMaxOver, final boolean tight) {
 		List<Tick> ticks = new ArrayList<Tick>();
 		double tickUnit = determineNumLogTicks(displaySize, min, max, maxTicks, allowMinMaxOver);
 		double p = graphMin;

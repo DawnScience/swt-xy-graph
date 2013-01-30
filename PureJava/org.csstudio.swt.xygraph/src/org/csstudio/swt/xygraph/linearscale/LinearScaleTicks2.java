@@ -110,6 +110,8 @@ public class LinearScaleTicks2 implements ITicksProvider {
 
 	private double majorStepInPixel;
 
+	private boolean ticksIndexBased;
+
 	public LinearScaleTicks2(IScaleProvider scale) {
 		this.scale = scale;
 		minorPositions = new ArrayList<Integer>();
@@ -211,7 +213,7 @@ public class LinearScaleTicks2 implements ITicksProvider {
 			if (scale.isLogScaleEnabled()) {
 				ticks = tf.generateLogTicks(length, min, max, numTicks, true, !scale.hasTicksAtEnds());
 			} else {
-				ticks = tf.generateTicks(length, min, max, numTicks, true, !scale.hasTicksAtEnds());
+				ticks = tf.generateTicks(length, min, max, numTicks, true, !scale.hasTicksAtEnds(), ticksIndexBased);
 			}
 		} while (!updateLabelPositionsAndCheckGaps(length, hMargin, tMargin, min > max) && numTicks-- > 2);
 
@@ -436,5 +438,12 @@ public class LinearScaleTicks2 implements ITicksProvider {
 				}
 			}
 		}
+	}
+
+	/**
+	 * @param isTicksIndexBased if true, make ticks based on axis dataset indexes
+	 */
+	public void setTicksIndexBased(boolean isTicksIndexBased) {
+		ticksIndexBased = isTicksIndexBased;
 	}
 }

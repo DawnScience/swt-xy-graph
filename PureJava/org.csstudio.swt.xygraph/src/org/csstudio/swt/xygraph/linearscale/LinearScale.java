@@ -55,14 +55,14 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
     private int length;
     
     private int margin;
-    
- 
-    
+
+    /** if true, then ticks are based on axis dataset indexes */
+    private boolean ticksIndexBased;
+
     /**
      * Constructor.
      */
-    public LinearScale() {      
-    	
+    public LinearScale() {
         tickLabels = new LinearScaleTickLabels(this);
         tickMarks = new LinearScaleTickMarks(this);
         add(tickMarks);        
@@ -171,7 +171,7 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
         return tickMarks;
     }
 
-    /**
+	/**
 	 * @return the length of the tick part (without margin)
 	 */
 	public int getTickLength() {
@@ -332,26 +332,24 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 	
 
 	/**
-     * Updates the tick, recalculate all parameters, such as margin, length...
-     */
-    @Override
-    public void updateTick() {
-    	if(isDirty()){
-	    	length = isHorizontal() ? 
-	    			getClientArea().width: getClientArea().height;    		
-			if (length > 2*getMargin()) {
-				Range r = tickLabels.update(length-2*getMargin());
+	 * Updates the tick, recalculate all parameters, such as margin, length...
+	 */
+	@Override
+	public void updateTick() {
+		if (isDirty()) {
+			length = isHorizontal() ? getClientArea().width : getClientArea().height;
+			if (length > 2 * getMargin()) {
+				Range r = tickLabels.update(length - 2 * getMargin());
 				if (r != null && !forceRange) {
 					min = r.getLower();
 					max = r.getUpper();
 					range = r;
 				}
-//				getMargin();
+				// getMargin();
 			}
-	    	setDirty(false);
-    	}    	
-    }	
-
+			setDirty(false);
+		}
+	}
 
 	@Override
 	public Range getScaleRange() {
@@ -369,5 +367,19 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 	@Override
 	public double getLabel(double value) {
 		return value;
+	}
+
+	/**
+	 * @param isTicksIndexBased if true, make ticks based on axis dataset indexes
+	 */
+	public void setTicksIndexBased(boolean isTicksIndexBased) {
+		if (ticksIndexBased != isTicksIndexBased)
+			tickLabels.setTicksIndexBased(isTicksIndexBased);
+		ticksIndexBased = isTicksIndexBased;
+	}
+
+	@Override
+	public boolean isTicksIndexBased() {
+		return ticksIndexBased;
 	}
 }
