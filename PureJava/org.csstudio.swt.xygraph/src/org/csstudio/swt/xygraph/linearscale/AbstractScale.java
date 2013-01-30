@@ -101,8 +101,6 @@ public abstract class AbstractScale extends Figure{
 
     private Format cachedFormat = null;
 
-    protected ITicksProvider ticksProvider;
-
     private boolean ticksAtEnds = true;
 
     /**
@@ -146,7 +144,8 @@ public abstract class AbstractScale extends Figure{
 				cachedFormat = new SimpleDateFormat(formatPattern);
 			} else {
 				if (formatPattern == null || formatPattern == default_decimal_format || formatPattern.equals("")) {
-					formatPattern = ticksProvider.getDefaultFormatPattern(min, max);
+					ITicksProvider ticks = getTicksProvider();
+					formatPattern = ticks == null ? default_decimal_format : ticks.getDefaultFormatPattern(min, max);
 					autoFormat = true;
 				}
 
@@ -167,8 +166,14 @@ public abstract class AbstractScale extends Figure{
 			return cachedFormat.format(new Date(((Number) obj).longValue()));
 		return cachedFormat.format(obj);
    }
-	
+
 	/**
+	 * Gets the ticks provider
+	 * @return tick provider
+	 */
+    abstract public ITicksProvider getTicksProvider();
+
+    /**
 	 * @return the majorTickMarkStepHint
 	 */
 	public int getMajorTickMarkStepHint() {

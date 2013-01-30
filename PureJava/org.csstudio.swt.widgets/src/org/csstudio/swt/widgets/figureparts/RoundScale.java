@@ -9,6 +9,7 @@ package org.csstudio.swt.widgets.figureparts;
 
 
 import org.csstudio.swt.xygraph.linearscale.AbstractScale;
+import org.csstudio.swt.xygraph.linearscale.ITicksProvider;
 import org.eclipse.draw2d.FigureUtilities;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
@@ -330,5 +331,10 @@ public class RoundScale extends AbstractScale {
 	public int getInnerRadius() {		
 		updateTick();
 		return radius;
+	}
+
+	@Override
+	public ITicksProvider getTicksProvider() {
+		return null;
 	}
 }

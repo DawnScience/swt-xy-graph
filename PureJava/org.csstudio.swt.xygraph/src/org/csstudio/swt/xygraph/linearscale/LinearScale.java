@@ -127,6 +127,7 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 	public Orientation getOrientation() {
 		return orientation;
 	}
+
 	@Override
 	public Dimension getPreferredSize(int wHint, int hHint) {
 		
@@ -149,10 +150,7 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 		return size;
 	}
 
-	/**
-	 * Gets the ticks provider
-	 * @return
-	 */
+	@Override
 	public ITicksProvider getTicksProvider() {
 		return ticksProvider;
 	}
