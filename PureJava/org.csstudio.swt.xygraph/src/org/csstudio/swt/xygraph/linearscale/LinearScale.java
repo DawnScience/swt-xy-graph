@@ -64,7 +64,6 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
     public LinearScale() {      
     	
         tickLabels = new LinearScaleTickLabels(this);
-        ticksProvider = tickLabels.getTicksProvider();
         tickMarks = new LinearScaleTickMarks(this);
         add(tickMarks);        
         add(tickLabels);    
@@ -118,7 +117,7 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
      */
     public int getMargin() {
 		if(isDirty())
-			margin = ticksProvider.getHeadMargin();
+			margin = getTicksProvider().getHeadMargin();
 		return margin;
 	}
 	/**
@@ -152,7 +151,7 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 
 	@Override
 	public ITicksProvider getTicksProvider() {
-		return ticksProvider;
+		return tickLabels.getTicksProvider();
 	}
 
 	/**
