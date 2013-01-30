@@ -302,23 +302,23 @@ public class TickFactoryTest {
 		String[] values = new String[out.length];
 		List<Tick> t;
 
-		t = tf.generateTicks(scaleSize, lower, upper, nTicks, true, tight);
+		t = tf.generateTicks(scaleSize, lower, upper, nTicks, true, tight, false);
 		checkTickValues(t, out);
 
 		if (upper != lower) {
-			t = tf.generateTicks(scaleSize, upper, lower, nTicks, true, tight);
+			t = tf.generateTicks(scaleSize, upper, lower, nTicks, true, tight, false);
 			for (int i = 0; i < out.length; i++)
 				values[i] = out[out.length - 1 - i];
 			checkTickValues(t, values);
 		}
 
-		t = tf.generateTicks(scaleSize, -lower, -upper, nTicks, true, tight);
+		t = tf.generateTicks(scaleSize, -lower, -upper, nTicks, true, tight, false);
 		for (int i = 0; i < out.length; i++)
 			values[i] = negate(out[i]);
 		checkTickValues(t, values);
 		
 		if (upper != lower) {
-			t = tf.generateTicks(scaleSize, -upper, -lower, nTicks, true, tight);
+			t = tf.generateTicks(scaleSize, -upper, -lower, nTicks, true, tight, false);
 			for (int i = 0; i < out.length; i++)
 				values[i] = negate(out[out.length - 1 - i]);
 			checkTickValues(t, values);
