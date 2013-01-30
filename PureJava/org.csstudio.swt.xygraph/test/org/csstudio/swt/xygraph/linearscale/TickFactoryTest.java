@@ -173,6 +173,9 @@ public class TickFactoryTest {
 
 		testGeneratedBothTicks(-0.5, 0.5, 2, "-0.5", "0.0", "0.5");
 		testGeneratedBothTicks(-0.1, 0.1, 2, "-0.1", "0.0", "0.1"); 
+
+		testGeneratedLooseTicks(0, 695, 8, "0", "200", "400", "600", "800");
+		testGeneratedTightTicks(0, 695, 8, "0", "200", "400", "600");
 	}
 
 	@Test
