@@ -419,7 +419,7 @@ public class TickFactory {
 		if (imax > 1) {
 			if (!tight && allowMinMaxOver) {
 				Tick t = ticks.get(imax - 1);
-				if (tickUnit > 0 && t.getValue() < max) { // last is >= max
+				if (!isReversed && t.getValue() < max) { // last is >= max
 					t.setValue(graphMax);
 					t.setText(getTickString(graphMax));
 				}
@@ -429,13 +429,13 @@ public class TickFactory {
 			double hi = tight ? max : ticks.get(imax - 1).getValue();
 			double range = hi - lo;
 
-			if (tickUnit > 0) {
+			if (isReversed) {
 				for (Tick t : ticks) {
-					t.setPosition((t.getValue() - lo) / range);
+					t.setPosition(1 - (t.getValue() - lo) / range);
 				}
 			} else {
 				for (Tick t : ticks) {
-					t.setPosition(1 - (t.getValue() - lo) / range);
+					t.setPosition((t.getValue() - lo) / range);
 				}
 			}
 		} else if (maxTicks > 1) {
@@ -444,7 +444,7 @@ public class TickFactory {
 				Tick newTick = new Tick();
 				newTick.setValue(graphMin);
 				newTick.setText(getTickString(graphMin));
-				if (tickUnit < 0) {
+				if (isReversed) {
 					newTick.setPosition(1);
 				} else {
 					newTick.setPosition(0);
@@ -463,7 +463,7 @@ public class TickFactory {
 					newTick.setText(getTickString(graphMax));
 					ticks.add(newTick);
 				}
-				if (tickUnit < 0) {
+				if (isReversed) {
 					ticks.get(0).setPosition(1);
 					ticks.get(1).setPosition(0);
 				} else {
@@ -482,7 +482,7 @@ public class TickFactory {
 				if (v > vmax)
 					vmax = v;
 			}
-			if (Math.log10(vmin) < DIGITS_LOWER_LIMIT || Math.log10(vmax) > DIGITS_UPPER_LIMIT) {
+			if (Math.log10(vmin) >= DIGITS_LOWER_LIMIT || Math.log10(vmax) <= DIGITS_UPPER_LIMIT) {
 				// override labels
 				for (Tick t : ticks) {
 					double v = scale.getLabel(t.getValue());
