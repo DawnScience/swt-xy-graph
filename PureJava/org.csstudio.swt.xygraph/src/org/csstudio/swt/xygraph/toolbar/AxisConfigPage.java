@@ -7,6 +7,7 @@
  ******************************************************************************/
 package org.csstudio.swt.xygraph.toolbar;
 
+import org.csstudio.swt.xygraph.Activator;
 import org.csstudio.swt.xygraph.figures.Axis;
 import org.csstudio.swt.xygraph.figures.XYGraph;
 import org.csstudio.swt.xygraph.linearscale.Range;
@@ -15,6 +16,7 @@ import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
@@ -63,12 +65,14 @@ public class AxisConfigPage {
 	private Button showAxisButton;
 	
 	private Composite composite;
+	private boolean enableRanges;
 	
-	public AxisConfigPage(XYGraph xyGraph, Axis axis) {
+	public AxisConfigPage(XYGraph xyGraph, Axis axis, boolean enableRanges) {
 		this.xyGraph = xyGraph;
 		this.axis = axis;
 		scaleFont = axis.getFont();
 		titleFont = axis.getTitleFont();
+		this.enableRanges = enableRanges;
 	}
 	
 	public void createPage(final Composite composite){
@@ -168,6 +172,7 @@ public class AxisConfigPage {
 		maxOrAutoScaleThrText = new DoubleInputText(composite, SWT.BORDER | SWT.SINGLE);		
 		gd = new GridData(SWT.FILL, SWT.BEGINNING, true, false, 2, 1);
 		maxOrAutoScaleThrText.getText().setLayoutData(gd);		
+		maxOrAutoScaleThrText.getText().setEnabled(enableRanges);
 		
 		minLabel = new Label(composite, 0);
 		minLabel.setText("Minimum: ");	
@@ -176,7 +181,19 @@ public class AxisConfigPage {
 		minText = new DoubleInputText(composite, SWT.BORDER | SWT.SINGLE);		
 		gd = new GridData(SWT.FILL, SWT.BEGINNING, true, false, 2, 1);
 		minText.getText().setLayoutData(gd);
+		minText.getText().setEnabled(enableRanges);
 		
+		if (!enableRanges) {
+			final CLabel info = new CLabel(composite, SWT.WRAP);
+			info.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false, 3, 1));
+			info.setText("Automatic rescale is on, max. and min. therefore cannot be edited.");
+			info.setImage(Activator.getImageDescriptor("icons/rescale.png").createImage());
+			
+			Label sep = new Label(composite, SWT.SEPARATOR|SWT.HORIZONTAL);
+			sep.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false, 3, 1));
+
+		}
+	
 		//autoScale button listener
 		autoScaleButton.addSelectionListener(new SelectionAdapter(){
 			@Override
@@ -247,6 +264,9 @@ public class AxisConfigPage {
 			}
 		});
 		
+		Label sep = new Label(composite, SWT.SEPARATOR|SWT.HORIZONTAL);
+		sep.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false, 3, 1));
+
 		showGridButton = new Button(composite, SWT.CHECK);
 		configCheckButton(showGridButton, "Show Grid Line");
 		dashGridLineButton = new Button(composite, SWT.CHECK);

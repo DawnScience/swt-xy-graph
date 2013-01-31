@@ -71,6 +71,11 @@ public class XYGraphConfigDialog extends Dialog {
 	
 	@Override
 	protected Control createDialogArea(Composite parent) {
+		return createDialogArea(parent, true);
+	}
+	
+	protected Control createDialogArea(Composite parent, boolean enableAxisRanges) {
+		
 		final Composite parent_composite = (Composite) super.createDialogArea(parent);
 		parent_composite.setLayout(new FillLayout());
         final TabFolder tabFolder = new TabFolder(parent_composite, SWT.NONE);   
@@ -112,8 +117,7 @@ public class XYGraphConfigDialog extends Dialog {
 	        axisConfigGroup.setText("Change Settings");
 	        axisConfigGroup.setLayoutData(new GridData(
         			SWT.FILL, SWT.FILL,true, true));
-	        AxisConfigPage axisConfigPage = 
-	        	new AxisConfigPage(xyGraph, axis);
+	        AxisConfigPage axisConfigPage = new AxisConfigPage(xyGraph, axis, enableAxisRanges);
 	        axisConfigPageList.add(axisConfigPage);
 	        axisConfigPage.createPage(axisConfigGroup);   	        
 	    } 	        
