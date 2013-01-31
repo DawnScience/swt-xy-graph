@@ -201,16 +201,15 @@ public class LinearScaleTickMarks extends Figure {
 						gc.drawLine(x, y, x + MINOR_TICK_LENGTH, y);
 				}
 			}
-        }
+		}
 
-        // draw scale line
-        if(scale.isScaleLineVisible()) {
-        	if (tickLabelSide == LabelSide.Primary) {
-            gc.drawLine(width - 1, scale.getMargin(), width - 1, height - scale.getMargin());
-        } else {
-            gc.drawLine(0, scale.getMargin(), 0, height - scale.getMargin());
-        }
-        }
-        
+		// draw scale line
+		if (scale.isScaleLineVisible()) {
+			if (tickLabelSide == LabelSide.Primary) {
+				gc.drawLine(width - 1, scale.getMargin(), width - 1, height - scale.getMargin());
+			} else {
+				gc.drawLine(0, scale.getMargin(), 0, height - scale.getMargin());
+			}
+		}
     }
 }

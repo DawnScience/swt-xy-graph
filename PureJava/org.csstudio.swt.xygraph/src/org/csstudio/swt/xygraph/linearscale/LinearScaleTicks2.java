@@ -108,8 +108,6 @@ public class LinearScaleTicks2 implements ITicksProvider {
 
 	protected IScaleProvider scale;
 
-	private double majorStepInPixel;
-
 	private boolean ticksIndexBased;
 
 	public LinearScaleTicks2(IScaleProvider scale) {
@@ -284,14 +282,9 @@ public class LinearScaleTicks2 implements ITicksProvider {
 	 * @return true if there is no overlaps
 	 */
 	private boolean updateLabelPositionsAndCheckGaps(int length, final int hMargin, final int tMargin, final boolean isReversed) {
-		for (Tick t : ticks) {
-			t.setPosition(length * t.getPosition() + hMargin);
-		}
 		final int imax = ticks.size();
 		if (imax == 0) {
 			return true;
-		} else if (imax > 1) {
-			majorStepInPixel = (ticks.get(imax-1).getPosition() - ticks.get(0).getPosition()) / (imax - 1);
 		}
 
 		maxWidth = 0;
@@ -316,48 +309,35 @@ public class LinearScaleTicks2 implements ITicksProvider {
 			return true; // sanity check
 
 //		System.err.println("Max labels have w:" + maxWidth + ", h:" + maxHeight);
+		if (isReversed) {
+			for (Tick t : ticks) {
+				t.setPosition(length - length * t.getPosition() + hMargin);
+			}
+		} else {
+			for (Tick t : ticks) {
+				t.setPosition(length * t.getPosition() + hMargin);
+			}
+		}
 		length += hMargin + tMargin; // re-expand length (so labels can flow into margins)
 		if (scale.isHorizontal()) {
-			if (isReversed) {
-				double last = length;
-				for (Tick t : ticks) {
-					final Dimension d = scale.calculateDimension(t.getText());
-					int w = d.width;
-					double p = t.getPosition() - w * 0.5;
-					if (p < 0) {
-						p = 0;
-					} else if (p + w >= length) {
-						p = length - 1 - w;
-					}
-					if (last < p + w) {
-						if (ticks.indexOf(t) == (imax - 1)) {
-							t.setTextPosition((int) Math.ceil(p));
-						}
-						return false;
-					}
-					last = p;
-					t.setTextPosition((int) Math.ceil(p));
+			double last = 0;
+			for (Tick t : ticks) {
+				final Dimension d = scale.calculateDimension(t.getText());
+				int w = d.width;
+				double p = t.getPosition() - w * 0.5;
+				if (p < 0) {
+					p = 0;
+				} else if (p + w >= length) {
+					p = length - 1 - w;
 				}
-			} else {
-				double last = 0;
-				for (Tick t : ticks) {
-					final Dimension d = scale.calculateDimension(t.getText());
-					int w = d.width;
-					double p = t.getPosition() - w * 0.5;
-					if (p < 0) {
-						p = 0;
-					} else if (p + w >= length) {
-						p = length - 1 - w;
+				if (last > p) {
+					if (ticks.indexOf(t) == (imax - 1)) {
+						t.setTextPosition((int) Math.ceil(p));
 					}
-					if (last > p) {
-						if (ticks.indexOf(t) == (imax - 1)) {
-							t.setTextPosition((int) Math.ceil(p));
-						}
-						return false;
-					}
-					last = p + w;
-					t.setTextPosition((int) Math.ceil(p));
+					return false;
 				}
+				last = p + w;
+				t.setTextPosition((int) Math.ceil(p));
 			}
 		} else {
 			for (Tick t : ticks) {
@@ -381,7 +361,15 @@ public class LinearScaleTicks2 implements ITicksProvider {
 	private void updateMinorTicks(final int end) {
 		minorPositions.clear();
 
-		if (majorStepInPixel == 0 || ticks.size() == 0)
+		final int jmax = ticks.size();
+		if (jmax == 0)
+			return;
+
+		double majorStepInPixel = -1;
+		if (jmax > 1) {
+			majorStepInPixel  = (ticks.get(jmax-1).getPosition() - ticks.get(0).getPosition()) / (jmax - 1);
+		}
+		if (majorStepInPixel == 0)
 			return;
 
 		int minorTicks;
