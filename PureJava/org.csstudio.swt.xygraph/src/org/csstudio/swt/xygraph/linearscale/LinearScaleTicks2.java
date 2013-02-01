@@ -150,7 +150,7 @@ public class LinearScaleTicks2 implements ITicksProvider {
 
 	@Override
 	public int getMajorCount() {
-		return ticks.size();
+		return ticks == null ? 0 : ticks.size();
 	}
 
 	@Override
