@@ -47,7 +47,7 @@ public class PlotArea extends Figure {
 
 	private boolean showBorder;
 
-	private ZoomType zoomType;
+	protected ZoomType zoomType;
 
 	private Point start;
 	private Point end;
