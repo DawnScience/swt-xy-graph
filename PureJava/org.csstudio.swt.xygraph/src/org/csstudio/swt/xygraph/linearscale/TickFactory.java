@@ -467,8 +467,8 @@ public class TickFactory {
 					ticks.get(0).setPosition(1);
 					ticks.get(1).setPosition(0);
 				} else {
-					ticks.get(0).setPosition(1);
-					ticks.get(1).setPosition(0);
+					ticks.get(0).setPosition(0);
+					ticks.get(1).setPosition(1);
 				}
 			}
 		}
