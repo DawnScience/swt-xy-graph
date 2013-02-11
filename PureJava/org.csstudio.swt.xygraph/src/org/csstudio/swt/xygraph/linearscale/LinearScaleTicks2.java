@@ -183,7 +183,7 @@ public class LinearScaleTicks2 implements ITicksProvider {
 
 		final int maximumNumTicks = scale.isHorizontal() ? Math.min(8, length / TICKMINDIST_IN_PIXELS_X)
 				: Math.min(8, length / TICKMINDIST_IN_PIXELS_Y);
-		int numTicks = Math.max(2, maximumNumTicks);
+		int numTicks = Math.max(3, maximumNumTicks);
 
 		final TickFactory tf;
 		if (scale instanceof AbstractScale) {
@@ -213,7 +213,7 @@ public class LinearScaleTicks2 implements ITicksProvider {
 			} else {
 				ticks = tf.generateTicks(length, min, max, numTicks, true, !scale.hasTicksAtEnds(), ticksIndexBased);
 			}
-		} while (!updateLabelPositionsAndCheckGaps(length, hMargin, tMargin, min > max) && numTicks-- > 2);
+		} while (!updateLabelPositionsAndCheckGaps(length, hMargin, tMargin, min > max) && numTicks-- > 3);
 
 		updateMinorTicks(hMargin+length);
 		if (scale.hasTicksAtEnds() && ticks.size() > 1)
