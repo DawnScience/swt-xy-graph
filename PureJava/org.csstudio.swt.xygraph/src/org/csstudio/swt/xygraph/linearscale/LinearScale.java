@@ -245,9 +245,18 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
         
 		return value;
 	}
-	
 
-    public boolean isHorizontal() {
+	/**
+	 * Get scaling for axis in terms of pixels/unit
+	 * @return
+	 */
+	public double getScaling() {
+		if (isLogScaleEnabled())
+			return (Math.log10(max) - Math.log10(min)) / (length - 2 * margin);
+		return (max - min) / (length - 2 * margin);
+	}
+
+	public boolean isHorizontal() {
 		return orientation == Orientation.HORIZONTAL;
 	}
 
