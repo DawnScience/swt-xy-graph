@@ -424,20 +424,6 @@ public class TickFactory {
 					t.setText(getTickString(graphMax));
 				}
 			}
-
-			double lo = tight ? min : ticks.get(0).getValue();
-			double hi = tight ? max : ticks.get(imax - 1).getValue();
-			double range = hi - lo;
-
-			if (isReversed) {
-				for (Tick t : ticks) {
-					t.setPosition(1 - (t.getValue() - lo) / range);
-				}
-			} else {
-				for (Tick t : ticks) {
-					t.setPosition((t.getValue() - lo) / range);
-				}
-			}
 		} else if (maxTicks > 1) {
 			if (imax == 0) {
 				imax++;
@@ -463,13 +449,20 @@ public class TickFactory {
 					newTick.setText(getTickString(graphMax));
 					ticks.add(newTick);
 				}
-				if (isReversed) {
-					ticks.get(0).setPosition(1);
-					ticks.get(1).setPosition(0);
-				} else {
-					ticks.get(0).setPosition(0);
-					ticks.get(1).setPosition(1);
-				}
+				imax++;
+			}
+		}
+		double lo = tight ? min : ticks.get(0).getValue();
+		double hi = tight ? max : (imax > 1 ? ticks.get(imax - 1).getValue() : lo);
+		double range = imax > 1 ? hi - lo : 1;
+
+		if (isReversed) {
+			for (Tick t : ticks) {
+				t.setPosition(1 - (t.getValue() - lo) / range);
+			}
+		} else {
+			for (Tick t : ticks) {
+				t.setPosition((t.getValue() - lo) / range);
 			}
 		}
 		if (isIndexBased && formatOfTicks == TickFormatting.plainMode) {
@@ -486,7 +479,8 @@ public class TickFactory {
 				// override labels
 				for (Tick t : ticks) {
 					double v = scale.getLabel(t.getValue());
-					t.setText(INDEX_FORMAT.format(v));
+					if (!Double.isNaN(v))
+						t.setText(INDEX_FORMAT.format(v));
 				}
 			}
 		}
