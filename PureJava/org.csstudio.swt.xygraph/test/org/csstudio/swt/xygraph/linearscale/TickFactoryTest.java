@@ -298,7 +298,7 @@ public class TickFactoryTest {
 	}
 
 	private void testGeneratedTicks(boolean tight, double lower, double upper, int nTicks, final String... out) {
-		TickFactory tf = new TickFactory(TickFormatting.plainMode, null);
+		TickFactory tf = new TickFactory(TickFormatting.autoMode, null);
 		String[] values = new String[out.length];
 		List<Tick> t;
 

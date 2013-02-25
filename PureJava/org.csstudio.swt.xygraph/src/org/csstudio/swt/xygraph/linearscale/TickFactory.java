@@ -29,10 +29,9 @@ import java.util.List;
 public class TickFactory {
 	public enum TickFormatting {
 		/**
-		 * Plain mode no rounding no chopping maximum 6 figures before the 
-		 * fraction point and four after
+		 * Automatically adjust precision
 		 */
-		plainMode,
+		autoMode,
 		/**
 		 * Rounded or chopped to the nearest decimal
 		 */
@@ -90,7 +89,7 @@ public class TickFactory {
 			return returnString;
 
 		switch (formatOfTicks) {
-		case plainMode:
+		case autoMode:
 			returnString = String.format(tickFormat, value);
 			break;
 		case useExponent:
@@ -135,7 +134,7 @@ public class TickFactory {
 
 	private void createFormatString(final int precision, final boolean b) {
 		switch (formatOfTicks) {
-		case plainMode:
+		case autoMode:
 			tickFormat = b ? String.format("%%.%de", precision) : String.format("%%.%df", precision);
 			break;
 		case useExponent:

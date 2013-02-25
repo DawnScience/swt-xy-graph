@@ -191,17 +191,17 @@ public class LinearScaleTicks2 implements ITicksProvider {
 			if (aScale.hasUserDefinedFormat()) {
 				tf = new TickFactory(scale);
 			} else if (aScale.isAutoFormat()) {
-				tf = new TickFactory(TickFormatting.plainMode, scale);
+				tf = new TickFactory(TickFormatting.autoMode, scale);
 			} else {
 				String format = aScale.getFormatPattern();
 				if (format.contains("E")) {
 					tf = new TickFactory(TickFormatting.useExponent, scale);
 				} else {
-					tf = new TickFactory(TickFormatting.plainMode, scale);
+					tf = new TickFactory(TickFormatting.autoMode, scale);
 				}
 			}
 		} else {
-			tf = new TickFactory(TickFormatting.plainMode, scale);
+			tf = new TickFactory(TickFormatting.autoMode, scale);
 		}
 
 		final int hMargin = getHeadMargin();
