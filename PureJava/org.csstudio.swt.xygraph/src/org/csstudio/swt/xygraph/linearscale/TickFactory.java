@@ -19,6 +19,7 @@ package org.csstudio.swt.xygraph.linearscale;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -284,7 +285,7 @@ public class TickFactory {
 		return BigDecimal.valueOf(BigDecimal.valueOf(nf).scaleByPowerOfTen(expv).doubleValue());
 	}
 
-	private double determineNumTicks(int size, double min, double max, int maxTicks,
+	private double determineNumTicks(double min, double max, int maxTicks,
 			boolean allowMinMaxOver, boolean isIndexBased) {
 		BigDecimal bMin = BigDecimal.valueOf(min);
 		BigDecimal bMax = BigDecimal.valueOf(max);
@@ -327,8 +328,13 @@ public class TickFactory {
 				if (graphMax == 0)
 					graphMax = 0;
 			} else {
-				graphMin = min;
-				graphMax = max;
+				if (isReversed) {
+					graphMin = max;
+					graphMax = min;
+				} else {
+					graphMin = min;
+					graphMax = max;
+				}
 			}
 			if (bUnit.compareTo(BREL_ERROR.multiply(magnitude)) <= 0) {
 				intervals = -1; // signal that we hit the limit of precision
@@ -386,7 +392,6 @@ public class TickFactory {
 	/**
 	 * Generate a list of ticks that span range given by min and max. The maximum number of
 	 * ticks is exceed by one in the case where the range straddles zero.
-	 * @param displaySize 
 	 * @param min
 	 * @param max
 	 * @param maxTicks 
@@ -394,10 +399,10 @@ public class TickFactory {
 	 * @param tight if true then remove ticks outside range 
 	 * @return a list of the ticks for the axis
 	 */
-	public List<Tick> generateTicks(int displaySize, double min, double max, int maxTicks,
+	public List<Tick> generateTicks(double min, double max, int maxTicks,
 			boolean allowMinMaxOver, final boolean tight, final boolean isIndexBased) {
 		List<Tick> ticks = new ArrayList<Tick>();
-		double tickUnit = determineNumTicks(displaySize, min, max, maxTicks, allowMinMaxOver, isIndexBased);
+		double tickUnit = determineNumTicks(min, max, maxTicks, allowMinMaxOver, isIndexBased);
 		if (tickUnit == 0)
 			return ticks;
 
@@ -486,7 +491,7 @@ public class TickFactory {
 		return ticks;
 	}
 
-	private double determineNumLogTicks(int size, double min, double max, int maxTicks,
+	private double determineNumLogTicks(double min, double max, int maxTicks,
 			boolean allowMinMaxOver) {
 		final boolean isReverse = min > max;
 		final int loDecade; // lowest decade (or power of ten)
@@ -526,7 +531,6 @@ public class TickFactory {
 	}
 
 	/**
-	 * @param displaySize 
 	 * @param min
 	 * @param max
 	 * @param maxTicks
@@ -534,10 +538,10 @@ public class TickFactory {
 	 * @param tight if true then remove ticks outside range 
 	 * @return a list of the ticks for the axis
 	 */
-	public List<Tick> generateLogTicks(int displaySize, double min, double max, int maxTicks,
+	public List<Tick> generateLogTicks(double min, double max, int maxTicks,
 			boolean allowMinMaxOver, final boolean tight) {
 		List<Tick> ticks = new ArrayList<Tick>();
-		double tickUnit = determineNumLogTicks(displaySize, min, max, maxTicks, allowMinMaxOver);
+		double tickUnit = determineNumLogTicks(min, max, maxTicks, allowMinMaxOver);
 		double p = graphMin;
 		if (tickUnit > 1) {
 			final double pmax = graphMax * Math.sqrt(tickUnit);

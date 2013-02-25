@@ -283,7 +283,6 @@ public class TickFactoryTest {
 		return String.format("%se%+02d", s, p);
 	}
 
-	private static final int scaleSize = 200;
 	private void testGeneratedLooseTicks(double lower, double upper, int nTicks, final String... out) {
 		testGeneratedTicks(false, lower, upper, nTicks, out);
 	}
@@ -302,23 +301,23 @@ public class TickFactoryTest {
 		String[] values = new String[out.length];
 		List<Tick> t;
 
-		t = tf.generateTicks(scaleSize, lower, upper, nTicks, true, tight, false);
+		t = tf.generateTicks(lower, upper, nTicks, true, tight);
 		checkTickValues(t, out);
 
 		if (upper != lower) {
-			t = tf.generateTicks(scaleSize, upper, lower, nTicks, true, tight, false);
+			t = tf.generateTicks(upper, lower, nTicks, true, tight);
 			for (int i = 0; i < out.length; i++)
 				values[i] = out[out.length - 1 - i];
 			checkTickValues(t, values);
 		}
 
-		t = tf.generateTicks(scaleSize, -lower, -upper, nTicks, true, tight, false);
+		t = tf.generateTicks(-lower, -upper, nTicks, true, tight);
 		for (int i = 0; i < out.length; i++)
 			values[i] = negate(out[i]);
 		checkTickValues(t, values);
 		
 		if (upper != lower) {
-			t = tf.generateTicks(scaleSize, -upper, -lower, nTicks, true, tight, false);
+			t = tf.generateTicks(-upper, -lower, nTicks, true, tight);
 			for (int i = 0; i < out.length; i++)
 				values[i] = negate(out[out.length - 1 - i]);
 			checkTickValues(t, values);

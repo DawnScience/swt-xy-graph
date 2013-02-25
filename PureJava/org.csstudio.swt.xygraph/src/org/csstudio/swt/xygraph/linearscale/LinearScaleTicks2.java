@@ -175,6 +175,7 @@ public class LinearScaleTicks2 implements ITicksProvider {
 
 	private final static int TICKMINDIST_IN_PIXELS_X = 40;
 	private final static int TICKMINDIST_IN_PIXELS_Y = 30;
+	private final static int MIN_TICKS = 3;
 
 	@Override
 	public Range update(final double min, final double max, final int length) {
@@ -209,11 +210,11 @@ public class LinearScaleTicks2 implements ITicksProvider {
 		// loop until labels fit
 		do {
 			if (scale.isLogScaleEnabled()) {
-				ticks = tf.generateLogTicks(length, min, max, numTicks, true, !scale.hasTicksAtEnds());
+				ticks = tf.generateLogTicks(min, max, numTicks, true, !scale.hasTicksAtEnds());
 			} else {
-				ticks = tf.generateTicks(length, min, max, numTicks, true, !scale.hasTicksAtEnds(), ticksIndexBased);
+				ticks = tf.generateTicks(min, max, numTicks, true, !scale.hasTicksAtEnds(), ticksIndexBased);
 			}
-		} while (!updateLabelPositionsAndCheckGaps(length, hMargin, tMargin, min > max) && numTicks-- > 3);
+		} while (!updateLabelPositionsAndCheckGaps(length, hMargin, tMargin, min > max) && numTicks-- > MIN_TICKS);
 
 		updateMinorTicks(hMargin+length);
 		if (scale.hasTicksAtEnds() && ticks.size() > 1)
@@ -243,8 +244,7 @@ public class LinearScaleTicks2 implements ITicksProvider {
 
 	@Override
 	public int getHeadMargin() {
-		if (ticks == null || ticks.size() == 0 || maxWidth == 0
-				|| maxHeight == 0) {
+		if (ticks == null || ticks.size() == 0 || maxWidth == 0 || maxHeight == 0) {
 //			System.err.println("No ticks yet!");
 			final Dimension l = scale.calculateDimension(scale.getScaleRange().getLower());
 			if (scale.isHorizontal()) {
@@ -259,8 +259,7 @@ public class LinearScaleTicks2 implements ITicksProvider {
 
 	@Override
 	public int getTailMargin() {
-		if (ticks == null || ticks.size() == 0 || maxWidth == 0
-				|| maxHeight == 0) {
+		if (ticks == null || ticks.size() == 0 || maxWidth == 0 || maxHeight == 0) {
 //			System.err.println("No ticks yet!");
 			final Dimension h = scale.calculateDimension(scale.getScaleRange().getUpper());
 			if (scale.isHorizontal()) {
@@ -269,7 +268,6 @@ public class LinearScaleTicks2 implements ITicksProvider {
 			}
 //			System.err.println("calculate Y margin with " + r);
 			return h.height;
-//			System.err.println("No ticks yet!");
 		}
 		return scale.isHorizontal() ? (maxWidth + 1) / 2 : (maxHeight + 1) / 2;
 	}
@@ -365,13 +363,10 @@ public class LinearScaleTicks2 implements ITicksProvider {
 		minorPositions.clear();
 
 		final int jmax = ticks.size();
-		if (jmax == 0)
+		if (jmax <= 1)
 			return;
 
-		double majorStepInPixel = -1;
-		if (jmax > 1) {
-			majorStepInPixel  = (ticks.get(jmax-1).getPosition() - ticks.get(0).getPosition()) / (jmax - 1);
-		}
+		double majorStepInPixel = (ticks.get(jmax-1).getPosition() - ticks.get(0).getPosition()) / (jmax - 1);
 		if (majorStepInPixel == 0)
 			return;
 
@@ -400,14 +395,29 @@ public class LinearScaleTicks2 implements ITicksProvider {
 			}
 		} else {
 			double step = Math.abs(majorStepInPixel);
-			if (scale.isDateEnabled()) {
-				minorTicks = 6;
-			} else if (step / 5 >= scale.getMinorTickMarkStepHint()) {
-				minorTicks = 5;
-			} else if (step / 4 >= scale.getMinorTickMarkStepHint()) {
-				minorTicks = 4;
+			if (ticksIndexBased) {
+				minorTicks = (int) Math.abs(ticks.get(1).getValue() - ticks.get(0).getValue());
+				if (minorTicks == 1)
+					return;
+				if (minorTicks > step/5) {
+					if (step / 5 >= scale.getMinorTickMarkStepHint()) {
+						minorTicks = 5;
+					} else if (step / 4 >= scale.getMinorTickMarkStepHint()) {
+						minorTicks = 4;
+					} else {
+						minorTicks = 2;
+					}
+				}
 			} else {
-				minorTicks = 2;
+				if (scale.isDateEnabled()) {
+					minorTicks = 6;
+				} else if (step / 5 >= scale.getMinorTickMarkStepHint()) {
+					minorTicks = 5;
+				} else if (step / 4 >= scale.getMinorTickMarkStepHint()) {
+					minorTicks = 4;
+				} else {
+					minorTicks = 2;
+				}
 			}
 
 			double minorStepInPixel = majorStepInPixel / minorTicks;
