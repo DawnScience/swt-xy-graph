@@ -285,8 +285,7 @@ public class TickFactory {
 		return BigDecimal.valueOf(BigDecimal.valueOf(nf).scaleByPowerOfTen(expv).doubleValue());
 	}
 
-	private double determineNumTicks(double min, double max, int maxTicks,
-			boolean allowMinMaxOver, boolean isIndexBased) {
+	private double determineNumTicks(double min, double max, int maxTicks, boolean allowMinMaxOver) {
 		BigDecimal bMin = BigDecimal.valueOf(min);
 		BigDecimal bMax = BigDecimal.valueOf(max);
 		BigDecimal bRange = bMax.subtract(bMin);
@@ -349,33 +348,18 @@ public class TickFactory {
 		}
 		double tickUnit = isReversed ? -bUnit.doubleValue() : bUnit.doubleValue();
 
-		if (isIndexBased) {
-			switch (formatOfTicks) {
-			case plainMode:
-				tickFormat = "%g";
-				break;
-			case useExponent:
-				tickFormat = "%e";
-				break;
-			default:
-				tickFormat = null;
-				break;
-			}
+		/**
+		 * We get the labelled max and min for determining the precision which
+		 * the ticks should be shown at.
+		 */
+		int d = bUnit.scale() == bUnit.precision() ? -bUnit.scale() : bUnit.precision() - bUnit.scale() - 1;
+		int p = (int) Math.max(Math.floor(Math.log10(Math.abs(graphMin))), Math.floor(Math.log10(Math.abs(graphMax))));
+		// System.err.println("P: " + bUnit.precision() + ", S: " +
+		// bUnit.scale() + " => " + d + ", " + p);
+		if (p <= DIGITS_LOWER_LIMIT || p >= DIGITS_UPPER_LIMIT) {
+			createFormatString(Math.max(p - d, 0), true);
 		} else {
-			/**
-			 * We get the labelled max and min for determining the precision
-			 * which the ticks should be shown at.
-			 */
-			int d = bUnit.scale() == bUnit.precision() ? -bUnit.scale() : bUnit.precision() - bUnit.scale() - 1;
-			int p = (int) Math.max(Math.floor(Math.log10(Math.abs(graphMin))),
-					Math.floor(Math.log10(Math.abs(graphMax))));
-			// System.err.println("P: " + bUnit.precision() + ", S: " +
-			// bUnit.scale() + " => " + d + ", " + p);
-			if (p <= DIGITS_LOWER_LIMIT || p >= DIGITS_UPPER_LIMIT) {
-				createFormatString(Math.max(p - d, 0), true);
-			} else {
-				createFormatString(Math.max(-d, 0), false);
-			}
+			createFormatString(Math.max(-d, 0), false);
 		}
 		return tickUnit;
 	}
@@ -386,8 +370,6 @@ public class TickFactory {
 		}
 		return x >= min && x <= max;
 	}
-
-	private static final DecimalFormat INDEX_FORMAT = new DecimalFormat("#####0.###");
 
 	/**
 	 * Generate a list of ticks that span range given by min and max. The maximum number of
@@ -400,9 +382,9 @@ public class TickFactory {
 	 * @return a list of the ticks for the axis
 	 */
 	public List<Tick> generateTicks(double min, double max, int maxTicks,
-			boolean allowMinMaxOver, final boolean tight, final boolean isIndexBased) {
+			boolean allowMinMaxOver, final boolean tight) {
 		List<Tick> ticks = new ArrayList<Tick>();
-		double tickUnit = determineNumTicks(min, max, maxTicks, allowMinMaxOver, isIndexBased);
+		double tickUnit = determineNumTicks(min, max, maxTicks, allowMinMaxOver);
 		if (tickUnit == 0)
 			return ticks;
 
@@ -469,22 +451,101 @@ public class TickFactory {
 				t.setPosition((t.getValue() - lo) / range);
 			}
 		}
-		if (isIndexBased && formatOfTicks == TickFormatting.plainMode) {
-			double vmin = Double.POSITIVE_INFINITY;
-			double vmax = Double.NEGATIVE_INFINITY;
-			for (Tick t : ticks) {
-				double v = Math.abs(scale.getLabel(t.getValue()));
-				if (v < vmin && v > 0)
-					vmin = v;
-				if (v > vmax)
-					vmax = v;
-			}
-			if (Math.log10(vmin) >= DIGITS_LOWER_LIMIT || Math.log10(vmax) <= DIGITS_UPPER_LIMIT) {
-				// override labels
+
+		return ticks;
+	}
+
+	private static final DecimalFormat CUSTOM_FORMAT = new DecimalFormat("#####0.000");
+	private static final DecimalFormat INDEX_FORMAT = new DecimalFormat("0");
+
+	/**
+	 * Generate a list of ticks that span range given by min and max.
+	 * @param min
+	 * @param max
+	 * @param maxTicks 
+	 * @param tight if true then remove ticks outside range 
+	 * @return a list of the ticks for the axis
+	 */
+	public List<Tick> generateIndexBasedTicks(double min, double max, int maxTicks, boolean tight) {
+
+		isReversed = min > max;
+		if (isReversed) {
+			double t = max;
+			max = min;
+			min = t;
+		}
+
+		List<Tick> ticks = new ArrayList<Tick>();
+		double gRange = nicenum(BigDecimal.valueOf(max - min), false).doubleValue();
+		double tickUnit = Math.max(1, nicenum(BigDecimal.valueOf(gRange/(maxTicks - 1)), true).doubleValue());
+		tickUnit = Math.floor(tickUnit); // make integer
+		graphMin = Math.ceil(Math.ceil(min / tickUnit) * tickUnit);
+		graphMax = Math.floor(Math.floor(max / tickUnit) * tickUnit);
+		intervals = (int) Math.floor((graphMax - graphMin) / tickUnit);
+
+		switch (formatOfTicks) {
+		case autoMode:
+			tickFormat = "%g";
+			break;
+		case useExponent:
+			tickFormat = "%e";
+			break;
+		default:
+			tickFormat = null;
+			break;
+		}
+
+		for (int i = 0; i <= intervals; i++) {
+			double p = graphMin + i * tickUnit;
+			Tick newTick = new Tick();
+			newTick.setValue(p);
+			newTick.setText(getTickString(p));
+			ticks.add(newTick);
+		}
+
+		int imax = ticks.size();
+		double range = imax > 1 ? max - min : 1;
+		for (Tick t : ticks) {
+			t.setPosition((t.getValue() - min) / range);
+		}
+		if (isReversed) {
+			Collections.reverse(ticks);
+		}
+
+		if (formatOfTicks == TickFormatting.autoMode) { // override labels
+			if (scale.areLabelCustomised()) {
+				double vmin = Double.POSITIVE_INFINITY;
+				double vmax = Double.NEGATIVE_INFINITY;
+				boolean allInts = true;
 				for (Tick t : ticks) {
-					double v = scale.getLabel(t.getValue());
-					if (!Double.isNaN(v))
-						t.setText(INDEX_FORMAT.format(v));
+					double v = Math.abs(scale.getLabel(t.getValue()));
+					if (Double.isNaN(v))
+						continue;
+					if (allInts) {
+						allInts = Math.abs(v - Math.floor(v)) == 0;
+					}
+					v = Math.abs(v);
+					if (v < vmin && v > 0)
+						vmin = v;
+					if (v > vmax)
+						vmax = v;
+				}
+				if (allInts) {
+					for (Tick t : ticks) {
+						double v = scale.getLabel(t.getValue());
+						if (!Double.isNaN(v))
+							t.setText(INDEX_FORMAT.format(v));
+					}
+				} else if (Math.log10(vmin) >= DIGITS_LOWER_LIMIT || Math.log10(vmax) <= DIGITS_UPPER_LIMIT) {
+					for (Tick t : ticks) {
+						double v = scale.getLabel(t.getValue());
+						if (!Double.isNaN(v))
+							t.setText(CUSTOM_FORMAT.format(v));
+					}
+				}
+			} else {
+				for (Tick t : ticks) {
+					t.setText(INDEX_FORMAT.format(t.getValue()));
 				}
 			}
 		}
