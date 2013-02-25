@@ -72,4 +72,9 @@ public interface IScaleProvider {
 	 * @return true if ticks need to based on axis dataset indexes
 	 */
 	public boolean isTicksIndexBased();
+
+	/**
+	 * @return true if axis labels are customised
+	 */
+	public boolean areLabelCustomised();
 }

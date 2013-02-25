@@ -391,4 +391,9 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 	public boolean isTicksIndexBased() {
 		return ticksIndexBased;
 	}
+
+	@Override
+	public boolean areLabelCustomised() {
+		return false;
+	}
 }
