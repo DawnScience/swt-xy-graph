@@ -320,36 +320,39 @@ public class LinearScaleTicks2 implements ITicksProvider {
 		}
 		length += hMargin + tMargin; // re-expand length (so labels can flow into margins)
 		if (scale.isHorizontal()) {
-			double last = 0;
+			final int space = (int) (0.67 * scale.calculateDimension(" ").width);
+			int last = 0;
 			for (Tick t : ticks) {
 				final Dimension d = scale.calculateDimension(t.getText());
 				int w = d.width;
-				double p = t.getPosition() - w * 0.5;
+				int p = (int) Math.ceil(t.getPosition() - w * 0.5);
 				if (p < 0) {
 					p = 0;
 				} else if (p + w >= length) {
 					p = length - 1 - w;
 				}
+				t.setTextPosition(p);
 				if (last > p) {
-					if (ticks.indexOf(t) == (imax - 1)) {
-						t.setTextPosition((int) Math.ceil(p));
+					if (ticks.indexOf(t) == (imax - 1) || imax > MIN_TICKS) {
+						return false;
+					} else {
+						t.setText("");
 					}
-					return false;
+				} else {
+					last = p + w + space;
 				}
-				last = p + w;
-				t.setTextPosition((int) Math.ceil(p));
 			}
 		} else {
 			for (Tick t : ticks) {
 				final Dimension d = scale.calculateDimension(t.getText());
 				int h = d.height;
-				double p = length - 1 - t.getPosition() - h * 0.5;
+				int p = (int) Math.ceil(length - 1 - t.getPosition() - h * 0.5);
 				if (p < 0) {
 					p = 0;
 				} else if (p + h >= length) {
 					p = length - 1 - h;
 				}
-				t.setTextPosition((int) Math.ceil(p));
+				t.setTextPosition(p);
 			}
 		}
 
