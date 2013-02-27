@@ -219,7 +219,7 @@ public abstract class AbstractScale extends Figure{
     private boolean userDefinedFormat = false;
 
 
-	protected  boolean forceRange;
+	protected boolean forceRange;
 
 	/**
      * Gets the state indicating if log scale is enabled.

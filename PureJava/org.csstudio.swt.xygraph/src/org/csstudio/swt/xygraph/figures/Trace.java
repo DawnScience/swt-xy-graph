@@ -721,7 +721,7 @@ public class Trace extends Figure implements IDataProviderListener,
                                                                 // is ascending sorted on X axis. 
                                                                 if (!predpPos.equals(plPolyline.getLastPoint()) && predpPos.x != plPolyline.getLastPoint().x) {
                                                                         // The line for this trace is not continuous.
-                                                                        // Draw a polylin at this point, and start to reconstruct a new
+                                                                        // Draw a polyline at this point, and start to reconstruct a new
                                                                         // polyline for the rest of the trace.
                                                                         
                                                                         if (lastInRegion != null) {

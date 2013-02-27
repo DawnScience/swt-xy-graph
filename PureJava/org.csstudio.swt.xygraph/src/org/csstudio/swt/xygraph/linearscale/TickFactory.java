@@ -463,11 +463,10 @@ public class TickFactory {
 	 * @param min
 	 * @param max
 	 * @param maxTicks 
-	 * @param tight if true then remove ticks outside range 
+	 * @param tight if true then remove ticks outside range  (ignored)
 	 * @return a list of the ticks for the axis
 	 */
 	public List<Tick> generateIndexBasedTicks(double min, double max, int maxTicks, boolean tight) {
-
 		isReversed = min > max;
 		if (isReversed) {
 			double t = max;
