@@ -477,11 +477,16 @@ public class TickFactory {
 
 		List<Tick> ticks = new ArrayList<Tick>();
 		double gRange = nicenum(BigDecimal.valueOf(max - min), false).doubleValue();
-		double tickUnit = Math.max(1, nicenum(BigDecimal.valueOf(gRange/(maxTicks - 1)), true).doubleValue());
-		tickUnit = Math.floor(tickUnit); // make integer
-		graphMin = Math.ceil(Math.ceil(min / tickUnit) * tickUnit);
-		graphMax = Math.floor(Math.floor(max / tickUnit) * tickUnit);
-		intervals = (int) Math.floor((graphMax - graphMin) / tickUnit);
+		double tickUnit = 1;
+		intervals = 0;
+		int it = maxTicks - 1;
+		while (intervals < 1) {
+			tickUnit = Math.max(1, nicenum(BigDecimal.valueOf(gRange / it++), true).doubleValue());
+			tickUnit = Math.floor(tickUnit); // make integer
+			graphMin = Math.ceil(Math.ceil(min / tickUnit) * tickUnit);
+			graphMax = Math.floor(Math.floor(max / tickUnit) * tickUnit);
+			intervals = (int) Math.floor((graphMax - graphMin) / tickUnit);
+		}
 
 		switch (formatOfTicks) {
 		case autoMode:
