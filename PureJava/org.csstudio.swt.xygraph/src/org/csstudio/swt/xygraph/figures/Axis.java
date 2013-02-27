@@ -300,10 +300,15 @@ public class Axis extends LinearScale{
         if (range == null) return false;
 
         // Update axis
-        boolean ticksAtEnd = hasTicksAtEnds();
-		setRange(range.getLower(), range.getUpper());
-		if (ticksAtEnd)
-			setTicksAtEnds(true); // override the implicit setting to false in setRange
+        Range old = getRange();
+        if (range.equals(old)) {
+        	return false;
+        }
+
+        // by-pass overridden method as it sets ticks to false
+        super.setRange(range.getLower(), range.getUpper());
+		fireAxisRangeChanged(old, range);
+		setTicksAtEnds(true);
 		repaint();
 		return true;
 	}
