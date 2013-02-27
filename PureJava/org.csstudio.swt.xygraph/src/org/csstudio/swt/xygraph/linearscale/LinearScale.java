@@ -189,6 +189,9 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 		updateTick();
 		//coerce to range		
 		//value = value < min ? min : (value > max ? max : value);
+		Range r = getLocalRange();
+		double min = r.getLower();
+		double max = r.getUpper();
 		int pixelsToStart =0;
 		if(logScaleEnabled){
 			if(value <=0)
@@ -236,7 +239,10 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
         	else
         		pixelsToStart = length + bounds.y - position;
         }
-        	
+
+		Range r = getLocalRange();
+		double min = r.getLower();
+		double max = r.getUpper();
         if(isLogScaleEnabled())
         	value = Math.pow(10, 
         			(pixelsToStart - margin)*(Math.log10(max)-Math.log10(min))/(length - 2*margin) + Math.log10(min));
@@ -340,6 +346,12 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 	}
 	
 
+	private Range localRange = null;
+
+	private Range getLocalRange() {
+		return localRange == null ? super.getRange() : localRange;
+	}
+
 	/**
 	 * Updates the tick, recalculate all parameters, such as margin, length...
 	 */
@@ -349,10 +361,10 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 			length = isHorizontal() ? getClientArea().width : getClientArea().height;
 			if (length > 2 * getMargin()) {
 				Range r = tickLabels.update(length - 2 * getMargin());
-				if (r != null && !forceRange) {
-					min = r.getLower();
-					max = r.getUpper();
-					range = r;
+				if (r != null && !r.equals(range) && !forceRange) {
+					localRange = r;
+				} else {
+					localRange = null;
 				}
 				// getMargin();
 			}
