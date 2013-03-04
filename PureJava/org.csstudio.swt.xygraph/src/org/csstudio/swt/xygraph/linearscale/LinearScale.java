@@ -348,7 +348,10 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 
 	private Range localRange = null;
 
-	private Range getLocalRange() {
+	/**
+	 * @return range used for axis (not range given by data)
+	 */
+	public Range getLocalRange() {
 		return localRange == null ? super.getRange() : localRange;
 	}
 

@@ -355,6 +355,7 @@ public class AxisConfigPage {
 			primaryButton.setEnabled(false);
 		logButton.setSelection(axis.isLogScaleEnabled());
 		autoScaleButton.setSelection(axis.isAutoScale());
+		Range r = axis.getLocalRange();
 		if(autoScaleButton.getSelection()){
 			maxOrAutoScaleLabel.setText("Auto Scale Threshold(%)");
 			maxOrAutoScaleThrText.setRange(new Range(0, 100));
@@ -366,12 +367,12 @@ public class AxisConfigPage {
 			maxOrAutoScaleLabel.setText("Maximum");
 			maxOrAutoScaleThrText.setRange(null);
 			maxOrAutoScaleThrText.getText().setText(
-					String.valueOf(axis.getRange().getUpper()));
+					String.valueOf(r.getUpper()));
 			minLabel.setVisible(true);
 			minText.getText().setVisible(true);
 		}
 		
-		minText.getText().setText(String.valueOf(axis.getRange().getLower()));
+		minText.getText().setText(String.valueOf(r.getLower()));
 		dateEnabledButton.setSelection(axis.isDateEnabled());		
 		autoFormat.setSelection(axis.isAutoFormat());
 		formatLabel.setText(dateEnabledButton.getSelection()? 
