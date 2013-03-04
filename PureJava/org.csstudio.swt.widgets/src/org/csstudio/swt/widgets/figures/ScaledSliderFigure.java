@@ -308,15 +308,20 @@ public class ScaledSliderFigure extends AbstractLinearMarkedFigure {
 		manualSetValue(getValue() + pageIncrement);
 		fireManualValueChange(getValue());
 	}
+	
+	private boolean drawFocus = true;
+	public void setDrawFocus(boolean drawFocus) {
+		this.drawFocus = drawFocus;
+	}
 
 	@Override
 	protected void paintClientArea(Graphics graphics) {
 		super.paintClientArea(graphics);
-		if(hasFocus()){
+		if(hasFocus() && drawFocus){
 			graphics.setForegroundColor(ColorConstants.black);
 			graphics.setBackgroundColor(ColorConstants.white);
 
-			Rectangle area = getClientArea();					
+			Rectangle area = getClientArea();			
 			graphics.drawFocus(area.x, area.y, area.width-1, area.height-1);
 		}
 		if(!isEnabled()) {
