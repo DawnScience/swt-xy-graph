@@ -50,12 +50,18 @@ public class LinearScaleTickMarks extends Figure {
         int width = d.width;
         int height = d.height;
 
-        if (scale.isHorizontal()) {
-            drawXTickMarks(graphics, ticks, scale.getTickLabelSide(), width, height);
-        } else {
-            drawYTickMarks(graphics, ticks, scale.getTickLabelSide(), width, height);
+        try {
+        	graphics.pushState();
+        	graphics.setAlpha(100);
+        	if (scale.isHorizontal()) {
+        		drawXTickMarks(graphics, ticks, scale.getTickLabelSide(), width, height);
+        	} else {
+        		drawYTickMarks(graphics, ticks, scale.getTickLabelSide(), width, height);
+        	}
+        } finally {
+        	graphics.popState();
         }
-   };
+  };
 
     /**
      * Draw the X tick marks.
