@@ -267,8 +267,6 @@ public class TickFactory {
 					nf = 1;
 				else if (f < 2.25)
 					nf = 2;
-				else if (f < 3.25)
-					nf = 2.5;
 				else if (f < 7.5)
 					nf = 5;
 				else
