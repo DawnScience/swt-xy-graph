@@ -51,6 +51,7 @@ public class ColorMapRamp extends Figure {
 		scale.setRange(min, max);
 		scale.setTicksAtEnds(false);
 		scale.setMajorTickMarkStepHint(50);
+		scale.setFont(getFont());
 		colorMapFigure = new ColorMapFigure();
 		add(colorMapFigure);
 		add(scale);	
@@ -63,7 +64,10 @@ public class ColorMapRamp extends Figure {
 	
 	
 	@Override
-	protected void layout() {			
+	protected void layout() {
+		if (scale.getFont()==null) return;
+		if (getChildren()==null || getChildren().isEmpty()) return;
+		
 		Rectangle clientArea = getClientArea();
 		Dimension scaleSize = scale.getPreferredSize(clientArea.width, clientArea.height);		
 		scale.setBounds(new Rectangle(clientArea.x + clientArea.width - scaleSize.width, clientArea.y,
@@ -148,15 +152,6 @@ public class ColorMapRamp extends Figure {
 	 */
 	public void setImageData(ImageData imageData) {
 		this.imageData = imageData;
-	}
-
-
-	public void dispose() {
-		//TODO Anything else needed to dispose?
-		removeAll();
-	}
-	
-	
-	
+	}	
 	
 }
