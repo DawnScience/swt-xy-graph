@@ -88,6 +88,8 @@ public class ColorMapRamp extends Figure {
 	 * @param min the min to set
 	 */
 	public final void setMin(double min) {
+		if (Double.isInfinite(min)) return;
+		if (Double.isNaN(min))      return;
 		this.min = min;
 		scale.setRange(min, max);
 		updateMapData();
@@ -98,6 +100,8 @@ public class ColorMapRamp extends Figure {
 	 * @param max the max to set
 	 */
 	public final void setMax(double max) {
+		if (Double.isInfinite(max)) return;
+		if (Double.isNaN(max))      return;
 		this.max = max;
 		scale.setRange(min, max);
 		updateMapData();
@@ -144,6 +148,12 @@ public class ColorMapRamp extends Figure {
 	 */
 	public void setImageData(ImageData imageData) {
 		this.imageData = imageData;
+	}
+
+
+	public void dispose() {
+		//TODO Anything else needed to dispose?
+		removeAll();
 	}
 	
 	
