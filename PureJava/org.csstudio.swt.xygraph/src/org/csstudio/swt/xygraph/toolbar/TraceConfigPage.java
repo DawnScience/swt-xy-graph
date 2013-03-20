@@ -424,9 +424,11 @@ public class TraceConfigPage {
 		} catch (Throwable ignored) {
 			// Nowt
 		}
+		String indexStr="";
 		if (matcher.matches()) {
 			frag  = matcher.group(1);
-			start = Integer.parseInt(matcher.group(2));
+			indexStr = matcher.group(2);
+			start = Integer.parseInt(indexStr);
 		}
 		
 		if (conjunctive!=null) {
@@ -437,9 +439,9 @@ public class TraceConfigPage {
 		final IContainer parent = file.getParent();
 		final IFile newFile;
 		if (parent instanceof IFolder) {
-			newFile = ((IFolder)parent).getFile(frag+"."+extension);
+			newFile = ((IFolder)parent).getFile(frag+indexStr+"."+extension);
 		} else if (parent instanceof IProject) {
-			newFile = ((IProject)parent).getFile(frag+"."+extension);
+			newFile = ((IProject)parent).getFile(frag+indexStr+"."+extension);
 		} else {
 			newFile = null;
 		}
