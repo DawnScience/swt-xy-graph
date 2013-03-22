@@ -409,7 +409,8 @@ public class LinearScaleTicks2 implements ITicksProvider {
 					} else {
 						minorTicks = 2;
 					}
-				}
+				} else if (minorTicks > 5)
+					minorTicks = 5;
 			} else {
 				if (scale.isDateEnabled()) {
 					minorTicks = 6;
