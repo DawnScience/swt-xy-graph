@@ -152,6 +152,11 @@ public class ColorMapRamp extends Figure {
 	 */
 	public void setImageData(ImageData imageData) {
 		this.imageData = imageData;
+	}
+
+
+	public void setLog10(boolean log) {
+		this.scale.setLogScale(log);
 	}	
 	
 }
