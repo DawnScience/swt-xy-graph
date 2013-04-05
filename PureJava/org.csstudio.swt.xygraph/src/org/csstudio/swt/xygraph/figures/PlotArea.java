@@ -193,13 +193,17 @@ public class PlotArea extends Figure {
 			case RUBBERBAND_ZOOM:
 			case HORIZONTAL_ZOOM:
 			case VERTICAL_ZOOM:
-				graphics.setXORMode(true); 
+				// Instead of XOR which does not always work,
+				// we draw two slighly staggered boxes, one in white,
+				// one in black.
 				graphics.setLineStyle(SWTConstants.LINE_DOT);
 				graphics.setLineWidth(1);
-				graphics.setForegroundColor(ColorConstants.white);
+				graphics.setLineDash(new int[]{1,1});
+				graphics.setForegroundColor(ColorConstants.black);
 				graphics.drawRectangle(start.x, start.y, end.x - start.x, end.y - start.y);
-				graphics.setXORMode(false); 
-				break;
+				
+				graphics.setForegroundColor(ColorConstants.white);
+				graphics.drawRectangle(start.x+1, start.y+1, end.x - start.x, end.y - start.y);
 
 			default:
 				break;
