@@ -483,6 +483,9 @@ public class TickFactory {
 			graphMin = Math.ceil(Math.ceil(min / tickUnit) * tickUnit);
 			graphMax = Math.floor(Math.floor(max / tickUnit) * tickUnit);
 			intervals = (int) Math.floor((graphMax - graphMin) / tickUnit);
+			if (tickUnit == 1) {
+				break;
+			}
 		}
 
 		switch (formatOfTicks) {
@@ -515,7 +518,7 @@ public class TickFactory {
 		}
 
 		if (formatOfTicks == TickFormatting.autoMode) { // override labels
-			if (scale.areLabelCustomised()) {
+			if (scale != null && scale.areLabelCustomised()) {
 				double vmin = Double.POSITIVE_INFINITY;
 				double vmax = Double.NEGATIVE_INFINITY;
 				boolean allInts = true;
