@@ -414,11 +414,6 @@ public class TickFactory {
 				Tick newTick = new Tick();
 				newTick.setValue(graphMin);
 				newTick.setText(getTickString(graphMin));
-				if (isReversed) {
-					newTick.setPosition(1);
-				} else {
-					newTick.setPosition(0);
-				}
 				ticks.add(newTick);
 			}
 			if (imax == 1) {
