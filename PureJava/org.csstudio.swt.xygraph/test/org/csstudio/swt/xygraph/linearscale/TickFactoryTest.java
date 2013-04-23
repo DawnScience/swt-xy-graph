@@ -264,6 +264,46 @@ public class TickFactoryTest {
 				"1.2345678901234560e+20", "1.2345678901234568e+20");
 	}
 
+	@Test
+	public void testIndexTicks() {
+		testGeneratedIndexBasedTicks(true, 0, 1, 4, "0", "1");
+		testGeneratedIndexBasedTicks(false, 0, 1, 4, "0", "1");
+
+		testGeneratedIndexBasedTicks(true, 0.1, 1, 4, "1");
+		testGeneratedIndexBasedTicks(false, 0.1, 1, 4, "1");
+
+		testGeneratedIndexBasedTicks(true, 0.1, 0.9, 4);
+		testGeneratedIndexBasedTicks(false, 0.1, 0.9, 4);
+	}
+
+	@Test
+	public void testLogTicks() {
+		testGeneratedLogTicks(true, 1, 2, 4, "1");
+		testGeneratedLogTicks(false, 1, 2, 4, "1", "10");
+
+		testGeneratedLogTicks(true, 1, 20, 4, "1", "10");
+		testGeneratedLogTicks(false, 1, 20, 4, "1", "10", "100");
+
+		testGeneratedLogTicks(true, 1e-3, 2e2, 7, "0.001", "0.010", "0.100", "1.000", "10.000", "100.000");
+		testGeneratedLogTicks(false, 1e-3, 2e2, 7, "0.001", "0.010", "0.100", "1.000", "10.000", "100.000", "1000.000");
+
+		testGeneratedLogTicks(true, 1e-3, 2e2, 3, "0.001", "1.000");
+		testGeneratedLogTicks(false, 1e-3, 2e2, 3, "0.001", "1.000", "1000.000");
+
+		testGeneratedLogTicks(true, 1e-4, 2e2, 3, "1e-04", "1e-01", "1e+02");
+		testGeneratedLogTicks(false, 1e-4, 2e2, 3, "1e-04", "1e-01", "1e+02");
+
+		testGeneratedLogTicks(true, 1e-5, 2e4, 3, "1e-05", "1e+00");
+		testGeneratedLogTicks(false, 1e-5, 2e4, 3, "1e-05", "1e+00", "1e+05");
+
+		testGeneratedLogTicks(true, 2.3e-5, 4.5e-5, 4, "1e-05");
+		testGeneratedLogTicks(false, 2.3e-5, 4.5e-5, 4, "1e-05", "1e-04");
+
+		testGeneratedLogTicks(true, 2.3e5, 4.5e5, 4, "1e+05");
+		testGeneratedLogTicks(false, 2.3e5, 4.5e5, 4, "1e+05", "1e+06");
+	}
+
+
 	private String scale(String s, int p) {
 		if (p == 0)
 			return s;
@@ -320,6 +360,38 @@ public class TickFactoryTest {
 			t = tf.generateTicks(-upper, -lower, nTicks, true, tight);
 			for (int i = 0; i < out.length; i++)
 				values[i] = negate(out[out.length - 1 - i]);
+			checkTickValues(t, values);
+		}
+	}
+
+	private void testGeneratedLogTicks(boolean tight, double lower, double upper, int nTicks, final String... out) {
+		TickFactory tf = new TickFactory(TickFormatting.autoMode, null);
+		String[] values = new String[out.length];
+		List<Tick> t;
+
+		t = tf.generateLogTicks(lower, upper, nTicks, true, tight);
+		checkTickValues(t, out);
+
+		if (upper != lower) {
+			t = tf.generateLogTicks(upper, lower, nTicks, true, tight);
+			for (int i = 0; i < out.length; i++)
+				values[i] = out[out.length - 1 - i];
+			checkTickValues(t, values);
+		}
+	}
+
+	private void testGeneratedIndexBasedTicks(boolean tight, double lower, double upper, int nTicks, final String... out) {
+		TickFactory tf = new TickFactory(TickFormatting.autoMode, null);
+		String[] values = new String[out.length];
+		List<Tick> t;
+
+		t = tf.generateIndexBasedTicks(lower, upper, nTicks, tight);
+		checkTickValues(t, out);
+
+		if (upper != lower) {
+			t = tf.generateIndexBasedTicks(upper, lower, nTicks, tight);
+			for (int i = 0; i < out.length; i++)
+				values[i] = out[out.length - 1 - i];
 			checkTickValues(t, values);
 		}
 	}

@@ -554,46 +554,64 @@ public class TickFactory {
 
 	private double determineNumLogTicks(double min, double max, int maxTicks,
 			boolean allowMinMaxOver) {
-		final boolean isReverse = min > max;
-		final int loDecade; // lowest decade (or power of ten)
-		final int hiDecade;
-		if (isReverse) {
-			loDecade = (int) Math.floor(Math.log10(max));
-			hiDecade = (int) Math.ceil(Math.log10(min));
-		} else {
-			loDecade = (int) Math.floor(Math.log10(min));
-			hiDecade = (int) Math.ceil(Math.log10(max));
+		isReversed = min > max;
+		if (isReversed) {
+			double t = min;
+			min = max;
+			max = t;
 		}
-	
+
+		int loDecade = (int) Math.floor(Math.log10(min)); // lowest decade (or power of ten)
+		int hiDecade = (int) Math.ceil(Math.log10(max));
+
 		int decades = hiDecade - loDecade;
 
-		int unit = 0;
-		int n;
+		int unit;
+		int n = maxTicks-1;
 		do {
-			n = decades/++unit;
-		} while (n > maxTicks);	
+			unit = decades/n--;
+		} while (unit == 0);
 
-		double tickUnit = isReverse ? Math.pow(10, -unit) : Math.pow(10, unit);
 		if (allowMinMaxOver) {
 			graphMin = Math.pow(10, loDecade);
-			graphMax = Math.pow(10, hiDecade);
+			graphMax = Math.pow(10, (n+1)*unit + loDecade);
 		} else {
 			graphMin = min;
 			graphMax = max;
 		}
-		if (isReverse) {
+
+		intervals = (int) Math.floor(Math.log10(graphMax/graphMin)/unit);
+
+		if (isReversed) {
 			double t = graphMin;
 			graphMin = graphMax;
 			graphMax = t;
 		}
-	
-		createFormatString((int) Math.max(-Math.floor(loDecade), 0), false);
+
+		double tickUnit = isReversed ? Math.pow(10, -unit) : Math.pow(10, unit);
+
+		if (loDecade < -3 || hiDecade > 3 || decades > 6) {
+			createFormatString(0, true);
+			
+		} else {
+			createFormatString(Math.max(-loDecade, 0), false);
+		}
 		return tickUnit;
 	}
 
+	private boolean inRangeLog(double x, double min, double max) {
+		if (isReversed) {
+			max -= BREL_ERROR.doubleValue();
+			return x >= max  && x <= min;
+		}
+		min -= BREL_ERROR.doubleValue();
+		return x >= min && x <= max;
+	}
+
+
 	/**
-	 * @param min
-	 * @param max
+	 * @param min (must be >0)
+	 * @param max (must be >0)
 	 * @param maxTicks
 	 * @param allowMinMaxOver allow min/maximum overwrite
 	 * @param tight if true then remove ticks outside range 
@@ -601,59 +619,91 @@ public class TickFactory {
 	 */
 	public List<Tick> generateLogTicks(double min, double max, int maxTicks,
 			boolean allowMinMaxOver, final boolean tight) {
+		if (min <= 0 || max <= 0) {
+			throw new IllegalArgumentException("Non-positive minimum and maximum values are not allowed");
+		}
+
 		List<Tick> ticks = new ArrayList<Tick>();
 		double tickUnit = determineNumLogTicks(min, max, maxTicks, allowMinMaxOver);
+
 		double p = graphMin;
-		if (tickUnit > 1) {
-			final double pmax = graphMax * Math.sqrt(tickUnit);
-			while (p < pmax) {
-				if (!tight || (p >= min && p <= max))
-				if (allowMinMaxOver || p <= max) {
-					Tick newTick = new Tick();
-					newTick.setValue(p);
-					newTick.setText(getTickString(p));
-					ticks.add(newTick);
-				}
-				double newTickValue = p * tickUnit;
-				if (p == newTickValue)
-					break;
-				p = newTickValue;
+		for (int i = 0; i <= intervals; i++) {
+			boolean r = inRangeLog(p, min, max);
+			if (!tight || r) {
+				Tick newTick = new Tick();
+				newTick.setValue(p);
+				newTick.setText(getTickString(p));
+				ticks.add(newTick);
 			}
-			final int imax = ticks.size();
-			if (imax == 1) {
-				ticks.get(0).setPosition(0.5);
-			} else if (imax > 1) {
-				double lo = Math.log(tight ? min : ticks.get(0).getValue());
-				double hi = Math.log(tight ? max : ticks.get(imax - 1).getValue());
-				double range = hi - lo;
-				for (Tick t : ticks) {
-					t.setPosition((Math.log(t.getValue()) - lo) / range);
+			p *= tickUnit;
+		}
+
+		int imax = ticks.size();
+		if (imax < intervals) {
+			boolean r = inRangeLog(p, min, max);
+			if (!tight || r) {
+				Tick newTick = new Tick();
+				newTick.setValue(p);
+				newTick.setText(getTickString(p));
+				ticks.add(newTick);
+				imax++;
+			}
+		}
+
+		if (imax > 1) {
+			if (!tight && allowMinMaxOver) {
+				Tick t = ticks.get(imax - 1);
+				if (!isReversed && t.getValue() < max) { // last is >= max
+					t.setValue(graphMax);
+					t.setText(getTickString(graphMax));
 				}
+			}
+		} else if (maxTicks > 1) {
+			if (imax == 0) {
+				imax++;
+				Tick newTick = new Tick();
+				if (isReversed) {
+					newTick.setValue(graphMax);
+					newTick.setText(getTickString(graphMax));
+				} else {
+					newTick.setValue(graphMin);
+					newTick.setText(getTickString(graphMin));
+				}
+				ticks.add(newTick);
+			}
+			if (imax == 1) {
+				if (!tight && allowMinMaxOver) {
+					Tick t = ticks.get(0);
+					Tick newTick = new Tick();
+					if (t.getText().equals(getTickString(graphMax))) {
+						double value = graphMin;
+						newTick.setValue(value);
+						newTick.setText(getTickString(value));
+						ticks.add(0, newTick);
+					} else {
+						double value = graphMax;
+						newTick.setValue(value);
+						newTick.setText(getTickString(value));
+						ticks.add(newTick);
+					}
+					imax++;
+				}
+			}
+		}
+
+		if (tickUnit > 1) {
+			double lo = Math.log(tight ? min : ticks.get(0).getValue());
+			double hi = Math.log(tight ? max : ticks.get(imax - 1).getValue());
+			double range = hi - lo;
+			for (Tick t : ticks) {
+				t.setPosition((Math.log(t.getValue()) - lo) / range);
 			}
 		} else {
-			final double pmin = graphMax * Math.sqrt(tickUnit);
-			while (p > pmin) {
-				if (!tight || (p >= max && p <= min))
-				if (allowMinMaxOver || p <= max) {
-					Tick newTick = new Tick();
-					newTick.setValue(p);
-					newTick.setText(getTickString(p));
-				}
-				double newTickValue = p * tickUnit;
-				if (p == newTickValue)
-					break;
-				p = newTickValue;
-			}
-			final int imax = ticks.size();
-			if (imax == 1) {
-				ticks.get(0).setPosition(0.5);
-			} else if (imax > 1) {
-				double lo = Math.log(tight ? max : ticks.get(0).getValue());
-				double hi = Math.log(tight ? min : ticks.get(imax - 1).getValue());
-				double range = hi - lo;
-				for (Tick t : ticks) {
-					t.setPosition(1 - (Math.log(t.getValue()) - lo) / range);
-				}
+			double lo = Math.log(tight ? max : ticks.get(0).getValue());
+			double hi = Math.log(tight ? min : ticks.get(imax - 1).getValue());
+			double range = hi - lo;
+			for (Tick t : ticks) {
+				t.setPosition(1 - (Math.log(t.getValue()) - lo) / range);
 			}
 		}
 		return ticks;
