@@ -571,6 +571,7 @@ public class Trace extends Figure implements IDataProviderListener,
                                 
                                 for (int i = startIndex; i <= endIndex; i++) {
                                         ISample dp = traceDataProvider.getSample(i);
+                                        if (dp==null) break;
                                         final boolean dpInXRange = xAxis.getRange().inRange(
                                                         dp.getXValue());
                                         // Mark 'NaN' samples on X axis
