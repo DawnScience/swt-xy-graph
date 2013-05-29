@@ -10,6 +10,7 @@ package org.csstudio.swt.xygraph.toolbar;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.csstudio.swt.xygraph.Activator;
 import org.csstudio.swt.xygraph.figures.Annotation;
 import org.csstudio.swt.xygraph.figures.Axis;
 import org.csstudio.swt.xygraph.figures.Trace;
@@ -18,6 +19,7 @@ import org.csstudio.swt.xygraph.undo.XYGraphConfigCommand;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -73,6 +75,8 @@ public class XYGraphConfigDialog extends Dialog {
 	protected Control createDialogArea(Composite parent) {
 		return createDialogArea(parent, true);
 	}
+	
+	private static final int MAX_TRACE_COUNT = 50; // Otherwise run out of widgets.
 	
 	protected Control createDialogArea(Composite parent, boolean enableAxisRanges) {
 		
@@ -140,33 +144,47 @@ public class XYGraphConfigDialog extends Dialog {
 		    traceConfigTab.setToolTipText("Configure Traces Settings");
 		    traceConfigTab.setControl(traceTabComposite);
 		    
+		    final CLabel error = new CLabel(traceTabComposite, SWT.NONE);
+		    error.setText("There are too many traces to edit");
+		    error.setToolTipText("Currently only the first 50 line traces can have their properties manually edited.\nThis is due to a limitation with the current widget design on the configure form.\nPlease contact your support representative to have this issue resolved.");
+		    error.setLayoutData(new GridData(SWT.FILL, SWT.FILL,true, false));
+		    error.setImage(Activator.getImageDescriptor("icons/error.png").createImage());
+		    error.setVisible(xyGraph.getPlotArea().getTraceList().size()>MAX_TRACE_COUNT);
+		    
 	    	Group traceSelectGroup = new Group(traceTabComposite, SWT.NONE);
-	    	traceSelectGroup.setLayoutData(new GridData(
-	    			SWT.FILL, SWT.FILL,true, false));
+	    	traceSelectGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL,true, false));
 	    	traceSelectGroup.setText("Select Trace");
 	    	traceSelectGroup.setLayout(new GridLayout(1, false));    	        
 	    	this.traceCombo = new Combo(traceSelectGroup, SWT.DROP_DOWN);
 	    	traceCombo.setLayoutData(new GridData(SWT.FILL, 0, true, false));
-		    for(Trace trace : xyGraph.getPlotArea().getTraceList())
+		    int count = 0;
+	    	for(Trace trace : xyGraph.getPlotArea().getTraceList()) {
+		    	count++;
+	    		if (count>MAX_TRACE_COUNT) break; // Sorry you just cannot edit more unless 
+                                                  // we change this configuration.
 		        traceCombo.add(trace.getName());	   
+		    }
 		    traceCombo.select(0);
 	    	
 		    final Composite traceConfigComposite = new Composite(traceTabComposite, SWT.NONE);
 		    traceConfigComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		    final StackLayout traceStackLayout = new StackLayout();
-	    	traceConfigComposite.setLayout(traceStackLayout);        	
-		    for(Trace trace : xyGraph.getPlotArea().getTraceList()){
-		        Group traceConfigGroup = new Group(traceConfigComposite, SWT.NONE); 	        	
-		        traceConfigGroup.setText("Change Settings");
-		        traceConfigGroup.setLayoutData(new GridData(
-	        			SWT.FILL, SWT.FILL,true, true));
-		        TraceConfigPage traceConfigPage = 
-		        	new TraceConfigPage(xyGraph, trace);
-		        traceConfigPageList.add(traceConfigPage);
-		        traceConfigPage.createPage(traceConfigGroup);   	        
-		    } 	        
-		        traceStackLayout.topControl = traceConfigPageList.get(0).getComposite();
-		        traceCombo.addSelectionListener(new SelectionAdapter(){
+	    	traceConfigComposite.setLayout(traceStackLayout);  
+	    	
+	    	count = 0;
+	    	for(Trace trace : xyGraph.getPlotArea().getTraceList()){
+	    		count++;
+	    		if (count>MAX_TRACE_COUNT) break; // Sorry you just cannot edit more unless 
+	    		                                  // we change this configuration.
+	    		Group traceConfigGroup = new Group(traceConfigComposite, SWT.NONE); 	        	
+	    		traceConfigGroup.setText("Change Settings");
+	    		traceConfigGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL,true, true));
+	    		TraceConfigPage traceConfigPage =  new TraceConfigPage(xyGraph, trace);
+	    		traceConfigPageList.add(traceConfigPage);
+	    		traceConfigPage.createPage(traceConfigGroup);   	        
+	    	} 	        
+	    	traceStackLayout.topControl = traceConfigPageList.get(0).getComposite();
+	    	traceCombo.addSelectionListener(new SelectionAdapter(){
 	    		@Override
 	    		public void widgetSelected(SelectionEvent e) {
 	    			traceStackLayout.topControl = traceConfigPageList.get(
