@@ -125,8 +125,7 @@ public class SingleSourceHelperImpl extends SingleSourceHelper {
 	                "Export data from "+name+"'", 
 	                null, null);
 	
-			// TODO Auto-generated method stub
-			return null;
+			return exportTo;
 			
 		} catch (Throwable ne) {
 			throw new RuntimeException(ne.getMessage(), ne);

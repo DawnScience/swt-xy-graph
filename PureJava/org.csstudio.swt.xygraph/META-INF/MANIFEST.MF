@@ -9,7 +9,7 @@ Export-Package: org.csstudio.swt.xygraph,
  org.csstudio.swt.xygraph.util
 Require-Bundle: org.eclipse.core.runtime,
  org.junit4,
- org.eclipse.core.resources;bundle-version="3.7.100"
+ org.eclipse.core.resources
 Bundle-Vendor: Xihui Chen
 Bundle-Version: 1.1.0.qualifier
 Bundle-Name: XYGraph Plug-in
@@ -26,9 +26,6 @@ Import-Package: org.eclipse.core.commands,
  org.eclipse.draw2d.images,
  org.eclipse.draw2d.internal,
  org.eclipse.draw2d.parts,
- org.eclipse.draw2d.rap.swt,
- org.eclipse.draw2d.rap.swt.custom,
- org.eclipse.draw2d.rap.swt.graphics,
  org.eclipse.draw2d.text,
  org.eclipse.draw2d.widgets,
  org.eclipse.jface.action,
