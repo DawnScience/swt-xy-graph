@@ -6,10 +6,16 @@ Bundle-Version: 2.1.0.qualifier
 Bundle-Vendor: Xihui Chen (ztyaner11@gmail.com)
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.eclipse.swt;bundle-version="3.7.1",
- org.eclipse.draw2d,
  org.csstudio.swt.xygraph;bundle-version="1.1.0"
 Export-Package: org.csstudio.swt.widgets.datadefinition,
  org.csstudio.swt.widgets.figureparts,
  org.csstudio.swt.widgets.figures,
  org.csstudio.swt.widgets.introspection,
  org.csstudio.swt.widgets.util
+Import-Package: org.eclipse.draw2d,
+ org.eclipse.draw2d.geometry,
+ org.eclipse.draw2d.images,
+ org.eclipse.swt,
+ org.eclipse.swt.graphics,
+ org.eclipse.swt.layout,
+ org.eclipse.swt.widgets

@@ -97,7 +97,10 @@ public class RoundScaleTickMarks extends Figure {
 		return;
 	} 
 
-   
+	/**
+	 * Not present in RAP SWT
+	 */
+	public static final int LINE_SOLID = 1;
    
     /**
      * Draw the X tick marks.
@@ -119,7 +122,7 @@ public class RoundScaleTickMarks extends Figure {
     	//add gap to avoid overlap
     	double minRadians = scale.convertPixelToRadians(2);
         // draw tick marks
-        graphics.setLineStyle(SWT.LINE_SOLID);
+    	if (!SWT.getPlatform().startsWith("rap")) graphics.setLineStyle(LINE_SOLID);
         int r = scale.getRadius();
         
         if(scale.isLogScaleEnabled()) {

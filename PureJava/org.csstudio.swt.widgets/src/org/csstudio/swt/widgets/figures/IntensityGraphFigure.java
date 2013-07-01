@@ -29,6 +29,7 @@ import org.csstudio.swt.widgets.introspection.DefaultWidgetIntrospector;
 import org.csstudio.swt.widgets.introspection.Introspectable;
 import org.csstudio.swt.xygraph.figures.Axis;
 import org.csstudio.swt.xygraph.linearscale.Range;
+import org.csstudio.swt.xygraph.util.GraphicsUtil;
 import org.csstudio.swt.xygraph.util.SWTConstants;
 import org.csstudio.swt.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.draw2d.ColorConstants;
@@ -49,7 +50,6 @@ import org.eclipse.draw2d.geometry.PrecisionPoint;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -503,7 +503,7 @@ public class IntensityGraphFigure extends Figure implements Introspectable {
 					Image image = new Image(Display.getDefault(),
 							size.width + CURSOR_SIZE, size.height + CURSOR_SIZE);
 					
-					GC gc = new GC(image);
+					GC gc = GraphicsUtil.createGC(image);
 					//gc.setAlpha(0);
 					gc.setBackground(TRANSPARENT_COLOR);					
 					gc.fillRectangle(image.getBounds());
@@ -518,7 +518,7 @@ public class IntensityGraphFigure extends Figure implements Introspectable {
 					
 					ImageData imageData = image.getImageData();
 					imageData.transparentPixel = imageData.palette.getPixel(TRANSPARENT_COLOR.getRGB());
-					setCursor(new Cursor(Display.getCurrent(),
+					setCursor(GraphicsUtil.createCursor(Display.getCurrent(),
 							imageData, CURSOR_SIZE/2 ,CURSOR_SIZE/2));
 					gc.dispose();
 					image.dispose();

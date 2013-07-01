@@ -12,6 +12,8 @@ import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
@@ -51,7 +53,7 @@ public final class GraphicsUtil {
 			final int h = titleSize.width +1;
 			Image image = new Image(Display.getCurrent(),w, h);			
 					try {
-					    final GC gc = new GC(image);	
+					    final GC gc = createGC(image);	
 					    final Color titleColor = graphics.getForegroundColor();
 					    RGB transparentRGB = new RGB(240, 240, 240);		
 										
@@ -63,11 +65,11 @@ public final class GraphicsUtil {
 						if(!upToDown){
 							tr.translate(0, h);
 							tr.rotate(-90);
-							gc.setTransform(tr);
+							setTransform(gc, tr);
 						}else{
 							tr.translate(w, 0);
 							tr.rotate(90);
-							gc.setTransform(tr);
+							setTransform(gc, tr);
 						}
 						gc.drawText(text, 0, 0);
 						tr.dispose();
@@ -93,5 +95,35 @@ public final class GraphicsUtil {
 	 */
 	public static final void drawVerticalText(Graphics graphics, String text, Point location, boolean upToDown){
 		drawVerticalText(graphics, text, location.x, location.y, upToDown);
+	}
+	
+	/**
+	 * Used for single sourcing, returns null if called in RAP Context.
+	 * @param image
+	 * @return
+	 */
+	public static GC createGC(Image image) {
+		try {
+		    return GC.class.getConstructor(Image.class).newInstance(image);
+		} catch (Exception ne) {
+			return null;
+		}
+	}
+	
+	public static void setTransform(GC gc, Transform transform) {
+		try {
+			GC.class.getMethod("setTransform", Transform.class).invoke(gc, transform);
+		} catch (Exception ne) {
+			return;
+		}
+	}
+
+
+	public static Cursor createCursor(Device device, ImageData imageData, int width, int height) {
+		try {
+			return Cursor.class.getConstructor(Device.class, ImageData.class, int.class, int.class).newInstance(device, imageData, width, height);
+		} catch (Exception ne) {
+			return null;
+		}
 	}
 }

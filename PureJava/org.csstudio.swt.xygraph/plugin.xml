@@ -7,13 +7,4 @@
             class="org.csstudio.swt.xygraph.preference.XYPreferenceInitializer">
       </initializer>
    </extension>
-   <extension
-         point="org.eclipse.ui.preferencePages">
-      <page
-            category="uk.ac.diamond.scisoft.analysis.rcp.preferences.root"
-            class="org.csstudio.swt.xygraph.preference.XYPreferencePage"
-            id="org.csstudio.swt.xygraph.preference.XYPreferencePage"
-            name="XY Graphing">
-      </page>
-   </extension>
 </plugin>

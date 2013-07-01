@@ -1,6 +1,7 @@
 package org.csstudio.swt.xygraph.util;
 
 import org.csstudio.swt.xygraph.figures.XYGraph;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -13,8 +14,7 @@ public abstract class SingleSourceHelper {
 	private static final SingleSourceHelper IMPL;
 	
 	static {
-		IMPL = (SingleSourceHelper)ImplementationLoader.newInstance(
-				SingleSourceHelper.class);
+		IMPL = (SingleSourceHelper)ImplementationLoader.newInstance(SingleSourceHelper.class);
 	}
 	
 	public static Cursor createCursor(
@@ -31,11 +31,19 @@ public abstract class SingleSourceHelper {
 	}
 	
 	public static String getImageSavePath(){
-		return IMPL.getInternalImageSavePath();
+		return IMPL.getInternalImageSavePath(null);
+	}
+	public static String getImageSavePath(String[] filter){
+		return IMPL.getInternalImageSavePath(filter);
+	}
+	public static IFile getProjectSaveFileLocation(String name){
+		return IMPL.getProjectSaveFilePath(name);
 	}
 	
 
-	protected abstract String getInternalImageSavePath();
+	protected abstract String getInternalImageSavePath(final String[] filterExtensions);
+	
+	protected abstract IFile getProjectSaveFilePath(String name);
 
 	protected abstract Cursor createInternalCursor(
 			Display display, ImageData imageData, int width, int height,int backUpSWTCursorStyle);

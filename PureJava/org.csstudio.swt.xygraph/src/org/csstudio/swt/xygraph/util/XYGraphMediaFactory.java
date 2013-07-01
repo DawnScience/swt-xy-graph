@@ -105,7 +105,7 @@ public final class XYGraphMediaFactory {
 		case GRABBING:
 			if(CURSOR_GRABBING == null){
 				
-				CURSOR_GRABBING = new Cursor(Display.getDefault(), 
+				CURSOR_GRABBING = GraphicsUtil.createCursor(Display.getDefault(), 
 						getInstance().getImage("images/Grabbing.png").getImageData(), 8,8);		
 			}
 			return CURSOR_GRABBING;
@@ -264,7 +264,7 @@ public final class XYGraphMediaFactory {
 	 * @return The system's default font.
 	 */
 	public Font getDefaultFont(final int style) {
-		// FIXME Die default Schriftart bzw. Schriftgrš§e hŠngt vom Betriebssystem ab 
+		// FIXME Die default Schriftart bzw. Schriftgrï¿½ï¿½e hï¿½ngt vom Betriebssystem ab 
 		return getFont("Arial", 10, style); //$NON-NLS-1$
 	}
 	

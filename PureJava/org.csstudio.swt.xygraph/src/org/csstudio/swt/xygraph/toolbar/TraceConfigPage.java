@@ -25,8 +25,8 @@ import org.csstudio.swt.xygraph.figures.Trace.ErrorBarType;
 import org.csstudio.swt.xygraph.figures.Trace.PointStyle;
 import org.csstudio.swt.xygraph.figures.Trace.TraceType;
 import org.csstudio.swt.xygraph.figures.XYGraph;
+import org.csstudio.swt.xygraph.util.SingleSourceHelper;
 import org.csstudio.swt.xygraph.util.XYGraphMediaFactory;
-import org.eclipse.emf.common.ui.dialogs.WorkspaceResourceDialog;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -42,15 +42,10 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.IEditorDescriptor;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.part.FileEditorInput;
 
 /**This will help to create the necessary widgets 
  * to configure an axis's properties.
@@ -231,11 +226,8 @@ public class TraceConfigPage {
 		export.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false, 2, 1));		
 		export.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				IFile exportTo = WorkspaceResourceDialog.openNewFile(Display.getDefault().getActiveShell(), 
-						                            "Create file to export to", 
-						                            "Export data from "+trace.getName()+"'", 
-						                            null, null);
-				
+
+                final IFile exportTo = SingleSourceHelper.getProjectSaveFileLocation(trace.getName());				
 				if (exportTo!=null) {
 				    try {
 						exportToDat(exportTo, trace.getDataProvider());
@@ -333,10 +325,12 @@ public class TraceConfigPage {
 		dat.create(stream, true, new NullProgressMonitor());
 		dat.getParent().refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
 
-		final IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		IEditorDescriptor desc = PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(dat.getName());
-        if (desc == null) desc =  PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(dat.getName()+".txt");
-		page.openEditor(new FileEditorInput(dat), desc.getId());
+		// TODO FIXME opening the exported file does not work in the RAP context of
+		// this plugin.
+//		final IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+//		IEditorDescriptor desc = PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(dat.getName());
+//        if (desc == null) desc =  PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(dat.getName()+".txt");
+//		page.openEditor(new FileEditorInput(dat), desc.getId());
 	}
 
 	/**
