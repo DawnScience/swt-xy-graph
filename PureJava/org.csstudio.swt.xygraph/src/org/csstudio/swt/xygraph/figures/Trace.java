@@ -235,20 +235,36 @@ public class Trace extends Figure implements IDataProviderListener,
         protected XYGraph xyGraph;
 
         protected List<ISample> hotSampleist;
-
-        public Trace(String name, Axis xAxis, Axis yAxis, IDataProvider dataProvider) {
-                this.setName(name);
-                this.xAxis = xAxis;
-                this.yAxis = yAxis;
-                xAxis.addTrace(this);
-                yAxis.addTrace(this);
-                xAxis.addListener(this);
-                yAxis.addListener(this);
-                setDataProvider(dataProvider);
-                hotSampleist = new ArrayList<ISample>();
+        
+        public Trace(String name) {
+            this.setName(name);
+       	 
         }
 
-        protected void drawErrorBar(Graphics graphics, Point dpPos, ISample dp) {
+        public Trace(String name, Axis xAxis, Axis yAxis, IDataProvider dataProvider) {
+        	this.setName(name);
+        	init(xAxis, yAxis, dataProvider);
+        }
+
+        /**
+         * Must be called if using Trace(String)
+         * 
+         * @param xAxis2
+         * @param yAxis2
+         * @param dataProvider
+         */
+        public void init(Axis xAxis, Axis yAxis, IDataProvider dataProvider) {
+        	this.xAxis = xAxis;
+            this.yAxis = yAxis;
+            xAxis.addTrace(this);
+            yAxis.addTrace(this);
+            xAxis.addListener(this);
+            yAxis.addListener(this);
+            setDataProvider(dataProvider);
+            hotSampleist = new ArrayList<ISample>();		
+        }
+
+		protected void drawErrorBar(Graphics graphics, Point dpPos, ISample dp) {
                 graphics.pushState();
                 graphics.setForegroundColor(errorBarColor);
                 graphics.setLineStyle(SWTConstants.LINE_SOLID);
