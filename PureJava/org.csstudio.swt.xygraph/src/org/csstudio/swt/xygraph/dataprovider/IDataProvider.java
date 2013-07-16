@@ -94,5 +94,11 @@ public interface IDataProvider {
      */
 	public boolean removeDataProviderListener(
 			final IDataProviderListener listener);	
+	
+	/**
+	 * @return true if the ISample have error information.
+	 * @return
+	 */
+	public boolean hasErrors();
 
 }

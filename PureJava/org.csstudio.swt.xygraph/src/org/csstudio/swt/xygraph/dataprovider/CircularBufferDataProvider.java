@@ -145,7 +145,16 @@ public class CircularBufferDataProvider extends AbstractDataProvider{
 		if(traceData.size() == traceData.getBufferSize() && plotMode == PlotMode.N_STOP)
 			return;
 		traceData.add(sample);
+		if (!hasErrors && sample.getYPlusError()>0d) {
+			hasErrors= true;
+		}
 		fireDataChange();
+	}
+	
+	private boolean hasErrors = false;
+	@Override
+	public boolean hasErrors() {
+		return hasErrors;
 	}
 	
 	/**Set the time stamp of currrent YData
@@ -472,6 +481,6 @@ public class CircularBufferDataProvider extends AbstractDataProvider{
 	public boolean isConcatenate_data() {
 		return concatenate_data;
 	}
-	
+
 
 }
