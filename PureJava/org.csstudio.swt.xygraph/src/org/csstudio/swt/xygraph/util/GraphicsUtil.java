@@ -14,6 +14,7 @@ import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Device;
+import org.eclipse.swt.graphics.Drawable;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
@@ -102,9 +103,9 @@ public final class GraphicsUtil {
 	 * @param image
 	 * @return
 	 */
-	public static GC createGC(Image image) {
+	public static GC createGC(Drawable image) {
 		try {
-		    return GC.class.getConstructor(Image.class).newInstance(image);
+		    return GC.class.getConstructor(Drawable.class).newInstance(image);
 		} catch (Exception ne) {
 			return null;
 		}
