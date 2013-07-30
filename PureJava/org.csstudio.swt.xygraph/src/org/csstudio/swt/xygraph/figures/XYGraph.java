@@ -42,7 +42,11 @@ import org.eclipse.swt.widgets.Display;
  * @author Xihui Chen
  * @author Kay Kasemir (performStagger)
  */
-public class XYGraph extends Figure{
+public class XYGraph extends Figure {
+
+	public static final String X_AXIS = "X-Axis";
+	public static final String Y_AXIS = "Y-Axis";
+
 
 	private static final int GAP = 2;
 //	public final static Color WHITE_COLOR = ColorConstants.white;
@@ -114,12 +118,12 @@ public class XYGraph extends Figure{
 
 		add(titleLabel);
 		add(plotArea);
-		primaryYAxis = new Axis("Y-Axis", true);
+		primaryYAxis = new Axis(Y_AXIS, true);
 		primaryYAxis.setTickLabelSide(LabelSide.Primary);
 		primaryYAxis.setAutoScaleThreshold(0.1);
 		addAxis(primaryYAxis);
 
-		primaryXAxis = new Axis("X-Axis", false);
+		primaryXAxis = new Axis(X_AXIS, false);
 		primaryXAxis.setTickLabelSide(LabelSide.Primary);
 		addAxis(primaryXAxis);
 
