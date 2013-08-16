@@ -11,6 +11,7 @@ import org.csstudio.swt.xygraph.Activator;
 import org.csstudio.swt.xygraph.figures.Axis;
 import org.csstudio.swt.xygraph.figures.XYGraph;
 import org.csstudio.swt.xygraph.linearscale.Range;
+import org.csstudio.swt.xygraph.preference.XYPreferences;
 import org.csstudio.swt.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -63,6 +64,7 @@ public class AxisConfigPage {
 	private Button dashGridLineButton;
 	private ColorSelector gridColorSelector;
 	private Button showAxisButton;
+	private Button showTicksButton;
 	
 	private Composite composite;
 	private boolean enableRanges;
@@ -281,8 +283,12 @@ public class AxisConfigPage {
 		gd = new GridData(SWT.BEGINNING, SWT.CENTER, false, false, 1, 1);
 		gridColorSelector.getButton().setLayoutData(gd);
 		
+		showTicksButton = new Button(composite, SWT.CHECK);
+		configCheckButton(showTicksButton, "Show nearest major tick on autoscale");
+
 		showAxisButton = new Button(composite, SWT.CHECK);
 		configCheckButton(showAxisButton, "Show Axis");
+		
 		initialize();
 	}
 
@@ -337,6 +343,16 @@ public class AxisConfigPage {
 		axis.setMajorGridColor( XYGraphMediaFactory.getInstance().getColor(
 				gridColorSelector.getColorValue()));
 		axis.setVisible(showAxisButton.getSelection());
+		
+		boolean isTicksAtEnd = showTicksButton.getSelection();
+		axis.setTicksAtEnds(isTicksAtEnd);
+		if (xyGraph.primaryXAxis==axis || xyGraph.primaryYAxis==axis) {
+			if (axis.isYAxis()) {
+				Activator.getDefault().getPreferenceStore().setValue(XYPreferences.TICKS_AT_END_Y, isTicksAtEnd);
+			} else {
+				Activator.getDefault().getPreferenceStore().setValue(XYPreferences.TICKS_AT_END_X, isTicksAtEnd);
+			}
+		}
 	}
 
 
@@ -385,6 +401,7 @@ public class AxisConfigPage {
 		dashGridLineButton.setSelection(axis.isDashGridLine());
 		gridColorSelector.setColorValue(axis.getMajorGridColor().getRGB());
 		showAxisButton.setSelection(axis.isVisible());
+		showTicksButton.setSelection(axis.hasTicksAtEnds());
 	}
 	
 	

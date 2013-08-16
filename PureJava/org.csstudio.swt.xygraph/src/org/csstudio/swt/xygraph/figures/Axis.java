@@ -11,9 +11,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.csstudio.swt.xygraph.Activator;
 import org.csstudio.swt.xygraph.dataprovider.IDataProvider;
 import org.csstudio.swt.xygraph.linearscale.LinearScale;
 import org.csstudio.swt.xygraph.linearscale.Range;
+import org.csstudio.swt.xygraph.preference.XYPreferences;
 import org.csstudio.swt.xygraph.undo.AxisPanOrZoomCommand;
 import org.csstudio.swt.xygraph.undo.SaveStateCommand;
 import org.csstudio.swt.xygraph.undo.ZoomType;
@@ -110,6 +112,12 @@ public class Axis extends LinearScale{
 					255 - backRGB.green, 255 - backRGB.blue);
 		}else
 			revertBackColor = XYGraphMediaFactory.getInstance().getColor(100,100,100);
+		
+		if (yAxis) {
+			setTicksAtEnds(Activator.getDefault().getPreferenceStore().getBoolean(XYPreferences.TICKS_AT_END_Y));
+		} else {
+			setTicksAtEnds(Activator.getDefault().getPreferenceStore().getBoolean(XYPreferences.TICKS_AT_END_X));
+		}
 	}
 
 	public void addListener(final IAxisListener listener){
@@ -138,9 +146,14 @@ public class Axis extends LinearScale{
 		if (old_range.getLower() == lower && old_range.getUpper() == upper) {
 			return;
 		}
-		setTicksAtEnds(false);
-		super.setRange(lower, upper);
-		fireAxisRangeChanged(old_range, getRange());
+		final boolean originalTicksEnd = hasTicksAtEnds();
+		try {
+			setTicksAtEnds(false);
+			super.setRange(lower, upper);
+			fireAxisRangeChanged(old_range, getRange());
+		} finally {
+			setTicksAtEnds(originalTicksEnd);
+		}
 	}
 
 	@Override
@@ -308,7 +321,11 @@ public class Axis extends LinearScale{
         // by-pass overridden method as it sets ticks to false
         super.setRange(range.getLower(), range.getUpper());
 		fireAxisRangeChanged(old, range);
-		setTicksAtEnds(true);
+		if (isYAxis()) {
+			setTicksAtEnds(Activator.getDefault().getPreferenceStore().getBoolean(XYPreferences.TICKS_AT_END_Y));
+		} else {
+			setTicksAtEnds(Activator.getDefault().getPreferenceStore().getBoolean(XYPreferences.TICKS_AT_END_X));
+		}
 		repaint();
 		return true;
 	}
