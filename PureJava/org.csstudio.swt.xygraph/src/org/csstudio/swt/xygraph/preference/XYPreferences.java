@@ -36,7 +36,5 @@ public class XYPreferences
     public static final String TICKS_PROVIDER_ORIGINAL = "original";
     public static final String TICKS_PROVIDER_MARK_2 = "mark2";
 
-    public static final String TICKS_AT_END_X = "org.csstudio.swt.xygraph.preference.ticksEndX";
-    public static final String TICKS_AT_END_Y = "org.csstudio.swt.xygraph.preference.ticksEndY";
 
 }
