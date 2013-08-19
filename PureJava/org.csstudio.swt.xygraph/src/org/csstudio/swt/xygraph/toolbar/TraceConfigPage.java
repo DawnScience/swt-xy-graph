@@ -74,6 +74,8 @@ public class TraceConfigPage {
 	private Spinner errorBarCapWidthSpinner;
 	private Button drawYErrorInAreaButton;
 	
+	private Button visible;
+	
 
 	
 	private Composite composite;
@@ -100,6 +102,10 @@ public class TraceConfigPage {
 		GridData gd;
 		GridData labelGd = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);		
 		
+		visible  = new Button(traceCompo, SWT.CHECK);
+		visible.setText("Visible");
+		visible.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false, 3, 1));
+
 		final Label nameLabel = new Label(traceCompo, 0);
 		nameLabel.setText("Name: ");
 		nameLabel.setLayoutData(labelGd);
@@ -300,6 +306,8 @@ public class TraceConfigPage {
 		drawYErrorInAreaButton.setText("Draw Y Error In Area");
 		drawYErrorInAreaButton.setLayoutData(
 				new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false, 2, 1));
+		
+		
 		initialize();
 	}
 
@@ -360,6 +368,10 @@ public class TraceConfigPage {
 				errorBarColorSelector.getColorValue()));
 		trace.setErrorBarCapWidth(errorBarCapWidthSpinner.getSelection());
 		trace.setDrawYErrorInArea(drawYErrorInAreaButton.getSelection());
+		
+		boolean vis = visible.getSelection();
+		if (vis!=trace.isVisible()) trace.setVisible(vis);
+
 	}
 
 
@@ -394,6 +406,8 @@ public class TraceConfigPage {
 		errorBarColorSelector.setEnabled(enabled);
 		errorBarCapWidthSpinner.setEnabled(enabled);
 		drawYErrorInAreaButton.setEnabled(enabled);
+		
+		visible.setSelection(trace.isVisible());
 		
 		baseLineCombo.setEnabled(
 				traceTypeCombo.getSelectionIndex() == 
