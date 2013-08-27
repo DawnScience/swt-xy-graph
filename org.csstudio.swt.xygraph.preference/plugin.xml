@@ -10,7 +10,7 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            category="uk.ac.diamond.scisoft.analysis.rcp.preferences.root"
+            category="org.dawb.workbench.ui.visualizationPreferences"
             class="org.csstudio.swt.xygraph.preference.XYPreferencePage"
             id="org.csstudio.swt.xygraph.preference.XYPreferencePage"
             name="XY Graphing">
