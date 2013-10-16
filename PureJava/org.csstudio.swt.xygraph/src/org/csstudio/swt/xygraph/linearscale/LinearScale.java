@@ -199,9 +199,9 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 			//	throw new IllegalArgumentException(
 			//			"Invalid value: value must be greater than 0");
 			pixelsToStart = (int)Math.round( ((Math.log10(value) - Math.log10(min))/
-							(Math.log10(max) - Math.log10(min)) * (length - 2d*margin)) + margin);
+							(Math.log10(max) - Math.log10(min)) * ((double)length - 2d*margin)) + margin);
 		}else			
-			pixelsToStart = (int)Math.round(((value - min)/(max-min)*(length-2d*margin)) + margin);
+			pixelsToStart = (int)Math.round(((value - min)/(max-min)*((double)length-2d*margin)) + margin);
 		
 		if(relative) {
 			if(orientation == Orientation.HORIZONTAL)
