@@ -136,12 +136,12 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 		if(isHorizontal()) {
 			//length = wHint;
 			fakeTickLabels.update(wHint-2*getMargin());
-			size.height = (int)fakeTickLabels.getTickLabelMaxHeight() 
+			size.height = fakeTickLabels.getTickLabelMaxHeight() 
 							+ SPACE_BTW_MARK_LABEL + LinearScaleTickMarks.MAJOR_TICK_LENGTH;
 		} else {
 			//length = hHint;
 			fakeTickLabels.update(hHint-2*getMargin());
-			size.width = (int)fakeTickLabels.getTickLabelMaxLength() 
+			size.width = fakeTickLabels.getTickLabelMaxLength() 
 							+ SPACE_BTW_MARK_LABEL + LinearScaleTickMarks.MAJOR_TICK_LENGTH;
 		
 		}
@@ -198,10 +198,10 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 				value = min;
 			//	throw new IllegalArgumentException(
 			//			"Invalid value: value must be greater than 0");
-			pixelsToStart = (int) ((Math.log10(value) - Math.log10(min))/
-							(Math.log10(max) - Math.log10(min)) * (length - 2*margin)) + margin;
+			pixelsToStart = (int)Math.round( ((Math.log10(value) - Math.log10(min))/
+							(Math.log10(max) - Math.log10(min)) * (length - 2d*margin)) + margin);
 		}else			
-			pixelsToStart = (int) ((value - min)/(max-min)*(length-2*margin)) + margin;
+			pixelsToStart = (int)Math.round(((value - min)/(max-min)*(length-2d*margin)) + margin);
 		
 		if(relative) {
 			if(orientation == Orientation.HORIZONTAL)
