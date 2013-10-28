@@ -139,14 +139,18 @@ public abstract class AbstractScale extends Figure{
 					} else {// if (timeUnit == Calendar.YEAR) {
 						formatPattern = "yyyy";
 					}
-					autoFormat = true;
+					if (formatPattern == null || formatPattern.equals("")) {
+						autoFormat = true;
+					}
 				}
 				cachedFormat = new SimpleDateFormat(formatPattern);
 			} else {
 				if (formatPattern == null || formatPattern == default_decimal_format || formatPattern.equals("")) {
 					ITicksProvider ticks = getTicksProvider();
 					formatPattern = ticks == null ? default_decimal_format : ticks.getDefaultFormatPattern(min, max);
-					autoFormat = true;
+					if (formatPattern == null || formatPattern.equals("")) {
+						autoFormat = true;
+					}
 				}
 
 				if (formatPattern.equals(default_decimal_format)
@@ -156,7 +160,6 @@ public abstract class AbstractScale extends Figure{
 						formatPattern = DEFAULT_ENGINEERING_FORMAT;
 					else
 						formatPattern = default_decimal_format;
-					autoFormat = true;
 				}
 				cachedFormat = new DecimalFormat(formatPattern);
 			}
