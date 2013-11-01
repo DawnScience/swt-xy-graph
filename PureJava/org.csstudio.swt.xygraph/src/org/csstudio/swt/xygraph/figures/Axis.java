@@ -79,6 +79,8 @@ public class Axis extends LinearScale{
 	final private List<IAxisListener> listeners = new ArrayList<IAxisListener>();
 
 	private ZoomType zoomType = ZoomType.NONE;
+	
+	private boolean axisAutoscaleTight = false;
 
 	private Point start;
 	private Point end;
@@ -280,7 +282,7 @@ public class Axis extends LinearScale{
 	/** Perform an auto-scale:
 	 *  Axis limits are set to the value range of the traces on this axis.
 	 *  Includes some optimization:
-	 *  Axis range is set a little wider than exact trace data range.
+	 *  Axis range is set a little wider than exact trace data range (but can be set to be tight).
 	 *  When auto-scale would only perform a minor axis adjustment,
 	 *  axis is left unchanged.
 	 *
@@ -308,7 +310,7 @@ public class Axis extends LinearScale{
         // by-pass overridden method as it sets ticks to false
         super.setRange(range.getLower(), range.getUpper());
 		fireAxisRangeChanged(old, range);
-		setTicksAtEnds(true);
+		setTicksAtEnds(!axisAutoscaleTight);
 		repaint();
 		return true;
 	}
@@ -826,5 +828,19 @@ public class Axis extends LinearScale{
 			if (traceList.contains(it.next())) it.remove();	
 		}
 		traceList.clear();
+	}
+	
+	/**
+	 * @param set whether autoscale sets axis range tight to the data or the end of axis is set to the nearest tickmark
+	 */
+	public void setAxisAutoscaleTight(boolean axisTight) {
+		this.axisAutoscaleTight = axisTight;
+	}
+	
+	/**
+	 * @return true if autoscaling axis is tight to displayed data
+	 */
+	public boolean isAxisAutoscaleTight() {
+		return this.axisAutoscaleTight;
 	}
 }
