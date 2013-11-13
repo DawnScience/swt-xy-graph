@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2010 Oak Ridge National Laboratory.
+ * Copyright (c) 2010, 2013 Oak Ridge National Laboratory and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Xihui Chen - initial API and implementation
+ *     Torkild U. Resheim - Expose fields and methods for subclassing bug 421670
  ******************************************************************************/
 package org.eclipse.nebula.visualization.xygraph.figures;
 
@@ -35,6 +39,7 @@ import org.eclipse.swt.graphics.Font;
  * particular point.
  * 
  * @author Xihui Chen
+ * @author Torkild U. Resheim
  *
  */
 public class Annotation extends Figure implements IAxisListener, IDataProviderListener {
@@ -78,17 +83,17 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 
 	private IAnnotationLabelProvider labelProvider = null;
 
-	private Axis xAxis;
-	private Axis yAxis;
+	protected Axis xAxis;
+	protected Axis yAxis;
 	private String name;
 	private CursorLineStyle cursorLineStyle = CursorLineStyle.NONE;
 	private Point currentPosition;
 
-	private double xValue;
-	private double yValue;
+	protected double xValue;
+	protected double yValue;
 
-	private Trace trace;
-	private ISample currentSnappedSample;
+	protected Trace trace;
+	protected ISample currentSnappedSample;
 
 	private boolean showName = true;
 	private boolean showSampleInfo = true;
@@ -112,7 +117,7 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 	private final static int POINT_SIZE = 6;
 	private final static int CURSOR_LINE_LENGTH = 3;
 	private final static int ARROW_LINE_LENGTH = 12;
-	private boolean pointerDragged;
+	protected boolean pointerDragged;
 
 	/**
 	 * Construct an annotation on a trace.
@@ -346,7 +351,7 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 	/**
 	 * move the annotation to the center of the plot area or trace.
 	 */
-	private void updateToDefaultPosition() {
+	protected void updateToDefaultPosition() {
 		if (trace != null && trace.getHotSampleList().size() > 0) {
 			currentSnappedSample = trace.getHotSampleList().get(trace.getHotSampleList().size() / 2);
 			currentPosition = new Point(xAxis.getValuePosition(currentSnappedSample.getXValue(), false),
