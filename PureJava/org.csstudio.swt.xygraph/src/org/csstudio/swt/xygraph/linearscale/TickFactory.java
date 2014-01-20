@@ -302,6 +302,14 @@ public class TickFactory {
 		if (bRange.compareTo(EPSILON.multiply(magnitude)) < 0) {
 			return 0;
 		}
+		
+		// Important fix: This avoids tick labeller entering an infinite loop
+		// for some plotting cases.
+		try {
+		    if (magnitude.doubleValue()<=Double.MIN_VALUE) return 0;
+		} catch (Throwable ne) {
+			// Might be a big number that doubleValue() does not work on - carry on!
+		}
 	
 		bRange = nicenum(bRange, false);
 		BigDecimal bUnit;
