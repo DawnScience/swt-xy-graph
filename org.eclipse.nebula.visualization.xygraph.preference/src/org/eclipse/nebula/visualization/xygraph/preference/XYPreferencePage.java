@@ -1,4 +1,4 @@
-package org.eclipse.nebula.visualization.preference;
+package org.eclipse.nebula.visualization.xygraph.preference;
 
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.nebula.visualization.xygraph.Activator;
