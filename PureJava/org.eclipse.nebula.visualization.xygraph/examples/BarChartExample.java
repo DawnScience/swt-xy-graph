@@ -1,10 +1,10 @@
-import org.csstudio.swt.xygraph.dataprovider.CircularBufferDataProvider;
-import org.csstudio.swt.xygraph.figures.Trace;
-import org.csstudio.swt.xygraph.figures.XYGraph;
-import org.csstudio.swt.xygraph.figures.Trace.PointStyle;
-import org.csstudio.swt.xygraph.figures.Trace.TraceType;
-import org.csstudio.swt.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.draw2d.LightweightSystem;
+import org.eclipse.nebula.visualization.xygraph.dataprovider.CircularBufferDataProvider;
+import org.eclipse.nebula.visualization.xygraph.figures.Trace;
+import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
+import org.eclipse.nebula.visualization.xygraph.figures.Trace.PointStyle;
+import org.eclipse.nebula.visualization.xygraph.figures.Trace.TraceType;
+import org.eclipse.nebula.visualization.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 

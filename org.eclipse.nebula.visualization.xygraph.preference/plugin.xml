@@ -4,15 +4,15 @@
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer
-            class="org.csstudio.swt.xygraph.preference.XYPreferenceInitializer">
+            class="org.eclipse.nebula.visualization.xygraph.preference.XYPreferenceInitializer">
       </initializer>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
             category="org.dawb.workbench.ui.visualizationPreferences"
-            class="org.csstudio.swt.xygraph.preference.XYPreferencePage"
-            id="org.csstudio.swt.xygraph.preference.XYPreferencePage"
+            class="org.eclipse.nebula.visualization.xygraph.preference.XYPreferencePage"
+            id="org.eclipse.nebula.visualization.xygraph.preference.XYPreferencePage"
             name="XY Graphing">
       </page>
    </extension>

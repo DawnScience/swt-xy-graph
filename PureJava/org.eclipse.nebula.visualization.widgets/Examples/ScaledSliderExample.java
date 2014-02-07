@@ -5,11 +5,11 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  ******************************************************************************/
-import org.csstudio.swt.widgets.datadefinition.IManualValueChangeListener;
-import org.csstudio.swt.widgets.figures.KnobFigure;
-import org.csstudio.swt.widgets.figures.ScaledSliderFigure;
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.LightweightSystem;
+import org.eclipse.nebula.visualization.widgets.datadefinition.IManualValueChangeListener;
+import org.eclipse.nebula.visualization.widgets.figures.KnobFigure;
+import org.eclipse.nebula.visualization.widgets.figures.ScaledSliderFigure;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 

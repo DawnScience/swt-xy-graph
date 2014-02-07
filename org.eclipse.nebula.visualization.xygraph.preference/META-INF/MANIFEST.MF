@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: XY Graph preferences
 Bundle-SymbolicName: org.eclipse.nebula.visualization.xygraph.preference;singleton:=true
 Bundle-Version: 1.2.0.qualifier
-Bundle-Activator: org.csstudio.swt.xygraph.preference.Activator
+Bundle-Activator: org.eclipse.nebula.visualization.xygraph.preference.Activator
 Bundle-Vendor: Diamond Light Source
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui,

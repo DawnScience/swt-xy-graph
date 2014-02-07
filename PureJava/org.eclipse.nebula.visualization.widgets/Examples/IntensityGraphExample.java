@@ -10,11 +10,11 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import org.csstudio.swt.widgets.datadefinition.ColorMap;
-import org.csstudio.swt.widgets.datadefinition.ColorMap.PredefinedColorMap;
-import org.csstudio.swt.widgets.figures.IntensityGraphFigure;
-import org.csstudio.swt.widgets.figures.IntensityGraphFigure.IROIListener;
 import org.eclipse.draw2d.LightweightSystem;
+import org.eclipse.nebula.visualization.widgets.datadefinition.ColorMap;
+import org.eclipse.nebula.visualization.widgets.datadefinition.ColorMap.PredefinedColorMap;
+import org.eclipse.nebula.visualization.widgets.figures.IntensityGraphFigure;
+import org.eclipse.nebula.visualization.widgets.figures.IntensityGraphFigure.IROIListener;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 

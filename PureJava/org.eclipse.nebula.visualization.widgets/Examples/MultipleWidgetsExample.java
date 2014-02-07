@@ -5,13 +5,13 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  ******************************************************************************/
-import org.csstudio.swt.widgets.datadefinition.IManualValueChangeListener;
-import org.csstudio.swt.widgets.figures.GaugeFigure;
-import org.csstudio.swt.widgets.figures.KnobFigure;
-import org.csstudio.swt.widgets.figures.TankFigure;
-import org.csstudio.swt.widgets.figures.ThermometerFigure;
-import org.csstudio.swt.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.draw2d.LightweightSystem;
+import org.eclipse.nebula.visualization.widgets.datadefinition.IManualValueChangeListener;
+import org.eclipse.nebula.visualization.widgets.figures.GaugeFigure;
+import org.eclipse.nebula.visualization.widgets.figures.KnobFigure;
+import org.eclipse.nebula.visualization.widgets.figures.TankFigure;
+import org.eclipse.nebula.visualization.widgets.figures.ThermometerFigure;
+import org.eclipse.nebula.visualization.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
