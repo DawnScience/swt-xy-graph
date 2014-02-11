@@ -604,7 +604,6 @@ public class TickFactory {
 
 		if (loDecade < -3 || hiDecade > 3 || decades > 6) {
 			createFormatString(0, true);
-			
 		} else {
 			createFormatString(Math.max(-loDecade, 0), false);
 		}
