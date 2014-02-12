@@ -2,8 +2,6 @@ package org.eclipse.nebula.visualization.xygraph.linearscale;
 
 import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.Graphics;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.nebula.visualization.xygraph.Activator;
 import org.eclipse.nebula.visualization.xygraph.preference.XYPreferences;
 
 /**
@@ -24,14 +22,7 @@ public class LinearScaleTickLabels extends Figure {
 	 */
 	protected LinearScaleTickLabels(IScaleProvider linearScale) {
 		scale = linearScale;
-		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
-		String provider = store.isDefault(XYPreferences.TICKS_PROVIDER) ? store
-				.getDefaultString(XYPreferences.TICKS_PROVIDER) : store.getString(XYPreferences.TICKS_PROVIDER);
-
-		if (XYPreferences.TICKS_PROVIDER_ORIGINAL.equals(provider))
-			ticks = new LinearScaleTicks(scale);
-		else
-			ticks = new LinearScaleTicks2(scale);
+		ticks = TickFactory.createTicksProvider(scale, XYPreferences.TICKS_PROVIDER_ORIGINAL);
 
 		setTicksIndexBased(scale.isTicksIndexBased());
 		setFont(scale.getFont());

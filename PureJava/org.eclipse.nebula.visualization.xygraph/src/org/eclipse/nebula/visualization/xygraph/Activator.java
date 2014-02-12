@@ -7,9 +7,11 @@
  ******************************************************************************/
 package org.eclipse.nebula.visualization.xygraph;
 
+import java.io.File;
 import java.util.logging.Logger;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -64,7 +66,13 @@ public class Activator extends AbstractUIPlugin {
 	}
 	
 	public static ImageDescriptor getImageDescriptor(String imageFilePath) {
-		return imageDescriptorFromPlugin(PLUGIN_ID, imageFilePath);
+		if (plugin!=null) {
+		    return imageDescriptorFromPlugin(PLUGIN_ID, imageFilePath);
+		} else {
+			final File  iconPath = new File(imageFilePath);
+			final Image image    = new Image(null, iconPath.getAbsolutePath());
+			return ImageDescriptor.createFromImage(image);
+		}
 	}
 
 }

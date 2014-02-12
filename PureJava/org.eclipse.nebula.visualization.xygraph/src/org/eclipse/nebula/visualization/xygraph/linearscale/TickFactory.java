@@ -22,6 +22,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.nebula.visualization.xygraph.Activator;
+import org.eclipse.nebula.visualization.xygraph.preference.XYPreferences;
+
 /**
  * Tick factory produces the different axis ticks. When specifying a format and
  * given the screen size parameters and range it will return a list of Ticks
@@ -719,4 +723,34 @@ public class TickFactory {
 		}
 		return ticks;
 	}
+	
+
+	/**
+	 * Create a ITicksProvider for a scale.
+	 * 
+	 * @param scale - the scale to create the ticks provider for.
+	 * @param defaultProviderName - may be null
+	 * @return
+	 */
+	public static ITicksProvider createTicksProvider(IScaleProvider scale, String defaultProviderName) {
+		
+		String provider;
+		if (Activator.getDefault()!=null) { // We are in OSGI
+			IPreferenceStore store = Activator.getDefault().getPreferenceStore();
+			provider = store.getString(XYPreferences.TICKS_PROVIDER);
+	
+		} else {
+			provider = defaultProviderName;
+		}
+
+		if (provider==null) provider = XYPreferences.TICKS_PROVIDER_ORIGINAL;
+		
+		ITicksProvider ticks;
+		if (XYPreferences.TICKS_PROVIDER_ORIGINAL.equals(provider))
+			ticks = new LinearScaleTicks(scale);
+		else
+			ticks = new LinearScaleTicks2(scale);
+        return ticks;
+	}
+
 }
