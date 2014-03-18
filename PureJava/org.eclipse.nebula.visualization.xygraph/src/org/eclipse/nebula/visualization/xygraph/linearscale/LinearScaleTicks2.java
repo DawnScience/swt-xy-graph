@@ -119,13 +119,13 @@ public class LinearScaleTicks2 implements ITicksProvider {
 	public List<Integer> getPositions() {
 		List<Integer> positions = new ArrayList<Integer>();
 		for (Tick t : ticks)
-			positions.add((int) t.getPosition());
+			positions.add((int) Math.round(t.getPosition()));
 		return positions;
 	}
 
 	@Override
 	public int getPosition(int index) {
-		return (int) ticks.get(index).getPosition();
+		return (int) Math.round(ticks.get(index).getPosition());
 	}
 
 	@Override
