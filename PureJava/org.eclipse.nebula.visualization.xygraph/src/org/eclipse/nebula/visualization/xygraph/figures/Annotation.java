@@ -387,7 +387,7 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 	protected void updateInfoLableText(boolean updateX0Y0) {
 		String info = null;		
 		if (labelProvider!=null) {
-			info = labelProvider.getInfoText(xValue, yValue);
+			info = labelProvider.getInfoText(xValue, yValue, showName, showSampleInfo, showPosition);
 		}
 		
 		if (info==null) {
