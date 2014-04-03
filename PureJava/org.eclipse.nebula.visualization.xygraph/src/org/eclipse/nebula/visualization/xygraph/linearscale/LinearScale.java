@@ -185,23 +185,34 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 	 * If false, return the absolute position which has the scale bounds counted.
 	 * @return position in pixels
 	 */
-	public int getValuePosition(double value, boolean relative) {		
+	public int getValuePosition(double value, boolean relative) {
+		return (int) Math.round(getValuePrecisePosition(value, relative));
+	}
+
+	/**
+	 * Get the position of the value based on scale. 
+	 * @param value the value to find its position. Support value out of range.
+	 * @param relative return the position relative to the left/bottom bound of the scale if true. 
+	 * If false, return the absolute position which has the scale bounds counted.
+	 * @return position in pixels
+	 */
+	public double getValuePrecisePosition(double value, boolean relative) {		
 		updateTick();
 		//coerce to range		
 		//value = value < min ? min : (value > max ? max : value);
 		Range r = getLocalRange();
 		double min = r.getLower();
 		double max = r.getUpper();
-		int pixelsToStart =0;
+		double pixelsToStart =0;
 		if(logScaleEnabled){
 			if(value <=0)
 				value = min;
 			//	throw new IllegalArgumentException(
 			//			"Invalid value: value must be greater than 0");
-			pixelsToStart = (int)Math.round( ((Math.log10(value) - Math.log10(min))/
-							(Math.log10(max) - Math.log10(min)) * ((double)length - 2d*margin)) + margin);
+			pixelsToStart = ((Math.log10(value) - Math.log10(min))/
+							(Math.log10(max) - Math.log10(min)) * ((double)length - 2d*margin)) + margin;
 		}else			
-			pixelsToStart = (int)Math.round(((value - min)/(max-min)*((double)length-2d*margin)) + margin);
+			pixelsToStart = ((value - min)/(max-min)*((double)length-2d*margin)) + margin;
 		
 		if(relative) {
 			if(orientation == Orientation.HORIZONTAL)
@@ -223,10 +234,10 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 	 * False if it is the absolute position.
 	 * @return the value corresponding to the position.
 	 */
-	public double getPositionValue(int position, boolean relative) {
+	public double getPositionValue(double position, boolean relative) {
 		updateTick();
 		//coerce to range
-        int pixelsToStart;
+        double pixelsToStart;
         double value;
         if(relative){
         	if(isHorizontal())
