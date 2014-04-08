@@ -376,7 +376,9 @@ public class LinearScaleTicks2 implements ITicksProvider {
 
 		if (scale.isLogScaleEnabled()) {
 			if (majorStepInPixel * LAST_STEP_FRAC >= scale.getMinorTickMarkStepHint()) {
-				minorTicks = 10 * (int) Math.abs(Math.log10(ticks.get(1).getValue() / ticks.get(0).getValue()));
+				minorTicks = 10 * (int) Math.round(Math.abs(Math.log10(ticks.get(1).getValue() / ticks.get(0).getValue())));
+				if (minorTicks > 10)
+					return; // gap is greater than a decade
 				double p = ticks.get(0).getPosition();
 				if (p > 0) {
 					p -= majorStepInPixel;
