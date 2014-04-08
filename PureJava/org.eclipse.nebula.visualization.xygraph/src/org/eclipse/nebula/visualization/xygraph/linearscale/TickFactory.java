@@ -582,15 +582,16 @@ public class TickFactory {
 
 		int decades = hiDecade - loDecade;
 
-		int unit;
-		int n = maxTicks-1;
+		int unit = 0;
+		int n;
 		do {
-			unit = decades/n--;
-		} while (unit == 0);
+			unit++;
+			n = decades/unit;
+		} while (n > maxTicks);
 
 		if (allowMinMaxOver) {
 			graphMin = Math.pow(10, loDecade);
-			graphMax = Math.pow(10, (n+1)*unit + loDecade);
+			graphMax = Math.pow(10, n*unit + loDecade);
 		} else {
 			graphMin = min;
 			graphMax = max;

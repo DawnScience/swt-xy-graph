@@ -612,7 +612,7 @@ public class Axis extends LinearScale{
 	public void zoomInOut(double center, final double factor)
     {
 	    final double t1, t2;
-	    final Range range = getRange();
+	    final Range range = getLocalRange();
 	    final double cfactor = 1.0 - factor;
 		if (isLogScaleEnabled()) {
 			center = Log10.log10(center) * factor;
