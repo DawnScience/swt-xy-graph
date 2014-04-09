@@ -8,6 +8,6 @@ public interface IAnnotationLabelProvider {
 	 * @param yValue
 	 * @return null to use normal labelling, "" to have no label, or a string to be the label.
 	 */
-	public String getInfoText(double xValue, double yValue);
+	public String getInfoText(double xValue, double yValue, boolean showName, boolean showSample, boolean showPosition);
 
 }

@@ -216,8 +216,7 @@ public class AnnotationConfigPage {
 		else
 			annotation.setAnnotationColor(null);
 		annotation.setFont(font);
-		annotation.setCursorLineStyle(CursorLineStyle.values()[
-				cursorLineCombo.getSelectionIndex()]);
+		annotation.setCursorLineStyle(CursorLineStyle.values()[cursorLineCombo.getSelectionIndex()]);
 		annotation.setShowName(showNameButton.getSelection());
 		annotation.setShowSampleInfo(showSampleInfoButton.getSelection());
 		annotation.setShowPosition(showPositionButton.getSelection());	
