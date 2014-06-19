@@ -12,6 +12,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.FigureUtilities;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.RectangleFigure;
@@ -74,13 +75,17 @@ public class Legend extends RectangleFigure {
 	
 	@Override
 	protected void outlineShape(Graphics graphics) {
+		if (!isVisible()) return;
+		graphics.pushState();
 		if (!traceList.isEmpty()) {
-		    graphics.setForegroundColor(traceList.get(0).getYAxis().getForegroundColor());
+			Color fg = traceList.get(0).getYAxis().getForegroundColor();
+			if (fg == null) fg = ColorConstants.black;
+			graphics.setForegroundColor(fg);
 		}
 		super.outlineShape(graphics);
-		
+		graphics.popState();
 	}
-	
+
 	@Override
 	protected void fillShape(Graphics graphics) {
 		if(!((XYGraph)getParent()).isTransparent())
