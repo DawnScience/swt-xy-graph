@@ -42,6 +42,7 @@ Import-Package: org.eclipse.core.commands,
  org.eclipse.swt.printing,
  org.eclipse.swt.widgets,
  org.eclipse.ui,
+ org.eclipse.ui.commands,
  org.eclipse.ui.part,
  org.eclipse.ui.plugin,
  org.eclipse.ui.services

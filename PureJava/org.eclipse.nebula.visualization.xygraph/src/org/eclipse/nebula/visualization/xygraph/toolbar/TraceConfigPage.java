@@ -13,9 +13,12 @@ import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -23,6 +26,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.preference.ColorSelector;
+import org.eclipse.nebula.visualization.xygraph.Activator;
 import org.eclipse.nebula.visualization.xygraph.dataprovider.IDataProvider;
 import org.eclipse.nebula.visualization.xygraph.dataprovider.ISample;
 import org.eclipse.nebula.visualization.xygraph.figures.Axis;
@@ -32,7 +36,6 @@ import org.eclipse.nebula.visualization.xygraph.figures.Trace.BaseLine;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace.ErrorBarType;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace.PointStyle;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace.TraceType;
-import org.eclipse.nebula.visualization.xygraph.util.SingleSourceHelper;
 import org.eclipse.nebula.visualization.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -46,6 +49,8 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICommandService;
 
 /**This will help to create the necessary widgets 
  * to configure an axis's properties.
@@ -228,18 +233,22 @@ public class TraceConfigPage {
 				new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false, 3, 1));		
 		
 		Button export = new Button(traceCompo, SWT.NONE);
-		export.setText("Export data...");	
+		export.setText("Convert data...");
+		export.setToolTipText("Convert trace to ascii (dat file)");
+		export.setImage(Activator.getImageDescriptor("icons/convert.png").createImage());
 		export.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false, 2, 1));		
 		export.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-
-                final IFile exportTo = SingleSourceHelper.getProjectSaveFileLocation(trace.getName());				
-				if (exportTo!=null) {
-				    try {
-						exportToDat(exportTo, trace.getDataProvider());
-					} catch (Exception e1) {
-						e1.printStackTrace();
-					}
+				// WARNING: this action uses the convert command in org.dawnsci.plotting plugin
+				// and its handler is org.dawnsci.plotting.command.ExportLineTraceCommand.
+				// TODO Replace this by an extension point so we can take out the unnecessary dependencies 
+				try {
+					final ICommandService service = (ICommandService)PlatformUI.getWorkbench().getService(ICommandService.class);							
+					final Command export = service.getCommand("org.dawnsci.plotting.export.line.trace.command");
+					final ExecutionEvent event = new ExecutionEvent(export, Collections.EMPTY_MAP, null, trace);
+					export.executeWithChecks(event);
+				} catch (Exception ex) {
+					ex.printStackTrace();
 				}
 			}
 		});
