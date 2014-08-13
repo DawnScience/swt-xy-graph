@@ -233,9 +233,9 @@ public class TraceConfigPage {
 				new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false, 3, 1));		
 		
 		Button export = new Button(traceCompo, SWT.NONE);
-		export.setText("Convert data...");
-		export.setToolTipText("Convert trace to ascii (dat file)");
-		export.setImage(Activator.getImageDescriptor("icons/convert.png").createImage());
+		export.setText("Export data...");
+		export.setToolTipText("Export trace to ascii (dat file)");
+		export.setImage(Activator.getImageDescriptor("icons/data-export.png").createImage());
 		export.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false, 2, 1));		
 		export.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
