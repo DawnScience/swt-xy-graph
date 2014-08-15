@@ -94,6 +94,7 @@ public class Legend extends RectangleFigure {
 		int vPos = bounds.y + INNER_GAP;
 		int i=0;
 		for(Trace trace : traceList){
+			if (!trace.isVisible()) continue;
 			int hwidth = OUT_GAP + ICON_WIDTH + INNER_GAP +  
 					+ FigureUtilities.getTextExtents(trace.getName(), getFont()).width;
 			int hEnd = hPos + hwidth;
@@ -160,6 +161,7 @@ public class Legend extends RectangleFigure {
 		int height = ICON_WIDTH + INNER_GAP;
 //		int i=0;
 		for(Trace trace : traceList){
+			if (!trace.isVisible()) continue;
 			hEnd = hEnd + OUT_GAP + ICON_WIDTH + INNER_GAP +  
 					+ FigureUtilities.getTextExtents(trace.getName(), getFont()).width;
 			
