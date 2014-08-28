@@ -106,7 +106,7 @@ public class XYGraphConfigDialog extends Dialog {
     			SWT.FILL, SWT.FILL,true, false));
     	axisSelectGroup.setText("Select Axis");
     	axisSelectGroup.setLayout(new GridLayout(1, false));    	        
-    	final Combo axisCombo = new Combo(axisSelectGroup, SWT.DROP_DOWN);
+    	final Combo axisCombo = new Combo(axisSelectGroup, SWT.DROP_DOWN|SWT.READ_ONLY);
     	axisCombo.setLayoutData(new GridData(SWT.FILL, 0, true, false));
 	    for(Axis axis : xyGraph.getAxisList())
 	        axisCombo.add(axis.getTitle() + (axis.isHorizontal() ? "(X-Axis)" : "(Y-Axis)"));	   
@@ -155,7 +155,7 @@ public class XYGraphConfigDialog extends Dialog {
 	    	traceSelectGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL,true, false));
 	    	traceSelectGroup.setText("Select Trace");
 	    	traceSelectGroup.setLayout(new GridLayout(1, false));    	        
-	    	this.traceCombo = new Combo(traceSelectGroup, SWT.DROP_DOWN);
+	    	this.traceCombo = new Combo(traceSelectGroup, SWT.DROP_DOWN|SWT.READ_ONLY);
 	    	traceCombo.setLayoutData(new GridData(SWT.FILL, 0, true, false));
 		    int count = 0;
 	    	for(Trace trace : xyGraph.getPlotArea().getTraceList()) {
