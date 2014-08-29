@@ -146,8 +146,7 @@ public abstract class AbstractScale extends Figure{
 				cachedFormat = new SimpleDateFormat(formatPattern);
 			} else {
 				if (formatPattern == null || formatPattern == default_decimal_format || formatPattern.equals("")) {
-					ITicksProvider ticks = getTicksProvider();
-					formatPattern = ticks == null ? default_decimal_format : ticks.getDefaultFormatPattern(min, max);
+					formatPattern = getAutoFormat(min, max);
 					if (formatPattern == null || formatPattern.equals("")) {
 						autoFormat = true;
 					}
@@ -165,10 +164,16 @@ public abstract class AbstractScale extends Figure{
 			}
 		}
 
-		if (isDateEnabled() && obj instanceof Number)
+		if (isDateEnabled() && obj instanceof Number) {
 			return cachedFormat.format(new Date(((Number) obj).longValue()));
+		}
 		return cachedFormat.format(obj);
-   }
+    }
+
+    protected String getAutoFormat(double min, double max) {
+    	ITicksProvider ticks = getTicksProvider();
+    	return ticks == null ? default_decimal_format : ticks.getDefaultFormatPattern(min, max);
+    }
 
 	/**
 	 * Gets the ticks provider
@@ -287,7 +292,7 @@ public abstract class AbstractScale extends Figure{
     	setFormat(formatPattern);
     }
     
-	private void setFormat(String formatPattern) {
+	protected void setFormat(String formatPattern) {
 		try {
  			new DecimalFormat(formatPattern);
  		} catch (NullPointerException e) {

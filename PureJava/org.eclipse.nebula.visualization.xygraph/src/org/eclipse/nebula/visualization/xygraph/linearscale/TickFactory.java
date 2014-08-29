@@ -464,7 +464,6 @@ public class TickFactory {
 		return ticks;
 	}
 
-	private static final DecimalFormat CUSTOM_FORMAT = new DecimalFormat("#####0.000");
 	private static final DecimalFormat INDEX_FORMAT = new DecimalFormat("0");
 
 	/**
@@ -556,7 +555,7 @@ public class TickFactory {
 					for (Tick t : ticks) {
 						double v = scale.getLabel(t.getValue());
 						if (!Double.isNaN(v))
-							t.setText(CUSTOM_FORMAT.format(v));
+							t.setText(scale.format(v));
 					}
 				}
 			} else {
