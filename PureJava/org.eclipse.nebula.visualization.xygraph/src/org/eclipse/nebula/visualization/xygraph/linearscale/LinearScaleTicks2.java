@@ -234,11 +234,12 @@ public class LinearScaleTicks2 implements ITicksProvider {
 		if (mantissa > 0.1)
 			format = "############.##";
 		else {
-			format = "##.##";
+			StringBuilder form = new StringBuilder("##0.00");
 			while (mantissa < 1 && mantissa > 0) {
 				mantissa *= 10.0;
-				format += "#";
+				form.append( "#" );
 			}
+			format = form.toString();
 		}
 
 		return format;
