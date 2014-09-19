@@ -10,7 +10,7 @@ import org.eclipse.swt.graphics.Font;
  * This allows the scale to draw tick marks different to the range which the
  * scale is operating over.
  * 
- * @author fcp94556
+ * @author Matthew Gerring
  *
  */
 public interface IScaleProvider {
