@@ -59,9 +59,14 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	public enum TraceType {
 		/** Solid Line */
 		SOLID_LINE(Messages.TraceSolid),
-
 		/** Dash Line */
 		DASH_LINE(Messages.TraceDash),
+		/** Dashdot Line */
+		DASHDOT_LINE(Messages.TraceDash),
+		/** Dashdotdot Line */
+		DASHDOTDOT_LINE(Messages.TraceDash),
+		/** Dot Line */
+		DOT_LINE(Messages.TraceDash),
 
 		/**
 		 * Only draw point whose style is defined by pointStyle. Its size is
@@ -440,6 +445,18 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 			graphics.setLineStyle(SWTConstants.LINE_DASH);
 			graphics.drawLine(p1, p2);
 			break;
+		case DASHDOT_LINE:
+			graphics.setLineStyle(SWTConstants.LINE_DASHDOT);
+			graphics.drawLine(p1, p2);
+			break;
+		case DASHDOTDOT_LINE:
+			graphics.setLineStyle(SWTConstants.LINE_DASHDOTDOT);
+			graphics.drawLine(p1, p2);
+			break;
+		case DOT_LINE:
+			graphics.setLineStyle(SWTConstants.LINE_DOT);
+			graphics.drawLine(p1, p2);
+			break;
 		case AREA:
 			int basey;
 			switch (baseLine) {
@@ -493,6 +510,18 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 			break;
 		case DASH_LINE:
 			graphics.setLineStyle(SWTConstants.LINE_DASH);
+			graphics.drawPolyline(pl);
+			break;
+		case DASHDOT_LINE:
+			graphics.setLineStyle(SWTConstants.LINE_DASHDOT);
+			graphics.drawPolyline(pl);
+			break;
+		case DASHDOTDOT_LINE:
+			graphics.setLineStyle(SWTConstants.LINE_DASHDOTDOT);
+			graphics.drawPolyline(pl);
+			break;
+		case DOT_LINE:
+			graphics.setLineStyle(SWTConstants.LINE_DOT);
 			graphics.drawPolyline(pl);
 			break;
 		default:
@@ -686,6 +715,9 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 							switch (traceType) {
 							case SOLID_LINE:
 							case DASH_LINE:
+							case DASHDOT_LINE:
+							case DASHDOTDOT_LINE:
+							case DOT_LINE:
 							case STEP_HORIZONTALLY:
 							case STEP_VERTICALLY:
 								if (plPolyline.size() == 0)
@@ -888,6 +920,9 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 					switch (traceType) {
 					case SOLID_LINE:
 					case DASH_LINE:
+					case DASHDOT_LINE:
+					case DASHDOTDOT_LINE:
+					case DOT_LINE:
 					case STEP_HORIZONTALLY:
 					case STEP_VERTICALLY:
 						// Draw polyline which was not drawn yet.
