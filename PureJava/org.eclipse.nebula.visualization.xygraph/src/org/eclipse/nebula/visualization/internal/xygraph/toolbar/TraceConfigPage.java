@@ -174,10 +174,7 @@ public class TraceConfigPage {
 		traceTypeCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				baseLineCombo.setEnabled(
-						traceTypeCombo.getSelectionIndex() == Arrays.asList(TraceType.values()).indexOf(TraceType.BAR)
-								|| traceTypeCombo.getSelectionIndex() == Arrays.asList(TraceType.values())
-										.indexOf(TraceType.AREA));
+				updateBaseLineComboEnable();
 			}
 		});
 
@@ -418,9 +415,7 @@ public class TraceConfigPage {
 
 		visible.setSelection(trace.isVisible());
 
-		baseLineCombo.setEnabled(traceTypeCombo.getSelectionIndex() == Arrays.asList(TraceType.values())
-				.indexOf(TraceType.BAR)
-				|| traceTypeCombo.getSelectionIndex() == Arrays.asList(TraceType.values()).indexOf(TraceType.AREA));
+		updateBaseLineComboEnable();
 	}
 
 	/**
@@ -480,4 +475,11 @@ public class TraceConfigPage {
 			return file;
 		return getUniqueFile(parent, frag, ++start, extension);
 	}
+
+	private void updateBaseLineComboEnable() {
+		baseLineCombo.setEnabled(traceTypeCombo.getSelectionIndex() == TraceType.BAR.ordinal()
+				|| traceTypeCombo.getSelectionIndex() == TraceType.AREA.ordinal()
+				|| traceTypeCombo.getSelectionIndex() == TraceType.LINE_AREA.ordinal());
+	}
+
 }

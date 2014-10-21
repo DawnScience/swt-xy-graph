@@ -59,14 +59,9 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	public enum TraceType {
 		/** Solid Line */
 		SOLID_LINE(Messages.TraceSolid),
+
 		/** Dash Line */
 		DASH_LINE(Messages.TraceDash),
-		/** Dashdot Line */
-		DASHDOT_LINE(Messages.TraceDash),
-		/** Dashdotdot Line */
-		DASHDOTDOT_LINE(Messages.TraceDash),
-		/** Dot Line */
-		DOT_LINE(Messages.TraceDash),
 
 		/**
 		 * Only draw point whose style is defined by pointStyle. Its size is
@@ -88,6 +83,12 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 		 * areaAlpha.
 		 */
 		AREA(Messages.TraceArea),
+
+		/**
+		 * It also has a solid line in addition to the area.
+		 */
+		LINE_AREA(Messages.TraceLineArea),
+
 		/**
 		 * Solid line in step. It looks like the y value(on vertical direction)
 		 * changed firstly.
@@ -98,10 +99,16 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 		 * Solid line in step. It looks like the x value(on horizontal
 		 * direction) changed firstly.
 		 */
-		STEP_HORIZONTALLY(Messages.TraceStepHoriz);
+		STEP_HORIZONTALLY(Messages.TraceStepHoriz),
 
-		/** Draw a single point. Only the last data point will be drawn. */
-		// SINGLE_POINT("Single Point");
+		/** Dashdot Line */
+		DASHDOT_LINE(Messages.TraceDashDot),
+
+		/** Dashdotdot Line */
+		DASHDOTDOT_LINE(Messages.TraceDashDotDot),
+
+		/** Dot Line */
+		DOT_LINE(Messages.TraceDot);
 
 		private TraceType(String description) {
 			this.description = description;
@@ -458,6 +465,11 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 			graphics.drawLine(p1, p2);
 			break;
 		case AREA:
+		case LINE_AREA:
+			if (traceType == TraceType.LINE_AREA) {
+				graphics.setLineStyle(SWTConstants.LINE_SOLID);
+				graphics.drawLine(p1, p2);
+			}
 			int basey;
 			switch (baseLine) {
 			case NEGATIVE_INFINITY:
@@ -662,7 +674,7 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 							dpInRange = yAxis.getRange().inRange(dp.getYValue());
 						}
 
-						if (traceType != TraceType.AREA) {
+						if (traceType != TraceType.AREA && traceType != TraceType.LINE_AREA) {
 							if (!predpInRange && !dpInRange) { // both are out
 																// of
 																// plot area
@@ -1362,7 +1374,6 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	}
 
 	private void fireTraceNameChanged(String oldName, String newName) {
-		// TODO Auto-generated method stub
 		if (((oldName == null) && (newName == null)) || ((oldName != null) && oldName.equals(newName)))
 			return;
 
@@ -1677,22 +1688,18 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	}
 
 	public void axisForegroundColorChanged(Axis axis, Color oldColor, Color newColor) {
-		// TODO Auto-generated method stub
 
 	}
 
 	public void axisTitleChanged(Axis axis, String oldTitle, String newTitle) {
-		// TODO Auto-generated method stub
 
 	}
 
 	public void axisAutoScaleChanged(Axis axis, boolean oldAutoScale, boolean newAutoScale) {
-		// TODO Auto-generated method stub
 
 	}
 
 	public void axisLogScaleChanged(Axis axis, boolean old, boolean logScale) {
-		// TODO Auto-generated method stub
 
 	}
 

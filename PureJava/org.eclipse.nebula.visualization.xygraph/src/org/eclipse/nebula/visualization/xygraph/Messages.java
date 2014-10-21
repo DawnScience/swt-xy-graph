@@ -51,8 +51,12 @@ public class Messages extends NLS {
 	public static String PointTriangle;
 	public static String ProintCross2;
 	public static String TraceArea;
+	public static String TraceLineArea;
 	public static String TraceBar;
 	public static String TraceDash;
+	public static String TraceDashDot;
+	public static String TraceDashDotDot;
+	public static String TraceDot;
 	public static String TracePoint;
 	public static String TraceSolid;
 	public static String TraceStepHoriz;

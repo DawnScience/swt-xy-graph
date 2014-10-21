@@ -149,6 +149,9 @@ public class Legend extends RectangleFigure {
 					new Point(hPos + ICON_WIDTH / 2, vPos + ICON_WIDTH));
 			trace.drawPoint(graphics, new Point(hPos + ICON_WIDTH / 2, vPos + trace.getPointSize() / 2));
 			break;
+		case LINE_AREA:
+			graphics.drawPolyline(new int[] { hPos, vPos + ICON_WIDTH / 2, hPos + ICON_WIDTH / 2,
+					vPos + trace.getPointSize() / 2, hPos + ICON_WIDTH - 1, vPos + ICON_WIDTH / 2, });
 		case AREA:
 			graphics.setBackgroundColor(trace.getTraceColor());
 			if (Preferences.useAdvancedGraphics())
