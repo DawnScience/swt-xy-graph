@@ -107,9 +107,9 @@ public class CircularBuffer<T> extends AbstractCollection<T> {
 	 * @param bufferSize
 	 *            the bufferSize to set
 	 * @param clear
-	 *            clear the buffer if true. Otherwise keep the exist data; Extra
-	 *            data on the end would be omitted if the new bufferSize is less
-	 *            than the exist data count.
+	 *            clear the buffer if true. Otherwise keep the exist data;
+	 *            Oldest data will be omitted if the new bufferSize is less than
+	 *            the exist data count.
 	 */
 	@SuppressWarnings("unchecked")
 	public synchronized void setBufferSize(int bufferSize, boolean clear) {
@@ -122,8 +122,10 @@ public class CircularBuffer<T> extends AbstractCollection<T> {
 			} else {// keep the exist data
 				T[] tempBuffer = (T[]) toArray();
 				buffer = (T[]) new Object[bufferSize];
-				for (int i = 0; i < Math.min(bufferSize, count); i++) {
-					buffer[i] = tempBuffer[i];
+				if (bufferSize < count) {
+					System.arraycopy(tempBuffer, count - bufferSize, buffer, 0, bufferSize);
+				} else {
+					System.arraycopy(tempBuffer, 0, buffer, 0, count);
 				}
 				count = Math.min(bufferSize, count);
 				head = 0;
