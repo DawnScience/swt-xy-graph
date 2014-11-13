@@ -33,6 +33,7 @@ import org.eclipse.nebula.visualization.xygraph.util.Preferences;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * Annotation Figure. Annotation could be used to indicate the information for a
@@ -618,12 +619,20 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 	public void dataChanged(IDataProvider dataProvider) {
 		if (trace == null)
 			return;
-		if (trace.getHotSampleList().contains(currentSnappedSample)) {
-			currentPosition = new Point(xAxis.getValuePosition(xValue, false), yAxis.getValuePosition(yValue, false));
-		} else if (trace.getHotSampleList().size() > 0) {
-			updateToDefaultPosition();
-			pointerDragged = false;
-		}
+		// run it in next cycle after the trace have been painted.
+		Display.getCurrent().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				if (trace.getHotSampleList().contains(currentSnappedSample)) {
+					currentPosition = new Point(xAxis.getValuePosition(xValue, false),
+							yAxis.getValuePosition(yValue, false));
+				} else if (trace.getHotSampleList().size() > 0) {
+					updateToDefaultPosition();
+					pointerDragged = false;
+				}
+			}
+		});
+
 	}
 
 	/**
