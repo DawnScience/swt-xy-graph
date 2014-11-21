@@ -300,16 +300,44 @@ public class Axis extends LinearScale{
 	    // Get range of data in all traces
         final Range range = getTraceDataRange();
         if (range == null) return false;
+		double tempMin = range.getLower();
+		double tempMax = range.getUpper();
 
-        // Update axis
-        Range old = getRange();
-        if (range.equals(old)) {
-        	return false;
+		// Get current axis range, determine how 'different' they are
+		double max = getRange().getUpper();
+		double min = getRange().getLower();
+
+		if (isLogScaleEnabled())
+		{	// Transition into log space
+			tempMin = Log10.log10(tempMin);
+			tempMax = Log10.log10(tempMax);
+			max = Log10.log10(max);
+			min = Log10.log10(min);
+		}
+
+		final double thr = (max - min)*autoScaleThreshold;
+
+		//if both the changes are lower than threshold, return
+		if(((tempMin - min)>=0 && (tempMin - min)<thr)
+				&& ((max - tempMax)>=0 && (max - tempMax)<thr)){
+			return false;
+		}
+
+		if((Double.doubleToLongBits(tempMin) == Double.doubleToLongBits(min)
+				&& Double.doubleToLongBits(tempMax) == Double.doubleToLongBits(max)) ||
+				Double.isInfinite(tempMin) || Double.isInfinite(tempMax) ||
+				Double.isNaN(tempMin) || Double.isNaN(tempMax))
+			return false;
+
+        if (isLogScaleEnabled())
+        {   // Revert from log space
+            tempMin = Log10.pow10(tempMin);
+            tempMax = Log10.pow10(tempMax);
         }
 
         // by-pass overridden method as it sets ticks to false
         super.setRange(range.getLower(), range.getUpper());
-		fireAxisRangeChanged(old, range);
+		fireAxisRangeChanged(getRange(), range);
 		setTicksAtEnds(!axisAutoscaleTight);
 		repaint();
 		return true;
