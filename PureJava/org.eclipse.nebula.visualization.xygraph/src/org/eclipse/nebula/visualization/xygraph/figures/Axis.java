@@ -298,7 +298,7 @@ public class Axis extends LinearScale{
 		    return false;
 
 	    // Get range of data in all traces
-        final Range range = getTraceDataRange();
+        Range range = getTraceDataRange();
         if (range == null) return false;
 		double tempMin = range.getLower();
 		double tempMax = range.getUpper();
@@ -315,12 +315,23 @@ public class Axis extends LinearScale{
 			min = Log10.log10(min);
 		}
 
-		final double thr = (max - min)*autoScaleThreshold;
+		// The threshold is 'shared' between upper and lower range, times by 0.5
+		final double thr = (max - min) * 0.5 * autoScaleThreshold;
 
 		//if both the changes are lower than threshold, return
 		if(((tempMin - min)>=0 && (tempMin - min)<thr)
 				&& ((max - tempMax)>=0 && (max - tempMax)<thr)){
 			return false;
+		}
+
+		// Only increase the range of the lower axis
+		if((min - tempMin) > 0 && (max - tempMax)>=0) {
+			range = new Range(range.getLower(), max);
+		}
+
+		// Only increase the range of the upper axis
+		if((tempMax - max) > 0 && (tempMin - min)>=0) {
+			range = new Range(min, range.getUpper());
 		}
 
 		if((Double.doubleToLongBits(tempMin) == Double.doubleToLongBits(min)
