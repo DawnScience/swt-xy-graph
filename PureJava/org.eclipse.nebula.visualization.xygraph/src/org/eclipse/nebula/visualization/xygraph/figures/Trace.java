@@ -1306,13 +1306,22 @@ public class Trace extends Figure implements IDataProviderListener,
          *            the name of the trace to set
          */
         public void setName(String name) {
+        	setName(name, true);
+        }
+        
+        /**
+         * @param name
+         *            the name of the trace to set
+         */
+        public void setName(String name, boolean fire) {
+ 
                 String oldName = this.name;
                 this.name = name;
                 revalidate();
                 if (xyGraph != null)
                         xyGraph.repaint();
 
-                fireTraceNameChanged(oldName, this.name);
+                if (fire) fireTraceNameChanged(oldName, this.name);
 
         }
 
