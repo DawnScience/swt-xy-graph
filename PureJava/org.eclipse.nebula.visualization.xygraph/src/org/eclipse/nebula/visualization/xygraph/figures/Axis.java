@@ -298,41 +298,52 @@ public class Axis extends LinearScale{
 		    return false;
 
 	    // Get range of data in all traces
-        final Range range = getTraceDataRange();
+        Range range = getTraceDataRange();
         if (range == null) return false;
-		double tempMin = range.getLower();
-		double tempMax = range.getUpper();
+		double dataMin = range.getLower();
+		double dataMax = range.getUpper();
 
 		// Get current axis range, determine how 'different' they are
-		double max = getRange().getUpper();
-		double min = getRange().getLower();
+		double axisMax = getRange().getUpper();
+		double axisMin = getRange().getLower();
 
 		if (isLogScaleEnabled())
 		{	// Transition into log space
-			tempMin = Log10.log10(tempMin);
-			tempMax = Log10.log10(tempMax);
-			max = Log10.log10(max);
-			min = Log10.log10(min);
+			dataMin = Log10.log10(dataMin);
+			dataMax = Log10.log10(dataMax);
+			axisMax = Log10.log10(axisMax);
+			axisMin = Log10.log10(axisMin);
 		}
 
-		final double thr = (max - min)*autoScaleThreshold;
+		// The threshold is 'shared' between upper and lower range, times by 0.5
+		final double thr = (axisMax - axisMin) * 0.5 * autoScaleThreshold;
 
-		//if both the changes are lower than threshold, return
-		if(((tempMin - min)>=0 && (tempMin - min)<thr)
-				&& ((max - tempMax)>=0 && (max - tempMax)<thr)){
+		// If both the changes are lower than threshold, return
+		if(((dataMin - axisMin)>=0 && (dataMin - axisMin)<thr)
+				&& ((axisMax - dataMax)>=0 && (axisMax - dataMax)<thr)){
 			return false;
 		}
 
-		if((Double.doubleToLongBits(tempMin) == Double.doubleToLongBits(min)
-				&& Double.doubleToLongBits(tempMax) == Double.doubleToLongBits(max)) ||
-				Double.isInfinite(tempMin) || Double.isInfinite(tempMax) ||
-				Double.isNaN(tempMin) || Double.isNaN(tempMax))
+		// Only increase the range of the lower axis
+		if((axisMin - dataMin) > 0 && (axisMax - dataMax)>=0) {
+			range = new Range(range.getLower(), axisMax);
+		}
+
+		// Only increase the range of the upper axis
+		if((dataMax - axisMax) > 0 && (dataMin - axisMin)>=0) {
+			range = new Range(axisMin, range.getUpper());
+		}
+
+		if((Double.doubleToLongBits(dataMin) == Double.doubleToLongBits(axisMin)
+				&& Double.doubleToLongBits(dataMax) == Double.doubleToLongBits(axisMax)) ||
+				Double.isInfinite(dataMin) || Double.isInfinite(dataMax) ||
+				Double.isNaN(dataMin) || Double.isNaN(dataMax))
 			return false;
 
         if (isLogScaleEnabled())
         {   // Revert from log space
-            tempMin = Log10.pow10(tempMin);
-            tempMax = Log10.pow10(tempMax);
+            dataMin = Log10.pow10(dataMin);
+            dataMax = Log10.pow10(dataMax);
         }
 
         // by-pass overridden method as it sets ticks to false
