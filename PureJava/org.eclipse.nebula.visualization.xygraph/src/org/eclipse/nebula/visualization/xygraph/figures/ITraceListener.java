@@ -12,4 +12,6 @@ public interface ITraceListener {
 	void traceTypeChanged(Trace trace, TraceType old, TraceType newTraceType);
 
 	void traceColorChanged(Trace trace, Color old, Color newColor);
+	
+	void traceWidthChanged(Trace trace, int old, int newWidth);
 }
