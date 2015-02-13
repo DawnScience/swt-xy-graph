@@ -20,13 +20,13 @@ import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.PointList;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.nebula.visualization.xygraph.Messages;
-import org.eclipse.nebula.visualization.xygraph.util.Preferences;
 import org.eclipse.nebula.visualization.xygraph.dataprovider.IDataProvider;
 import org.eclipse.nebula.visualization.xygraph.dataprovider.IDataProviderListener;
 import org.eclipse.nebula.visualization.xygraph.dataprovider.ISample;
 import org.eclipse.nebula.visualization.xygraph.dataprovider.Sample;
 import org.eclipse.nebula.visualization.xygraph.linearscale.AbstractScale.LabelSide;
 import org.eclipse.nebula.visualization.xygraph.linearscale.Range;
+import org.eclipse.nebula.visualization.xygraph.util.Preferences;
 import org.eclipse.nebula.visualization.xygraph.util.SWTConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -1076,14 +1076,37 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 			final double xmin = xAxis.getRange().getLower();
 			x = xmin;
 			y = (xmin - x1) * dy / dx + y1;
-			if (evalDP(x, y, dp1, dp2))
-				dpTuple[count++] = new Sample(x, y);
+			if (evalDP(x, y, dp1, dp2)) {
+				ISample newSample = new Sample(x, y);
+				boolean insert = true;
+				for (int i = 0; i < count; i++) {
+					if (newSample.equals(dpTuple[i])) {
+						insert = false;
+						break;
+					}
+				}
+				if (insert) {
+					dpTuple[count++] = newSample;
+				}
+			}
+
 			// Intersection with right yAxis
 			final double xmax = xAxis.getRange().getUpper();
 			x = xmax;
 			y = (xmax - x1) * dy / dx + y1;
-			if (dx != 0 && evalDP(x, y, dp1, dp2))
-				dpTuple[count++] = new Sample(x, y);
+			if (dx != 0 && evalDP(x, y, dp1, dp2)) {
+				ISample newSample = new Sample(x, y);
+				boolean insert = true;
+				for (int i = 0; i < count; i++) {
+					if (newSample.equals(dpTuple[i])) {
+						insert = false;
+						break;
+					}
+				}
+				if (insert) {
+					dpTuple[count++] = newSample;
+				}
+			}
 		}
 		return dpTuple;
 	}
