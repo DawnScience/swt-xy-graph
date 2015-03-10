@@ -144,6 +144,22 @@ public class Axis extends LinearScale{
 		super.setRange(lower, upper);
 		fireAxisRangeChanged(old_range, getRange());
 	}
+	
+	@Override
+	public void setLogScale(boolean isLog) {
+		boolean cur = isLogScaleEnabled();
+		super.setLogScale(isLog);
+		if (cur!=isLog && xyGraph!=null) {
+			Display.getDefault().asyncExec(new Runnable() {
+                public void run() {
+        			xyGraph.performAutoScale();
+        			xyGraph.getPlotArea().layout();
+        			xyGraph.revalidate();
+        			xyGraph.repaint();
+                }
+			});
+		}
+	}
 
 	@Override
 	protected void layout() {

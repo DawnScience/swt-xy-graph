@@ -309,6 +309,7 @@ public class AxisConfigPage {
 		axis.setForegroundColor(XYGraphMediaFactory.getInstance().getColor(
 				axisColorSelector.getColorValue()));
 		axis.setPrimarySide(primaryButton.getSelection());
+		
 		axis.setLogScale(logButton.getSelection());
 		axis.setAutoScale(autoScaleButton.getSelection());
 		if(autoScaleButton.getSelection())
