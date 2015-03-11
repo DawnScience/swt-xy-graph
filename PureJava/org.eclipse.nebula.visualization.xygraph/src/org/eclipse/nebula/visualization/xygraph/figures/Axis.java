@@ -153,7 +153,6 @@ public class Axis extends LinearScale{
 			Display.getDefault().asyncExec(new Runnable() {
                 public void run() {
         			xyGraph.performAutoScale();
-        			xyGraph.performAutoScale();
         			xyGraph.getPlotArea().layout();
         			xyGraph.revalidate();
         			xyGraph.repaint();
