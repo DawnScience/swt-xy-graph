@@ -323,14 +323,6 @@ public class Axis extends LinearScale{
 		double axisMax = getRange().getUpper();
 		double axisMin = getRange().getLower();
 
-		if (isLogScaleEnabled())
-		{	// Transition into log space
-			dataMin = Log10.log10(dataMin);
-			dataMax = Log10.log10(dataMax);
-			axisMax = Log10.log10(axisMax);
-			axisMin = Log10.log10(axisMin);
-		}
-
 		// The threshold is 'shared' between upper and lower range, times by 0.5
 		final double thr = (axisMax - axisMin) * 0.5 * autoScaleThreshold;
 
@@ -342,12 +334,12 @@ public class Axis extends LinearScale{
 
 		// Only increase the range of the lower axis
 		if((axisMin - dataMin) > 0 && (axisMax - dataMax)>=0) {
-			range = new Range(range.getLower(), axisMax);
+			range = new Range(dataMin, axisMax);
 		}
 
 		// Only increase the range of the upper axis
 		if((dataMax - axisMax) > 0 && (dataMin - axisMin)>=0) {
-			range = new Range(axisMin, range.getUpper());
+			range = new Range(axisMin, dataMax);
 		}
 
 		if((Double.doubleToLongBits(dataMin) == Double.doubleToLongBits(axisMin)
@@ -355,12 +347,6 @@ public class Axis extends LinearScale{
 				Double.isInfinite(dataMin) || Double.isInfinite(dataMax) ||
 				Double.isNaN(dataMin) || Double.isNaN(dataMax))
 			return false;
-
-        if (isLogScaleEnabled())
-        {   // Revert from log space
-            dataMin = Log10.pow10(dataMin);
-            dataMax = Log10.pow10(dataMax);
-        }
 
         // by-pass overridden method as it sets ticks to false
         super.setRange(range.getLower(), range.getUpper());
