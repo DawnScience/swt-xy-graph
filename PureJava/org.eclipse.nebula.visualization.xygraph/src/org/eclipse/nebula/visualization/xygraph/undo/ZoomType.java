@@ -80,17 +80,24 @@ public enum ZoomType{
 		PANNING(Messages.Zoom_Pan,
 				XYGraphMediaFactory.getInstance().getImage("images/Panning.png"),
 				XYGraphMediaFactory.getInstance().getImage("images/PanningCursor.png"),
-                XYGraphFlags.COMBINED_ZOOM | XYGraphFlags.SEPARATE_ZOOM, SWT.CURSOR_HAND),
+                XYGraphFlags.COMBINED_ZOOM | XYGraphFlags.SEPARATE_ZOOM, SWT.CURSOR_HAND, false),
 				
         /** Disarm zoom behavior */
 		NONE(Messages.Zoom_None,
 				XYGraphMediaFactory.getInstance().getImage("images/MouseArrow.png"), null,
-                XYGraphFlags.COMBINED_ZOOM | XYGraphFlags.SEPARATE_ZOOM, SWT.CURSOR_ARROW);
+                XYGraphFlags.COMBINED_ZOOM | XYGraphFlags.SEPARATE_ZOOM, SWT.CURSOR_ARROW, false);
 		
 		final private Image iconImage;
 		final private String description;
 		private Cursor cursor;
 		final private int flags;
+		final private boolean isZoom;
+		
+		private ZoomType(final String description, 
+				final Image iconImage, final Image cursorImage,
+				final int flags, final int backUpSWTCursorType){
+			this(description, iconImage, cursorImage, flags, backUpSWTCursorType, true);
+		}
 		
 		/** Initialize
 		 *  @param description Description used for tool tip
@@ -103,7 +110,7 @@ public enum ZoomType{
 		 */
 		private ZoomType(final String description, 
 				final Image iconImage, final Image cursorImage,
-				final int flags, final int backUpSWTCursorType){
+				final int flags, final int backUpSWTCursorType, boolean isZoom){
 			this.description = description;
 			this.iconImage = iconImage;
 			if(cursorImage == null)
@@ -114,6 +121,7 @@ public enum ZoomType{
 						8, 8, backUpSWTCursorType);
 			XYGraphMediaFactory.getInstance().registerCursor(cursor);
 			this.flags = flags;
+			this.isZoom = isZoom;
 		}
 		
 		/**
@@ -161,5 +169,9 @@ public enum ZoomType{
 
 		public void setCursor(Cursor cursor) {
 			this.cursor = cursor;
+		}
+
+		public boolean isZoom() {
+			return isZoom;
 		}
 	}
