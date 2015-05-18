@@ -16,7 +16,7 @@ Bundle-Version: 1.1.0.qualifier
 Bundle-Name: XYGraph Plug-in
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: org.eclipse.nebula.visualization.xygraph;singleton:=true
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.eclipse.nebula.visualization.xygraph.Activator
 Import-Package: org.eclipse.core.commands,
