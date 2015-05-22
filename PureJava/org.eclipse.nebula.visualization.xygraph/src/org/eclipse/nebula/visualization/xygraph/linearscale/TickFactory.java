@@ -567,6 +567,9 @@ public class TickFactory {
 		return ticks;
 	}
 
+	private final static int LOWEST_LOG_10 = -323; // sub-normal value 4.9e-324
+	private final static int HIGHEST_LOG_10 = 308; // 1.80e308
+
 	private double determineNumLogTicks(double min, double max, int maxTicks,
 			boolean allowMinMaxOver) {
 		isReversed = min > max;
@@ -576,27 +579,29 @@ public class TickFactory {
 			max = t;
 		}
 
-		int loDecade = (int) Math.floor(Math.log10(min)); // lowest decade (or power of ten)
-		int hiDecade = (int) Math.ceil(Math.log10(max));
+		graphMin = Math.log10(min);
+		graphMax = Math.log10(max);
+		int loDecade = (int) Math.floor(graphMin); // lowest decade (or power of ten)
+		if (loDecade < LOWEST_LOG_10) {
+			loDecade = LOWEST_LOG_10;
+		}
+		int hiDecade = (int) Math.ceil(graphMax);
+		if (hiDecade > HIGHEST_LOG_10) {
+			hiDecade = HIGHEST_LOG_10;
+		}
 
 		int decades = hiDecade - loDecade;
 
-		int unit = 0;
-		int n;
-		do {
-			unit++;
-			n = decades/unit;
-		} while (n > maxTicks);
+		int unit = (int) Math.ceil(1 + decades/(maxTicks + 1));
+		int n = decades/unit;
 
 		if (allowMinMaxOver) {
-			graphMin = Math.pow(10, loDecade);
-			graphMax = Math.pow(10, n*unit + loDecade);
+			graphMin = loDecade;
+			graphMax = n*unit + loDecade;
+			intervals = n;
 		} else {
-			graphMin = min;
-			graphMax = max;
+			intervals = (int) Math.floor(graphMax - graphMin)/unit;
 		}
-
-		intervals = (int) Math.floor(Math.log10(graphMax/graphMin)/unit);
 
 		if (isReversed) {
 			double t = graphMin;
@@ -604,7 +609,7 @@ public class TickFactory {
 			graphMax = t;
 		}
 
-		double tickUnit = isReversed ? Math.pow(10, -unit) : Math.pow(10, unit);
+		double tickUnit = isReversed ? -unit : unit;
 
 		if (loDecade < -3 || hiDecade > 3 || decades > 6) {
 			createFormatString(0, true);
@@ -643,23 +648,25 @@ public class TickFactory {
 
 		double p = graphMin;
 		for (int i = 0; i <= intervals; i++) {
-			boolean r = inRangeLog(p, min, max);
+			double x = Math.pow(10, p);
+			boolean r = inRangeLog(x, min, max);
 			if (!tight || r) {
 				Tick newTick = new Tick();
-				newTick.setValue(p);
-				newTick.setText(getTickString(p));
+				newTick.setValue(x);
+				newTick.setText(getTickString(x));
 				ticks.add(newTick);
 			}
-			p *= tickUnit;
+			p += tickUnit;
 		}
 
 		int imax = ticks.size();
 		if (imax < intervals) {
-			boolean r = inRangeLog(p, min, max);
+			double x = Math.pow(10, p);
+			boolean r = inRangeLog(x, min, max);
 			if (!tight || r) {
 				Tick newTick = new Tick();
-				newTick.setValue(p);
-				newTick.setText(getTickString(p));
+				newTick.setValue(x);
+				newTick.setText(getTickString(x));
 				ticks.add(newTick);
 				imax++;
 			}
@@ -669,36 +676,33 @@ public class TickFactory {
 			if (!tight && allowMinMaxOver) {
 				Tick t = ticks.get(imax - 1);
 				if (!isReversed && t.getValue() < max) { // last is >= max
-					t.setValue(graphMax);
-					t.setText(getTickString(graphMax));
+					double x = Math.pow(10, graphMax);
+					t.setValue(x);
+					t.setText(getTickString(x));
 				}
 			}
 		} else if (maxTicks > 1) {
 			if (imax == 0) {
 				imax++;
 				Tick newTick = new Tick();
-				if (isReversed) {
-					newTick.setValue(graphMax);
-					newTick.setText(getTickString(graphMax));
-				} else {
-					newTick.setValue(graphMin);
-					newTick.setText(getTickString(graphMin));
-				}
+				double x = Math.pow(10, isReversed ? graphMax : graphMin);
+				newTick.setValue(x);
+				newTick.setText(getTickString(x));
 				ticks.add(newTick);
 			}
 			if (imax == 1) {
 				if (!tight && allowMinMaxOver) {
 					Tick t = ticks.get(0);
 					Tick newTick = new Tick();
-					if (t.getText().equals(getTickString(graphMax))) {
-						double value = graphMin;
-						newTick.setValue(value);
-						newTick.setText(getTickString(value));
+					double x = Math.pow(10, graphMax);
+					if (t.getText().equals(getTickString(x))) {
+						x = Math.pow(10, graphMin);
+						newTick.setValue(x);
+						newTick.setText(getTickString(x));
 						ticks.add(0, newTick);
 					} else {
-						double value = graphMax;
-						newTick.setValue(value);
-						newTick.setText(getTickString(value));
+						newTick.setValue(x);
+						newTick.setText(getTickString(x));
 						ticks.add(newTick);
 					}
 					imax++;
