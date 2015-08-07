@@ -38,14 +38,12 @@ public abstract class AbstractScale extends Figure{
 
 	public static final double DEFAULT_MIN = 0d;
 
-
-	public static final String DEFAULT_ENGINEERING_FORMAT = "0.####E0";
-
-
 	/**
 	 * the digits limit to be displayed in engineering format
 	 */
-	private static final int ENGINEERING_LIMIT = 4;
+	public static final int ENGINEERING_LIMIT = 4;
+
+	public static final String DEFAULT_ENGINEERING_FORMAT = "0.####E0";
 
 	private static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd\nHH:mm:ss";    	
     

@@ -230,18 +230,21 @@ public class LinearScaleTicks2 implements ITicksProvider {
 		String format = null;
 
 		// calculate the default decimal format
-		double mantissa = Math.abs(max - min);
-		if (mantissa > 0.1)
-			format = "############.##";
-		else {
+		double mantissa = Math.max(Math.abs(min), Math.abs(max));
+		double power = mantissa == 0 ? -1 : Math.log10(mantissa);
+	
+		if (power >= AbstractScale.ENGINEERING_LIMIT || power < -6) {
+			format = AbstractScale.DEFAULT_ENGINEERING_FORMAT;
+		} else if (power <= 0) {
 			StringBuilder form = new StringBuilder("##0.00");
-			while (mantissa < 1 && mantissa > 0) {
-				mantissa *= 10.0;
-				form.append( "#" );
+			while (power < -1) {
+				power += 1;
+				form.append("#");
 			}
 			format = form.toString();
+		} else {
+			format = "############.##";
 		}
-
 		return format;
 	}
 
