@@ -145,21 +145,13 @@ public abstract class AbstractScale extends Figure{
 				}
 				cachedFormat = new SimpleDateFormat(formatPattern);
 			} else {
-				if (formatPattern == null || formatPattern == default_decimal_format || formatPattern.equals("")) {
+				if (formatPattern == null || formatPattern.isEmpty() || formatPattern.equals(default_decimal_format) || formatPattern.equals(DEFAULT_DATE_FORMAT)) {
 					formatPattern = getAutoFormat(min, max);
 					if (formatPattern == null || formatPattern.equals("")) {
 						autoFormat = true;
 					}
 				}
 
-				if (formatPattern.equals(default_decimal_format)
-						|| formatPattern.equals(DEFAULT_ENGINEERING_FORMAT)) {
-					if ((max != 0 && Math.abs(Math.log10(Math.abs(max))) >= ENGINEERING_LIMIT)
-							|| (min != 0 && Math.abs(Math.log10(Math.abs(min))) >= ENGINEERING_LIMIT))
-						formatPattern = DEFAULT_ENGINEERING_FORMAT;
-					else
-						formatPattern = default_decimal_format;
-				}
 				cachedFormat = new DecimalFormat(formatPattern);
 			}
 		}
@@ -172,7 +164,14 @@ public abstract class AbstractScale extends Figure{
 
     protected String getAutoFormat(double min, double max) {
     	ITicksProvider ticks = getTicksProvider();
-    	return ticks == null ? default_decimal_format : ticks.getDefaultFormatPattern(min, max);
+    	if (ticks == null) {
+			if ((max != 0 && Math.abs(Math.log10(Math.abs(max))) >= ENGINEERING_LIMIT)
+						|| (min != 0 && Math.abs(Math.log10(Math.abs(min))) >= ENGINEERING_LIMIT)) {
+					return DEFAULT_ENGINEERING_FORMAT;
+			}
+			return default_decimal_format;
+    	}
+    	return ticks.getDefaultFormatPattern(min, max);
     }
 
 	/**
