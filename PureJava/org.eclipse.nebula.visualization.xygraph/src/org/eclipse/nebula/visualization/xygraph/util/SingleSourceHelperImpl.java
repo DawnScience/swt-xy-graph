@@ -90,7 +90,7 @@ public class SingleSourceHelperImpl extends SingleSourceHelper {
 	protected String getInternalImageSavePath(String[] filterExtensions) {
 		
 		try { // Swt use reflection
-			Class clazz = getClass().getClassLoader().loadClass("org.eclipse.swt.widgets.FileDialog");
+			Class<?> clazz = getClass().getClassLoader().loadClass("org.eclipse.swt.widgets.FileDialog");
 			
 			Object dialog = clazz.getConstructor(Shell.class, int.class).newInstance(Display.getDefault().getShells()[0], SWT.SAVE);
 			
@@ -116,7 +116,7 @@ public class SingleSourceHelperImpl extends SingleSourceHelper {
 		
 		try {
 			final Bundle bundle = Platform.getBundle("org.eclipse.emf.common.ui");
-			final Class  clazz  = bundle.loadClass("org.eclipse.emf.common.ui.dialogs.WorkspaceResourceDialog");
+			final Class<?> clazz = bundle.loadClass("org.eclipse.emf.common.ui.dialogs.WorkspaceResourceDialog");
 			
 			final Method openNewMethod = clazz.getMethod("openNewFile", Shell.class,String.class,String.class, IPath.class,  List.class);
 			
