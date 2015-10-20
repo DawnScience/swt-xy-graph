@@ -46,6 +46,7 @@ public class XYGraphConfigDialog extends Dialog {
 	protected List<AnnotationConfigPage> annotationConfigPageList;
 	protected List<AxisConfigPage> axisConfigPageList;
 	protected Combo traceCombo;
+	protected Combo axisCombo;
 	protected Combo annotationsCombo;
 	protected List<TraceConfigPage> traceConfigPageList;
 	protected XYGraph xyGraph;
@@ -106,7 +107,7 @@ public class XYGraphConfigDialog extends Dialog {
     			SWT.FILL, SWT.FILL,true, false));
     	axisSelectGroup.setText("Select Axis");
     	axisSelectGroup.setLayout(new GridLayout(1, false));    	        
-    	final Combo axisCombo = new Combo(axisSelectGroup, SWT.DROP_DOWN|SWT.READ_ONLY);
+    	axisCombo = new Combo(axisSelectGroup, SWT.DROP_DOWN|SWT.READ_ONLY);
     	axisCombo.setLayoutData(new GridData(SWT.FILL, 0, true, false));
 	    for(Axis axis : xyGraph.getAxisList())
 	        axisCombo.add(axis.getTitle() + (axis.isHorizontal() ? "(X-Axis)" : "(Y-Axis)"));	   
@@ -243,7 +244,7 @@ public class XYGraphConfigDialog extends Dialog {
         
 		return parent_composite;
 	}
-	
+
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		((GridLayout) parent.getLayout()).numColumns++;
