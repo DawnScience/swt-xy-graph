@@ -44,7 +44,7 @@ public class XYGraphConfigDialog extends Dialog {
 	
 	private GraphConfigPage graphConfigPage;
 	protected List<AnnotationConfigPage> annotationConfigPageList;
-	private List<AxisConfigPage> axisConfigPageList;
+	protected List<AxisConfigPage> axisConfigPageList;
 	protected Combo traceCombo;
 	protected Combo annotationsCombo;
 	protected List<TraceConfigPage> traceConfigPageList;
