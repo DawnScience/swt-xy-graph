@@ -354,7 +354,9 @@ public abstract class AbstractScale extends Figure{
         }
         	
         logScaleEnabled = enabled;
-        setTicksAtEnds(true);
+        // TODO Setting it to true triggers the max and min Y-axis label to be inverted
+     	// when in log scale mode. See http://jira.diamond.ac.uk/browse/SCI-5344 and SCI-5348
+        setTicksAtEnds(false);
         range = new Range(min, max);
         setDirty(true);
 		revalidate();
@@ -514,6 +516,13 @@ public abstract class AbstractScale extends Figure{
 		return ticksAtEnds;
 	}
 
+	/**
+	 * Warning: Setting this to true triggers the max and min Y-axis labels to
+	 * be inverted when in log scale mode. See
+	 * http://jira.diamond.ac.uk/browse/SCI-5344 and SCI-5348
+	 * 
+	 * @param ticksAtEnds
+	 */
 	public void setTicksAtEnds(boolean ticksAtEnds) {
 		this.ticksAtEnds = ticksAtEnds;
 	}

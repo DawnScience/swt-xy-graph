@@ -351,7 +351,10 @@ public class Axis extends LinearScale{
         // by-pass overridden method as it sets ticks to false
         super.setRange(range.getLower(), range.getUpper());
 		fireAxisRangeChanged(getRange(), range);
-		setTicksAtEnds(!axisAutoscaleTight);
+
+		// TODO Setting it to true triggers the max and min Y-axis label to be inverted
+		// when in log scale mode. See http://jira.diamond.ac.uk/browse/SCI-5344 and SCI-5348
+		setTicksAtEnds(false);
 		repaint();
 		return true;
 	}
