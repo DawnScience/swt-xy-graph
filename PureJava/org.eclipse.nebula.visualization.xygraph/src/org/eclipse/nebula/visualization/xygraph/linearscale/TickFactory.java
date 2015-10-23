@@ -570,7 +570,7 @@ public class TickFactory {
 	private final static int LOWEST_LOG_10 = -323; // sub-normal value 4.9e-324
 	private final static int HIGHEST_LOG_10 = 308; // 1.80e308
 
-	private double determineNumLogTicks(double min, double max, int maxTicks,
+	private int determineNumLogTicks(double min, double max, int maxTicks,
 			boolean allowMinMaxOver) {
 		isReversed = min > max;
 		if (isReversed) {
@@ -609,14 +609,12 @@ public class TickFactory {
 			graphMax = t;
 		}
 
-		double tickUnit = isReversed ? -unit : unit;
-
 		if (loDecade < -3 || hiDecade > 3 || decades > 6) {
 			createFormatString(0, true);
 		} else {
 			createFormatString(Math.max(-loDecade, 0), false);
 		}
-		return tickUnit;
+		return isReversed ? -unit : unit;
 	}
 
 	private boolean inRangeLog(double x, double min, double max) {
@@ -644,7 +642,7 @@ public class TickFactory {
 		}
 
 		List<Tick> ticks = new ArrayList<Tick>();
-		double tickUnit = determineNumLogTicks(min, max, maxTicks, allowMinMaxOver);
+		int tickUnit = determineNumLogTicks(min, max, maxTicks, allowMinMaxOver);
 
 		double p = graphMin;
 		for (int i = 0; i <= intervals; i++) {
@@ -710,7 +708,7 @@ public class TickFactory {
 			}
 		}
 
-		if (tickUnit > 1) {
+		if (tickUnit > 0) {
 			double lo = Math.log(tight ? min : ticks.get(0).getValue());
 			double hi = Math.log(tight ? max : ticks.get(imax - 1).getValue());
 			double range = hi - lo;
