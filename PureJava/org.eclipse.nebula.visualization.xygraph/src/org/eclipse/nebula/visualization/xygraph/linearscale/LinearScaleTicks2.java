@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright 2012 Diamond Light Source Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -110,7 +110,7 @@ public class LinearScaleTicks2 implements ITicksProvider {
 	private final static int MIN_TICKS = 3;
 
 	@Override
-	public Range update(final double min, final double max, final int length) {
+	public Range update(final double min, final double max, int length) {
 		if (scale.isLogScaleEnabled() && (min <= 0 || max <= 0))
 			throw new IllegalArgumentException("Range for log scale must be in positive range");
 
@@ -139,6 +139,7 @@ public class LinearScaleTicks2 implements ITicksProvider {
 
 		final int hMargin = getHeadMargin();
 		final int tMargin = getTailMargin();
+
 		// loop until labels fit
 		do {
 			if (ticksIndexBased) {
