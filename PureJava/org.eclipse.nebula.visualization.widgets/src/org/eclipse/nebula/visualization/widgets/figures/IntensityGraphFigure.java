@@ -130,6 +130,40 @@ public class IntensityGraphFigure extends Figure implements Introspectable {
 		public String getROIInfo(int xIndex, int yIndex, int width, int height);
 	}	
 	
+	/**
+	 * Wraps an array of raw signed data to emulate an unsigned datatype.
+	 *
+	 */
+	public class UnsignedPrimitiveArrayWrapper implements IPrimaryArrayWrapper {
+
+		private IPrimaryArrayWrapper array;
+		private double offset;
+
+		/**
+		 * Wrap an array to return unsigned data.
+		 * @param array Array to be wrapped
+		 * @param bits Length of unsigned data, in bits
+		 */
+		public UnsignedPrimitiveArrayWrapper(IPrimaryArrayWrapper array, int bits) {
+			this.array = array;
+			this.offset = Math.pow(2, bits);
+		}
+
+		@Override
+		public double get(int i) {
+			if(array.get(i) < 0) {
+				return array.get(i) + offset;
+			} else {
+				return array.get(i);
+			}
+		}
+
+		@Override
+		public int getSize() {
+			return array.getSize();
+		}
+	}
+
 	class SinglePixelProfileCrossHair extends Figure {
 		/**
 		 * Center coordinates 
@@ -348,22 +382,6 @@ public class IntensityGraphFigure extends Figure implements Introspectable {
 				return dataArray;			
 		}
 
-		private synchronized IPrimaryArrayWrapper convertFromUnsignedArray(IPrimaryArrayWrapper data, int bits) {
-			if(bits == 0) {
-				return data;
-			}
-			double[] result = new double[data.getSize()];
-			double offset = Math.pow(2, bits);
-			for(int i=0; i<data.getSize(); i++) {
-				if(data.get(i) < 0) {
-					result[i] = data.get(i) + offset;
-				} else {
-					result[i] = data.get(i);
-				}
-			}
-			return new DoubleArrayWrapper(result);
-		}
-
 		
 		/**Get data index location on cropped data array from geometry location.
 		 * @param x x much be inside graph area.
@@ -431,7 +449,7 @@ public class IntensityGraphFigure extends Figure implements Introspectable {
 				croppedDataArray = cropDataArray(cropLeft, cropRight, cropTop, cropBottom);
 				
 				if(unsigned) {
-					croppedDataArray = convertFromUnsignedArray(croppedDataArray, unsignedBits);
+					croppedDataArray = new UnsignedPrimitiveArrayWrapper(croppedDataArray, unsignedBits);
 				}
 
 				fireProfileDataChanged(croppedDataArray, croppedDataWidth, croppedDataHeight);
