@@ -130,6 +130,40 @@ public class IntensityGraphFigure extends Figure implements Introspectable {
 		public String getROIInfo(int xIndex, int yIndex, int width, int height);
 	}	
 	
+	/**
+	 * Wraps an array of raw signed data to emulate an unsigned datatype.
+	 *
+	 */
+	public class UnsignedPrimitiveArrayWrapper implements IPrimaryArrayWrapper {
+
+		private IPrimaryArrayWrapper array;
+		private double offset;
+
+		/**
+		 * Wrap an array to return unsigned data.
+		 * @param array Array to be wrapped
+		 * @param bits Length of unsigned data, in bits
+		 */
+		public UnsignedPrimitiveArrayWrapper(IPrimaryArrayWrapper array, int bits) {
+			this.array = array;
+			this.offset = Math.pow(2, bits);
+		}
+
+		@Override
+		public double get(int i) {
+			if(array.get(i) < 0) {
+				return array.get(i) + offset;
+			} else {
+				return array.get(i);
+			}
+		}
+
+		@Override
+		public int getSize() {
+			return array.getSize();
+		}
+	}
+
 	class SinglePixelProfileCrossHair extends Figure {
 		/**
 		 * Center coordinates 
@@ -347,7 +381,7 @@ public class IntensityGraphFigure extends Figure implements Introspectable {
 			}else
 				return dataArray;			
 		}
-		
+
 		
 		/**Get data index location on cropped data array from geometry location.
 		 * @param x x much be inside graph area.
@@ -414,6 +448,10 @@ public class IntensityGraphFigure extends Figure implements Introspectable {
 				
 				croppedDataArray = cropDataArray(cropLeft, cropRight, cropTop, cropBottom);
 				
+				if(unsigned) {
+					croppedDataArray = new UnsignedPrimitiveArrayWrapper(croppedDataArray, unsignedBits);
+				}
+
 				fireProfileDataChanged(croppedDataArray, croppedDataWidth, croppedDataHeight);
 //				for(ROIFigure roiFigure : roiMap.values()){
 //					roiFigure.fireROIUpdated();
@@ -614,6 +652,8 @@ public class IntensityGraphFigure extends Figure implements Introspectable {
 
 	private int dataWidth, dataHeight;
 	private int cropLeft, cropRight, cropTop, cropBottom;
+	private int unsignedBits;
+	private boolean unsigned;
 //	private double[] dataArray;
 	private IPrimaryArrayWrapper dataArray;
 	
@@ -988,6 +1028,14 @@ public class IntensityGraphFigure extends Figure implements Introspectable {
 	 */
 	public int getDataWidth() {
 		return dataWidth;
+	}
+
+	public boolean isUnsigned() {
+		return unsigned;
+	}
+
+	public int getUnsignedBits() {
+		return unsignedBits;
 	}
 
 	public GraphArea getGraphArea() {
@@ -1399,6 +1447,22 @@ public class IntensityGraphFigure extends Figure implements Introspectable {
 		dataDirty = true;
 		repaint();
 	}
+
+
+	/**
+	 * @param unsigned true if the data is unsigned
+	 */
+	public void setUnsigned(boolean unsigned) {
+		this.unsigned = unsigned;
+	}
+
+	/**
+	 * @param bits the number of bits in the unsigned data, or zero
+	 */
+	public final void setUnsignedBits(int bits) {
+		this.unsignedBits = bits;
+	}
+
 
 	/**Set color of ROI figures.
 	 * @param roiColor
