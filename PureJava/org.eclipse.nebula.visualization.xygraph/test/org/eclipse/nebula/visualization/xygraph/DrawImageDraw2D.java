@@ -65,6 +65,7 @@ public class DrawImageDraw2D extends Figure {
 		gc.setAdvanced(fgc.getAdvanced());
 
 		SWTGraphics g = new SWTGraphics(gc);
+		g.setClip(new Rectangle(0, 0, bnds.width, bnds.height)); // fixes empty draw problem
 		setBounds(new Rectangle(0, 0, bnds.width, bnds.height));
 //		layout();
 		paint(g);
