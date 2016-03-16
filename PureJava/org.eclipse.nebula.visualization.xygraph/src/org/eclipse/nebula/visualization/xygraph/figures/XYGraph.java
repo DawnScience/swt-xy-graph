@@ -676,7 +676,10 @@ public class XYGraph extends Figure {
 			
 			Image image = new Image(null, bounds.width + 6, bounds.height + 6);
 			GC gc = GraphicsUtil.createGC(image);
-			SWTGraphics graphics = new SWTGraphics(gc); 
+
+			SWTGraphics graphics = new SWTGraphics(gc);
+			// Needed because the clipping is not set with GTK2
+			graphics.setClip(new Rectangle(0, 0, image.getBounds().width, image.getBounds().height));
 			graphics.translate(-bounds.x + 3, -bounds.y + 3);
 			graphics.setForegroundColor(getForegroundColor());
 			graphics.setBackgroundColor(getBackgroundColor());		
