@@ -95,26 +95,26 @@ public class TickFactoryTest {
 	@Test
 	public void testNiceNum() {
 		Assert.assertEquals(new BigDecimal("0.1"), TickFactory.nicenum(BigDecimal.valueOf(0.1), false));
-		Assert.assertEquals(new BigDecimal("1.0"), TickFactory.nicenum(BigDecimal.valueOf(1), false));
-		Assert.assertEquals(new BigDecimal("10.0"), TickFactory.nicenum(BigDecimal.valueOf(10), false));
-		Assert.assertEquals(new BigDecimal("1.0"), TickFactory.nicenum(BigDecimal.valueOf(0.9), false));
-		Assert.assertEquals(new BigDecimal("10.0"), TickFactory.nicenum(BigDecimal.valueOf(9), false));
-		Assert.assertEquals(new BigDecimal("100.0"), TickFactory.nicenum(BigDecimal.valueOf(90), false));
-		Assert.assertEquals(new BigDecimal("1.0"), TickFactory.nicenum(BigDecimal.valueOf(0.7), false));
-		Assert.assertEquals(new BigDecimal("10.0"), TickFactory.nicenum(BigDecimal.valueOf(7), false));
-		Assert.assertEquals(new BigDecimal("100.0"), TickFactory.nicenum(BigDecimal.valueOf(70), false));
+		Assert.assertEquals(new BigDecimal("1"), TickFactory.nicenum(BigDecimal.valueOf(1), false));
+		Assert.assertEquals(new BigDecimal("1e1"), TickFactory.nicenum(BigDecimal.valueOf(10), false));
+		Assert.assertEquals(new BigDecimal("1"), TickFactory.nicenum(BigDecimal.valueOf(0.9), false));
+		Assert.assertEquals(new BigDecimal("1e1"), TickFactory.nicenum(BigDecimal.valueOf(9), false));
+		Assert.assertEquals(new BigDecimal("1e2"), TickFactory.nicenum(BigDecimal.valueOf(90), false));
+		Assert.assertEquals(new BigDecimal("1"), TickFactory.nicenum(BigDecimal.valueOf(0.7), false));
+		Assert.assertEquals(new BigDecimal("1e1"), TickFactory.nicenum(BigDecimal.valueOf(7), false));
+		Assert.assertEquals(new BigDecimal("1e2"), TickFactory.nicenum(BigDecimal.valueOf(70), false));
 		Assert.assertEquals(new BigDecimal("0.5"), TickFactory.nicenum(BigDecimal.valueOf(0.5), false));
-		Assert.assertEquals(new BigDecimal("5.0"), TickFactory.nicenum(BigDecimal.valueOf(5), false));
-		Assert.assertEquals(new BigDecimal("50.0"), TickFactory.nicenum(BigDecimal.valueOf(50), false));
+		Assert.assertEquals(new BigDecimal("5"), TickFactory.nicenum(BigDecimal.valueOf(5), false));
+		Assert.assertEquals(new BigDecimal("5e1"), TickFactory.nicenum(BigDecimal.valueOf(50), false));
 		Assert.assertEquals(new BigDecimal("0.5"), TickFactory.nicenum(BigDecimal.valueOf(0.3), false));
-		Assert.assertEquals(new BigDecimal("5.0"), TickFactory.nicenum(BigDecimal.valueOf(3), false));
-		Assert.assertEquals(new BigDecimal("50.0"), TickFactory.nicenum(BigDecimal.valueOf(30), false));
+		Assert.assertEquals(new BigDecimal("5"), TickFactory.nicenum(BigDecimal.valueOf(3), false));
+		Assert.assertEquals(new BigDecimal("5e1"), TickFactory.nicenum(BigDecimal.valueOf(30), false));
 		Assert.assertEquals(new BigDecimal("0.2"), TickFactory.nicenum(BigDecimal.valueOf(0.2), false));
-		Assert.assertEquals(new BigDecimal("2.0"), TickFactory.nicenum(BigDecimal.valueOf(2), false));
-		Assert.assertEquals(new BigDecimal("20.0"), TickFactory.nicenum(BigDecimal.valueOf(20), false));
+		Assert.assertEquals(new BigDecimal("2"), TickFactory.nicenum(BigDecimal.valueOf(2), false));
+		Assert.assertEquals(new BigDecimal("2e1"), TickFactory.nicenum(BigDecimal.valueOf(20), false));
 		Assert.assertEquals(new BigDecimal("0.2"), TickFactory.nicenum(BigDecimal.valueOf(0.19), false));
-		Assert.assertEquals(new BigDecimal("2.0"), TickFactory.nicenum(BigDecimal.valueOf(1.9), false));
-		Assert.assertEquals(new BigDecimal("20.0"), TickFactory.nicenum(BigDecimal.valueOf(19), false));
+		Assert.assertEquals(new BigDecimal("2"), TickFactory.nicenum(BigDecimal.valueOf(1.9), false));
+		Assert.assertEquals(new BigDecimal("2e1"), TickFactory.nicenum(BigDecimal.valueOf(19), false));
 
 //		double[] ranges = new double[] {1, 2, 5};
 //		for (double r : ranges) {
@@ -123,20 +123,20 @@ public class TickFactoryTest {
 //			}
 //		}
 
-		Assert.assertEquals(new BigDecimal("1.0"), TickFactory.nicenum(BigDecimal.valueOf(1), true));
-		Assert.assertEquals(new BigDecimal("1.0"), TickFactory.nicenum(BigDecimal.valueOf(1.3), true));
-		Assert.assertEquals(new BigDecimal("2.0"), TickFactory.nicenum(BigDecimal.valueOf(1.5), true));
-		Assert.assertEquals(new BigDecimal("2.0"), TickFactory.nicenum(BigDecimal.valueOf(2), true));
-		Assert.assertEquals(new BigDecimal("2.0"), TickFactory.nicenum(BigDecimal.valueOf(2.2), true));
+		Assert.assertEquals(new BigDecimal("1"), TickFactory.nicenum(BigDecimal.valueOf(1), true));
+		Assert.assertEquals(new BigDecimal("1"), TickFactory.nicenum(BigDecimal.valueOf(1.3), true));
+		Assert.assertEquals(new BigDecimal("2"), TickFactory.nicenum(BigDecimal.valueOf(1.5), true));
+		Assert.assertEquals(new BigDecimal("2"), TickFactory.nicenum(BigDecimal.valueOf(2), true));
+		Assert.assertEquals(new BigDecimal("2"), TickFactory.nicenum(BigDecimal.valueOf(2.2), true));
 		Assert.assertEquals(new BigDecimal("2.5"), TickFactory.nicenum(BigDecimal.valueOf(2.3), true));
 		Assert.assertEquals(new BigDecimal("2.5"), TickFactory.nicenum(BigDecimal.valueOf(2.5), true));
 		Assert.assertEquals(new BigDecimal("2.5"), TickFactory.nicenum(BigDecimal.valueOf(3.), true));
-		Assert.assertEquals(new BigDecimal("5.0"), TickFactory.nicenum(BigDecimal.valueOf(4.3), true));
-		Assert.assertEquals(new BigDecimal("5.0"), TickFactory.nicenum(BigDecimal.valueOf(5.), true));
-		Assert.assertEquals(new BigDecimal("5.0"), TickFactory.nicenum(BigDecimal.valueOf(7.), true));
-		Assert.assertEquals(new BigDecimal("10.0"), TickFactory.nicenum(BigDecimal.valueOf(8.3), true));
-		Assert.assertEquals(new BigDecimal("10.0"), TickFactory.nicenum(BigDecimal.valueOf(9.7), true));
-		Assert.assertEquals(new BigDecimal("10.0"), TickFactory.nicenum(BigDecimal.valueOf(10), true));
+		Assert.assertEquals(new BigDecimal("5"), TickFactory.nicenum(BigDecimal.valueOf(4.3), true));
+		Assert.assertEquals(new BigDecimal("5"), TickFactory.nicenum(BigDecimal.valueOf(5.), true));
+		Assert.assertEquals(new BigDecimal("5"), TickFactory.nicenum(BigDecimal.valueOf(7.), true));
+		Assert.assertEquals(new BigDecimal("1e1"), TickFactory.nicenum(BigDecimal.valueOf(8.3), true));
+		Assert.assertEquals(new BigDecimal("1e1"), TickFactory.nicenum(BigDecimal.valueOf(9.7), true));
+		Assert.assertEquals(new BigDecimal("1e1"), TickFactory.nicenum(BigDecimal.valueOf(10), true));
 	}
 
 	@Test
@@ -178,6 +178,9 @@ public class TickFactoryTest {
 
 		testGeneratedLooseTicks(0, 695, 8, "0", "200", "400", "600", "800");
 		testGeneratedTightTicks(0, 695, 8, "0", "200", "400", "600");
+
+		testGeneratedLooseTicks(0, 12, 8, "0.0", "2.5", "5.0", "7.5", "10.0", "12.5");
+		testGeneratedTightTicks(0, 12, 8, "0.0", "2.5", "5.0", "7.5", "10.0");
 	}
 
 	@Test
