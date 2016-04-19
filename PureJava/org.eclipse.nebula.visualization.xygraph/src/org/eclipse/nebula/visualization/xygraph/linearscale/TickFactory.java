@@ -81,8 +81,8 @@ public class TickFactory {
 	 * @param format
 	 */
 	public TickFactory(TickFormatting format, IScaleProvider scale) {
-	   formatOfTicks = format;
-	   this.scale = scale;
+		formatOfTicks = format;
+		this.scale = scale;
 	}
 
 	private String getTickString(double value) {
@@ -137,10 +137,10 @@ public class TickFactory {
 		return returnString;
 	}
 
-	private void createFormatString(final int precision, final boolean b) {
+	private void createFormatString(final int precision, final boolean useExponent) {
 		switch (formatOfTicks) {
 		case autoMode:
-			tickFormat = b ? String.format("%%.%de", precision) : String.format("%%.%df", precision);
+			tickFormat = useExponent ? String.format("%%.%de", precision) : String.format("%%.%df", precision);
 			break;
 		case useExponent:
 			tickFormat = String.format("%%.%de", precision);
@@ -162,8 +162,9 @@ public class TickFactory {
 		if (ns == 0)
 			return 0;
 		final int ds = d.signum();
-		if (ds == 0)
+		if (ds == 0) {
 			throw new IllegalArgumentException("Zero denominator is not allowed");
+		}
 
 		n = n.abs();
 		d = d.abs();
@@ -200,8 +201,9 @@ public class TickFactory {
 		if (ns == 0)
 			return 0;
 		final int ds = d.signum();
-		if (ds == 0)
+		if (ds == 0) {
 			throw new IllegalArgumentException("Zero denominator is not allowed");
+		}
 
 		n = n.abs();
 		d = d.abs();
@@ -286,7 +288,7 @@ public class TickFactory {
 				nf = 5;
 			else
 				nf = 10;
-		return BigDecimal.valueOf(BigDecimal.valueOf(nf).scaleByPowerOfTen(expv).doubleValue());
+		return BigDecimal.valueOf(BigDecimal.valueOf(nf).scaleByPowerOfTen(expv).doubleValue()).stripTrailingZeros();
 	}
 
 	private double determineNumTicks(double min, double max, int maxTicks, boolean allowMinMaxOver) {
@@ -308,14 +310,13 @@ public class TickFactory {
 		if (bRange.compareTo(EPSILON.multiply(magnitude)) < 0) {
 			return 0;
 		}
-		
-		
+
 		// Important fix: This avoids tick labeller entering an infinite loop
 		// for some plotting cases.
 		try {
-		    if (magnitude.doubleValue()<=Double.MIN_VALUE) {
-		    	return 0;
-		    }
+			if (magnitude.doubleValue() <= Double.MIN_VALUE) {
+				return 0;
+			}
 		} catch (Throwable ne) {
 			// Might be a big number that doubleValue() does not work on - carry on!
 		}
@@ -368,14 +369,13 @@ public class TickFactory {
 		 * We get the labelled max and min for determining the precision which
 		 * the ticks should be shown at.
 		 */
-		int d = bUnit.scale() == bUnit.precision() ? -bUnit.scale() : bUnit.precision() - bUnit.scale() - 1;
+		int d = bUnit.scale() < 0 ? bUnit.precision() + bUnit.scale() - 1 : bUnit.scale();
 		int p = (int) Math.max(Math.floor(Math.log10(Math.abs(graphMin))), Math.floor(Math.log10(Math.abs(graphMax))));
-		// System.err.println("P: " + bUnit.precision() + ", S: " +
-		// bUnit.scale() + " => " + d + ", " + p);
+//		System.err.println(bUnit + " = P: " + bUnit.precision() + ", S: " + bUnit.scale() + " => " + d + ", " + p);
 		if (p <= DIGITS_LOWER_LIMIT || p >= DIGITS_UPPER_LIMIT) {
-			createFormatString(Math.max(p - d, 0), true);
+			createFormatString(Math.max(d + p, 0), true);
 		} else {
-			createFormatString(Math.max(-d, 0), false);
+			createFormatString(Math.max(d, 0), false);
 		}
 		return tickUnit;
 	}
@@ -628,7 +628,6 @@ public class TickFactory {
 		return x >= min && x <= max;
 	}
 
-
 	/**
 	 * @param min (must be >0)
 	 * @param max (must be >0)
@@ -742,7 +741,6 @@ public class TickFactory {
 		if (Activator.getDefault()!=null) { // We are in OSGI
 			IPreferenceStore store = Activator.getDefault().getPreferenceStore();
 			provider = store.getString(XYPreferences.TICKS_PROVIDER);
-	
 		} else {
 			provider = defaultProviderName;
 		}
@@ -754,7 +752,6 @@ public class TickFactory {
 			ticks = new LinearScaleTicks(scale);
 		else
 			ticks = new LinearScaleTicks2(scale);
-        return ticks;
+		return ticks;
 	}
-
 }
