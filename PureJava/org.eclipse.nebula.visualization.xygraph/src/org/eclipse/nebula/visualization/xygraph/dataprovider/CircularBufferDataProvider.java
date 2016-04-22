@@ -67,8 +67,8 @@ public class CircularBufferDataProvider extends AbstractDataProvider{
 			return sv;
 		}
 	}
+	protected CircularBuffer<ISample> traceData;
 	
-	private CircularBuffer<ISample> traceData;	
 	
 	private double currentXData;
 	
