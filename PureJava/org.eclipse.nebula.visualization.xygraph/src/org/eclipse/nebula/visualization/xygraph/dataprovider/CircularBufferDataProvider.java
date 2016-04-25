@@ -90,8 +90,8 @@ public class CircularBufferDataProvider extends AbstractDataProvider{
 	
 	private boolean currentYDataArrayChanged = false;
 	
-	private boolean xAxisDateEnabled = false;
 	
+	protected boolean xAxisDateEnabled = false;
 	private int updateDelay = 0;
 	private boolean duringDelay = false;
 	
