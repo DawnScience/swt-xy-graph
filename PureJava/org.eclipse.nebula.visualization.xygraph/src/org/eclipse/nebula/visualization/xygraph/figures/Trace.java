@@ -1409,23 +1409,27 @@ public class Trace extends Figure implements IDataProviderListener,
          * could be drawn between inside data and outside data. <b>This method only
          * works for chronological data, which means the data is naturally sorted on
          * xAxis.</b>
-         * 
-         * @return the Range of the index.
+         *
+         * @return the Range of the index or NULL if no sensible range is found.
          */
         protected Range getIndexRangeOnXAxis() {
                 Range axisRange = xAxis.getRange();
                 if (traceDataProvider.getSize() <= 0)
                         return null;
+
+                // Sort upper/lower limits to ensure max > min
                 double min = axisRange.getLower() > axisRange.getUpper() ? axisRange
                                 .getUpper() : axisRange.getLower();
                 double max = axisRange.getUpper() > axisRange.getLower() ? axisRange
                                 .getUpper() : axisRange.getLower();
 
+               // Data lies entirely outside the axis range
                 if (min > traceDataProvider.getSample(traceDataProvider.getSize() - 1)
                                 .getXValue()
                                 || max < traceDataProvider.getSample(0).getXValue())
                         return null;
 
+                // find indices of data inside the range; start with all data
                 int lowIndex = 0;
                 int highIndex = traceDataProvider.getSize() - 1;
                 if (min > traceDataProvider.getSample(0).getXValue())

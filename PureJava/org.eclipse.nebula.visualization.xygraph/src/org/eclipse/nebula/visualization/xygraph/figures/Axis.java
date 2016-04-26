@@ -50,9 +50,6 @@ public class Axis extends LinearScale{
     /** The auto zoom interval in ms.*/
     final static int ZOOM_SPEED = 200;
 
-//	private static final Color GRAY_COLOR = XYGraphMediaFactory.getInstance().getColor(
-//			XYGraphMediaFactory.COLOR_GRAY);
-
     private String title;
 
     final private List<Trace> traceList = new ArrayList<Trace>();
@@ -310,12 +307,16 @@ public class Axis extends LinearScale{
 	 */
 	public boolean performAutoScale(final boolean force) {
 	    // Anything to do? Autoscale not enabled nor forced?
-		if (traceList.size() <= 0  ||  !(force || autoScale))
+		if (traceList.size() <= 0  ||  !(force || autoScale)) {
 		    return false;
+		}
 
-	    // Get range of data in all traces
-        Range range = getTraceDataRange();
-        if (range == null) return false;
+		// Get range of data in all traces
+		Range range = getTraceDataRange();
+		if (range == null) {
+			return false;
+		}
+
 		double dataMin = range.getLower();
 		double dataMax = range.getUpper();
 
@@ -323,37 +324,47 @@ public class Axis extends LinearScale{
 		double axisMax = getRange().getUpper();
 		double axisMin = getRange().getLower();
 
+		if (rangeIsUnchanged(dataMin, dataMax, axisMin, axisMax) ||
+		        Double.isInfinite(dataMin) || Double.isInfinite(dataMax) ||
+		        Double.isNaN(dataMin) || Double.isNaN(dataMax)) {
+		    return false;
+		}
+
 		// The threshold is 'shared' between upper and lower range, times by 0.5
 		final double thr = (axisMax - axisMin) * 0.5 * autoScaleThreshold;
 
+		boolean lowerChanged = (dataMin - axisMin) < 0 || (dataMin - axisMin) >= thr;
+		boolean upperChanged = (axisMax - dataMax) < 0 || (axisMax - dataMax) >= thr;
 		// If both the changes are lower than threshold, return
-		if(((dataMin - axisMin)>=0 && (dataMin - axisMin)<thr)
-				&& ((axisMax - dataMax)>=0 && (axisMax - dataMax)<thr)){
+		if (!lowerChanged && !upperChanged) {
 			return false;
 		}
 
-		// Only increase the range of the lower axis
-		if((axisMin - dataMin) > 0 && (axisMax - dataMax)>=0) {
-			range = new Range(dataMin, axisMax);
-		}
+		// Calculate updated range
+		double newMax = upperChanged ? dataMax : axisMax;
+		double newMin = lowerChanged ? dataMin : axisMin;
+		range = new Range(newMin, newMax);
 
-		// Only increase the range of the upper axis
-		if((dataMax - axisMax) > 0 && (dataMin - axisMin)>=0) {
-			range = new Range(axisMin, dataMax);
-		}
-
-		if((Double.doubleToLongBits(dataMin) == Double.doubleToLongBits(axisMin)
-				&& Double.doubleToLongBits(dataMax) == Double.doubleToLongBits(axisMax)) ||
-				Double.isInfinite(dataMin) || Double.isInfinite(dataMax) ||
-				Double.isNaN(dataMin) || Double.isNaN(dataMax))
-			return false;
-
-        // by-pass overridden method as it sets ticks to false
-        super.setRange(range.getLower(), range.getUpper());
+		// by-pass overridden method as it sets ticks to false
+		super.setRange(range.getLower(), range.getUpper());
 		fireAxisRangeChanged(getRange(), range);
 		setTicksAtEnds(!axisAutoscaleTight);
 		repaint();
 		return true;
+	}
+
+	/**
+	 * Determines if upper or lower data has changed from current axis limits
+	 *
+	 * @param dataMin - min of data in buffer
+	 * @param dataMax - max of data in buffer
+	 * @param axisMin - current axis min
+	 * @param axisMax - current axis max
+	 * @return TRUE if data and axis max and min values are equal
+	 */
+	private boolean rangeIsUnchanged(double dataMin, double dataMax, double axisMin, double axisMax) {
+		return Double.doubleToLongBits(dataMin) == Double.doubleToLongBits(axisMin)
+			&& Double.doubleToLongBits(dataMax) == Double.doubleToLongBits(axisMax);
 	}
 
 	/**Add a trace to the axis.
