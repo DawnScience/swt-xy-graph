@@ -14,12 +14,7 @@ package org.eclipse.nebula.visualization.xygraph.dataprovider;
  *  represents a number of 5 that could also be anywhere in 4 .. 7.
  *  The errors are not percentages.
  *  The 'negative' error is actually a positive number.
- *  <p>
- *  Note:
- *  Only the x/y value is used in equals()!
- *  Error ranges and info texts are ignored when determining equality
- *  with another Sample.
- *  
+ *
  *  @author Xihui Chen
  *  @author Kay Kasemir Comments, made immutable
  */
@@ -111,15 +106,6 @@ public class Sample implements ISample {
 	public String getInfo() {
 		return info;
 	}
-	
-	
-
-//    @Override
-//    public boolean equals(final Object obj) {
-//    	if(obj instanceof Sample)
-//    		return  (((Sample)obj).xValue == xValue && ((Sample)obj).yValue == yValue);
-//    	return false;
-//    }
 
     @Override
 	public int hashCode() {

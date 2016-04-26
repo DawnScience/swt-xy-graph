@@ -50,9 +50,6 @@ public class Axis extends LinearScale{
     /** The auto zoom interval in ms.*/
     final static int ZOOM_SPEED = 200;
 
-//	private static final Color GRAY_COLOR = XYGraphMediaFactory.getInstance().getColor(
-//			XYGraphMediaFactory.COLOR_GRAY);
-
     private String title;
 
     final private List<Trace> traceList = new ArrayList<Trace>();
