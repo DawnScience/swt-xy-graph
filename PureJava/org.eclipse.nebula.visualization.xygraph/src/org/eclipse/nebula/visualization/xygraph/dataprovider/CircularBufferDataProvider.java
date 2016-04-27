@@ -67,8 +67,8 @@ public class CircularBufferDataProvider extends AbstractDataProvider{
 			return sv;
 		}
 	}
+	protected CircularBuffer<ISample> traceData;
 	
-	private CircularBuffer<ISample> traceData;	
 	
 	private double currentXData;
 	
@@ -90,8 +90,8 @@ public class CircularBufferDataProvider extends AbstractDataProvider{
 	
 	private boolean currentYDataArrayChanged = false;
 	
-	private boolean xAxisDateEnabled = false;
 	
+	protected boolean xAxisDateEnabled = false;
 	private int updateDelay = 0;
 	private boolean duringDelay = false;
 	
@@ -161,10 +161,7 @@ public class CircularBufferDataProvider extends AbstractDataProvider{
 	 * @param timestamp timestamp of Y data in milliseconds.
 	 */
 	public synchronized void setCurrentYDataTimestamp(long timestamp){
-		if(!xAxisDateEnabled){
-			clearTrace();
-			xAxisDateEnabled = true;
-		}		
+		setXAxisDateEnabled(true);
 		this.currentYDataTimestamp = timestamp;
 		currentYDataTimestampChanged = true;
 		if(currentYDataChanged)
@@ -176,7 +173,7 @@ public class CircularBufferDataProvider extends AbstractDataProvider{
 	 * @param timestamp timestamp of Y data in milliseconds.
 	 */
 	public synchronized void setCurrentYData(double newValue, long timestamp) {
-		xAxisDateEnabled = true;
+		setXAxisDateEnabled(true);
 		this.currentYData = newValue;
 		currentYDataChanged = true;
 		this.currentYDataTimestamp = timestamp;
@@ -451,7 +448,10 @@ public class CircularBufferDataProvider extends AbstractDataProvider{
 	 * @param xAxisDateEnabled the xAxisDateEnabled to set
 	 */
 	public void setXAxisDateEnabled(boolean xAxisDateEnabled) {
-		this.xAxisDateEnabled = xAxisDateEnabled;
+		if (this.xAxisDateEnabled != xAxisDateEnabled) {
+			clearTrace();
+			this.xAxisDateEnabled = xAxisDateEnabled;
+		}
 	}
 
 	/**
