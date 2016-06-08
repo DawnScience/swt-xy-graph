@@ -1,9 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2010 Oak Ridge National Laboratory.
+ * Copyright (c) 2010 Oak Ridge National Laboratory and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ * Contributors:
+ * 		Xihui Chen - initial API and implementation
+ * 		Kay Kasemir (synchronization, STEP_HORIZONTALLY tweaks)
+ * 		Laurent PHILIPPE (Add trace listeners)
+ * 		Takashi Nakamoto @ Cosylab (performance improvement)
+ * 		Bernhard Wedl - PointStyleProvider (Bug 459521)
  ******************************************************************************/
 package org.eclipse.nebula.visualization.xygraph.figures;
 
@@ -22,10 +28,12 @@ import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.nebula.visualization.xygraph.Messages;
 import org.eclipse.nebula.visualization.xygraph.dataprovider.IDataProvider;
 import org.eclipse.nebula.visualization.xygraph.dataprovider.IDataProviderListener;
+import org.eclipse.nebula.visualization.xygraph.dataprovider.IMetaData;
 import org.eclipse.nebula.visualization.xygraph.dataprovider.ISample;
 import org.eclipse.nebula.visualization.xygraph.dataprovider.Sample;
 import org.eclipse.nebula.visualization.xygraph.linearscale.AbstractScale.LabelSide;
 import org.eclipse.nebula.visualization.xygraph.linearscale.Range;
+import org.eclipse.nebula.visualization.xygraph.styleprovider.IPointStyleProvider;
 import org.eclipse.nebula.visualization.xygraph.util.Preferences;
 import org.eclipse.nebula.visualization.xygraph.util.SWTConstants;
 import org.eclipse.swt.SWT;
@@ -199,6 +207,14 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 		return listeners.remove(listener);
 	}
 
+	public void setPointStyleProvider(IPointStyleProvider pointStyleProvider) {
+		fPointStyleProvider = pointStyleProvider;
+	}
+
+	public IPointStyleProvider getPointStyleProvider() {
+		return fPointStyleProvider;
+	}
+
 	protected String name;
 
 	protected IDataProvider traceDataProvider;
@@ -243,6 +259,8 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	protected IXYGraph xyGraph;
 
 	protected List<ISample> hotSampleist;
+
+	private IPointStyleProvider fPointStyleProvider;
 
 	public Trace(String name) {
 		this.setName(name);
@@ -368,58 +386,84 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	 * @param pos
 	 */
 	public void drawPoint(Graphics graphics, Point pos) {
+		drawPoint(graphics, pos, null);
+	}
+
+	private void drawPoint(Graphics graphics, Point pos, ISample sample) {
+		Color renderColor = traceColor;
+		PointStyle renderPointStyle = pointStyle;
+		int renderPointSize = pointSize;
+		try {
+			if ((fPointStyleProvider != null) && (sample != null)) {
+				renderColor = fPointStyleProvider.getPointColor(sample, this);
+				renderPointStyle = fPointStyleProvider.getPointStyle(sample, this);
+				renderPointSize = fPointStyleProvider.getPointSize(sample, this);
+			}
+		} catch (Exception ex) {
+			// Draw anyway and log error
+			System.err.println(ex.getMessage());
+			renderColor = traceColor;
+			renderPointStyle = pointStyle;
+			renderPointSize = pointSize;
+		}
 		// Shortcut when no point requested
 		if (pointStyle == PointStyle.NONE)
 			return;
 		graphics.pushState();
-		graphics.setBackgroundColor(traceColor);
-		// graphics.setForegroundColor(traceColor);
+		graphics.setBackgroundColor(renderColor);
+		graphics.setForegroundColor(renderColor); // Otherwise redraw does not
+													// affect lines
 		graphics.setLineWidth(1);
 		graphics.setLineStyle(SWTConstants.LINE_SOLID);
-		switch (pointStyle) {
+		switch (renderPointStyle) {
 		case POINT:
-			graphics.fillOval(new Rectangle(pos.x - pointSize / 2, pos.y - pointSize / 2, pointSize, pointSize));
+			graphics.fillOval(new Rectangle(pos.x - renderPointSize / 2, pos.y - renderPointSize / 2, renderPointSize,
+					renderPointSize));
 			break;
 		case CIRCLE:
-			graphics.drawOval(new Rectangle(pos.x - pointSize / 2, pos.y - pointSize / 2, pointSize, pointSize));
+			graphics.drawOval(new Rectangle(pos.x - renderPointSize / 2, pos.y - renderPointSize / 2, renderPointSize,
+					renderPointSize));
 			break;
 		case FILLED_CIRCLE:
 			graphics.fillOval(new Rectangle(pos.x - pointSize / 2, pos.y - pointSize / 2, pointSize, pointSize));
 			break;
 		case TRIANGLE:
-			graphics.drawPolygon(new int[] { pos.x - pointSize / 2, pos.y + pointSize / 2, pos.x, pos.y - pointSize / 2,
-					pos.x + pointSize / 2, pos.y + pointSize / 2 });
+			graphics.drawPolygon(new int[] { pos.x - renderPointSize / 2, pos.y + renderPointSize / 2, pos.x,
+					pos.y - renderPointSize / 2, pos.x + renderPointSize / 2, pos.y + renderPointSize / 2 });
 			break;
 		case FILLED_TRIANGLE:
-			graphics.fillPolygon(new int[] { pos.x - pointSize / 2, pos.y + pointSize / 2, pos.x, pos.y - pointSize / 2,
-					pos.x + pointSize / 2, pos.y + pointSize / 2 });
+			graphics.fillPolygon(new int[] { pos.x - renderPointSize / 2, pos.y + renderPointSize / 2, pos.x,
+					pos.y - renderPointSize / 2, pos.x + renderPointSize / 2, pos.y + renderPointSize / 2 });
 			break;
 		case SQUARE:
-			graphics.drawRectangle(new Rectangle(pos.x - pointSize / 2, pos.y - pointSize / 2, pointSize, pointSize));
+			graphics.drawRectangle(new Rectangle(pos.x - renderPointSize / 2, pos.y - renderPointSize / 2,
+					renderPointSize, renderPointSize));
 			break;
 		case FILLED_SQUARE:
-			graphics.fillRectangle(new Rectangle(pos.x - pointSize / 2, pos.y - pointSize / 2, pointSize, pointSize));
+			graphics.fillRectangle(new Rectangle(pos.x - renderPointSize / 2, pos.y - renderPointSize / 2,
+					renderPointSize, renderPointSize));
 			break;
 		case BAR:
-			graphics.drawLine(pos.x, pos.y - pointSize / 2, pos.x, pos.y + pointSize / 2);
+			graphics.drawLine(pos.x, pos.y - renderPointSize / 2, pos.x, pos.y + renderPointSize / 2);
 			break;
 		case CROSS:
-			graphics.drawLine(pos.x, pos.y - pointSize / 2, pos.x, pos.y + pointSize / 2);
-			graphics.drawLine(pos.x - pointSize / 2, pos.y, pos.x + pointSize / 2, pos.y);
+			graphics.drawLine(pos.x, pos.y - renderPointSize / 2, pos.x, pos.y + renderPointSize / 2);
+			graphics.drawLine(pos.x - renderPointSize / 2, pos.y, pos.x + renderPointSize / 2, pos.y);
 			break;
 		case XCROSS:
-			graphics.drawLine(pos.x - pointSize / 2, pos.y - pointSize / 2, pos.x + pointSize / 2,
-					pos.y + pointSize / 2);
-			graphics.drawLine(pos.x + pointSize / 2, pos.y - pointSize / 2, pos.x - pointSize / 2,
+			graphics.drawLine(pos.x - renderPointSize / 2, pos.y - renderPointSize / 2, pos.x + renderPointSize / 2,
+					pos.y + renderPointSize / 2);
+			graphics.drawLine(pos.x + renderPointSize / 2, pos.y - renderPointSize / 2, pos.x - renderPointSize / 2,
 					pos.y + pointSize / 2);
 			break;
 		case DIAMOND:
-			graphics.drawPolyline(new int[] { pos.x, pos.y - pointSize / 2, pos.x - pointSize / 2, pos.y, pos.x,
-					pos.y + pointSize / 2, pos.x + pointSize / 2, pos.y, pos.x, pos.y - pointSize / 2 });
+			graphics.drawPolyline(new int[] { pos.x, pos.y - renderPointSize / 2, pos.x - renderPointSize / 2, pos.y,
+					pos.x, pos.y + renderPointSize / 2, pos.x + renderPointSize / 2, pos.y, pos.x,
+					pos.y - renderPointSize / 2 });
 			break;
 		case FILLED_DIAMOND:
-			graphics.fillPolygon(new int[] { pos.x, pos.y - pointSize / 2, pos.x - pointSize / 2, pos.y, pos.x,
-					pos.y + pointSize / 2, pos.x + pointSize / 2, pos.y });
+			graphics.fillPolygon(new int[] { pos.x, pos.y - renderPointSize / 2, pos.x - renderPointSize / 2, pos.y,
+					pos.x, pos.y + renderPointSize / 2, pos.x + renderPointSize / 2, pos.y });
 			break;
 		default:
 			break;
@@ -612,6 +656,8 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 											: yAxis.getRange().getUpper(),
 									dp.getYPlusError(), dp.getYMinusError(), Double.NaN, dp.getXMinusError(),
 									dp.getInfo());
+							if (dp instanceof IMetaData)
+								nanSample.setData(((IMetaData) dp).getData());
 							hotSampleist.add(nanSample);
 						}
 						// Is data point in the plot area?
@@ -625,7 +671,7 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 							// Do not draw points in the same place to improve
 							// performance
 							if (!hsPoint.contains(dpPos)) {
-								drawPoint(graphics, dpPos);
+								drawPoint(graphics, dpPos, dp);
 								hsPoint.add(dpPos);
 							}
 
