@@ -115,8 +115,7 @@ public class LinearScaleTicks2 implements ITicksProvider {
 		if (scale.isLogScaleEnabled() && (min <= 0 || max <= 0))
 			throw new IllegalArgumentException("Range for log scale must be in positive range");
 
-		final int maximumNumTicks = scale.isHorizontal() ? Math.min(MAX_TICKS, length / TICKMINDIST_IN_PIXELS_X)
-				: Math.min(MAX_TICKS, length / TICKMINDIST_IN_PIXELS_Y);
+		final int maximumNumTicks = Math.min(MAX_TICKS, length / (scale.isHorizontal() ? TICKMINDIST_IN_PIXELS_X : TICKMINDIST_IN_PIXELS_Y) + 1);
 		int numTicks = Math.max(3, maximumNumTicks);
 
 		final TickFactory tf;
