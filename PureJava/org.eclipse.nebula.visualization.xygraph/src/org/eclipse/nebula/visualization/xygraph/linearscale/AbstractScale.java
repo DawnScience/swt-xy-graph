@@ -5,6 +5,8 @@ import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.draw2d.Figure;
 import org.eclipse.swt.SWT;
@@ -97,7 +99,7 @@ public abstract class AbstractScale extends Figure{
 	
     protected Range range = new Range(min, max);
 
-    private Format cachedFormat = null;
+    private Map<Integer, Format> cachedFormats = new HashMap<Integer, Format>();
 
     private boolean ticksAtEnds = true;
 
@@ -109,7 +111,22 @@ public abstract class AbstractScale extends Figure{
      * @return the formatted string
      */
     public String format(Object obj) {     
-		if (cachedFormat == null) {
+    	return format(obj, 0);
+    }
+
+    /**
+     * Formats the given object.
+     * 
+     * @param obj
+     *            the object
+     * @param extraDP must be non-negative
+     * @return the formatted string
+     */
+    public String format(Object obj, int extraDP) {     
+    	if (extraDP < 0) {
+    		throw new IllegalArgumentException("Number of extra decimal places must be non-negative");
+    	}
+		if (cachedFormats.get(extraDP) == null) {
 			if (isDateEnabled()) {
 				if (autoFormat || formatPattern == null
 						|| formatPattern.equals("")
@@ -141,7 +158,7 @@ public abstract class AbstractScale extends Figure{
 						autoFormat = true;
 					}
 				}
-				cachedFormat = new SimpleDateFormat(formatPattern);
+				cachedFormats.put(extraDP, new SimpleDateFormat(formatPattern));
 			} else {
 				if (formatPattern == null || formatPattern.isEmpty() || formatPattern.equals(default_decimal_format) || formatPattern.equals(DEFAULT_DATE_FORMAT)) {
 					formatPattern = getAutoFormat(min, max);
@@ -150,14 +167,26 @@ public abstract class AbstractScale extends Figure{
 					}
 				}
 
-				cachedFormat = new DecimalFormat(formatPattern);
+				String ePattern = formatPattern;
+				if (extraDP > 0) {
+					int e = formatPattern.lastIndexOf('E');
+					StringBuilder temp = new StringBuilder(e == -1 ? formatPattern : formatPattern.substring(0, e));
+					for (int i = 0; i < extraDP; i++) {
+						temp.append('#');
+					}
+					if (e != -1) {
+						temp.append(formatPattern.substring(e));
+					}
+					ePattern = temp.toString();
+				}
+				cachedFormats.put(extraDP, new DecimalFormat(ePattern));
 			}
 		}
 
 		if (isDateEnabled() && obj instanceof Number) {
-			return cachedFormat.format(new Date(((Number) obj).longValue()));
+			return cachedFormats.get(extraDP).format(new Date(((Number) obj).longValue()));
 		}
-		return cachedFormat.format(obj);
+		return cachedFormats.get(extraDP).format(obj);
     }
 
     protected String getAutoFormat(double min, double max) {
@@ -256,7 +285,7 @@ public abstract class AbstractScale extends Figure{
 	 */
 	public void setDateEnabled(boolean dateEnabled) {
 		this.dateEnabled = dateEnabled;
-		cachedFormat = null;
+		cachedFormats.clear();
         setDirty(true);
         revalidate();
 	}
@@ -297,7 +326,7 @@ public abstract class AbstractScale extends Figure{
  		} catch (IllegalArgumentException e){
  			throw e;
  		}
-		cachedFormat = null;
+		cachedFormats.clear();
         this.formatPattern = formatPattern;
        
         autoFormat = false;
@@ -420,7 +449,7 @@ public abstract class AbstractScale extends Figure{
         min = lower;
         max = upper;
         range = new Range(min, max);
-        cachedFormat = null;
+        cachedFormats.clear();
         setDirty(true);
         revalidate();
         repaint();
@@ -497,7 +526,7 @@ public abstract class AbstractScale extends Figure{
 		this.autoFormat = autoFormat;
 		if(autoFormat){
 			formatPattern = null;
-			cachedFormat = null;
+			cachedFormats.clear();
 			setRange(getRange());
 			format(0);
 		}
