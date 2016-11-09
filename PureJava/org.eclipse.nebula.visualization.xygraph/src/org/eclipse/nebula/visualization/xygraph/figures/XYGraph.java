@@ -73,7 +73,6 @@ public class XYGraph extends Figure {
         new RGB(219, 128,   4), // orange
     };
 
-	private int traceNum = 0;
 	private boolean transparent = false;
 	protected boolean showLegend = true;
 
@@ -385,8 +384,7 @@ public class XYGraph extends Figure {
 		if (trace.getTraceColor() == null)
 		{   // Cycle through default colors
 		    trace.setTraceColor(XYGraphMediaFactory.getInstance().getColor(
-		    		DEFAULT_TRACES_COLOR[traceNum % DEFAULT_TRACES_COLOR.length]));
-        	++traceNum;
+		    		DEFAULT_TRACES_COLOR[plotArea.getTraceList().size() % DEFAULT_TRACES_COLOR.length]));
 		}
 		if(legendMap.containsKey(trace.getYAxis()))
 			legendMap.get(trace.getYAxis()).addTrace(trace);
