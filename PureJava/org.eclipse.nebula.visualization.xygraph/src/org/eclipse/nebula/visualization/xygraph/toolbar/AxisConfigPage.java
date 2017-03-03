@@ -63,6 +63,7 @@ public class AxisConfigPage {
 	private Button dashGridLineButton;
 	private ColorSelector gridColorSelector;
 	private Button showAxisButton;
+	private Button invertAxisButton;
 	
 	private Composite composite;
 	private boolean enableRanges;
@@ -283,6 +284,10 @@ public class AxisConfigPage {
 		
 		showAxisButton = new Button(composite, SWT.CHECK);
 		configCheckButton(showAxisButton, "Show Axis");
+
+		invertAxisButton = new Button(composite, SWT.CHECK);
+		configCheckButton(invertAxisButton, "Invert Axis");
+		
 		initialize();
 	}
 
@@ -338,6 +343,7 @@ public class AxisConfigPage {
 		axis.setMajorGridColor( XYGraphMediaFactory.getInstance().getColor(
 				gridColorSelector.getColorValue()));
 		axis.setVisible(showAxisButton.getSelection());
+		axis.setInverted(invertAxisButton.getSelection());
 	}
 
 
@@ -386,6 +392,7 @@ public class AxisConfigPage {
 		dashGridLineButton.setSelection(axis.isDashGridLine());
 		gridColorSelector.setColorValue(axis.getMajorGridColor().getRGB());
 		showAxisButton.setSelection(axis.isVisible());
+		invertAxisButton.setSelection(axis.isInverted());
 	}
 	
 	
