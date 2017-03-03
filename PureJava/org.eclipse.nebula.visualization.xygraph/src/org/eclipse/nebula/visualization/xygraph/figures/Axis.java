@@ -78,6 +78,7 @@ public class Axis extends LinearScale{
 	private ZoomType zoomType = ZoomType.NONE;
 	
 	private boolean axisAutoscaleTight = false;
+	private boolean isInverted = false;
 
 	private Point start;
 	private Point end;
@@ -170,6 +171,40 @@ public class Axis extends LinearScale{
 		grid.setVisible(visible);
 		revalidate();
 	}
+
+	/**
+	 * 
+	 * @param isInverted
+	 */
+	public void setInverted(boolean isInverted) {
+		this.isInverted = isInverted;
+		double min = getRange().getLower();
+		double max = getRange().getUpper();
+		if (isInverted) {
+			if (min < max) {
+				setRange(new Range(max, min));
+//				performAutoScale(true);
+			}
+		} else {
+			if (min > max) {
+				setRange(new Range(min, max));
+//				xyGraph.repaint();
+//				performAutoScale(true);
+			}
+		}
+		xyGraph.performAutoScale();
+
+//		performAutoScale(true);
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isInverted() {
+		return isInverted;
+	}
+
 	@Override
 	public void setForegroundColor(final Color color) {
 		super.setForegroundColor(color);
@@ -343,7 +378,7 @@ public class Axis extends LinearScale{
 		// Calculate updated range
 		double newMax = upperChanged ? dataMax : axisMax;
 		double newMin = lowerChanged ? dataMin : axisMin;
-		range = new Range(newMin, newMax);
+		range = !isInverted ? new Range(newMin, newMax) : new Range(newMax, newMin);
 
 		// by-pass overridden method as it sets ticks to false
 		super.setRange(range.getLower(), range.getUpper());
