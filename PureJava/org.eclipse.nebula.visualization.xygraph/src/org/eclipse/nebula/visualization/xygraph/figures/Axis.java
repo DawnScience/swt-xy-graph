@@ -173,6 +173,7 @@ public class Axis extends LinearScale{
 	}
 
 	/**
+	 * Inverts the axis if set to True
 	 * 
 	 * @param isInverted
 	 */
@@ -180,24 +181,14 @@ public class Axis extends LinearScale{
 		this.isInverted = isInverted;
 		double min = getRange().getLower();
 		double max = getRange().getUpper();
-		if (isInverted) {
-			if (min < max) {
-				setRange(new Range(max, min));
-//				performAutoScale(true);
-			}
-		} else {
-			if (min > max) {
-				setRange(new Range(min, max));
-//				xyGraph.repaint();
-//				performAutoScale(true);
-			}
+		if ((isInverted && (min < max)) || (!isInverted && (min > max))) {
+			setRange(new Range(max, min));
 		}
-		xyGraph.performAutoScale();
-
-//		performAutoScale(true);
+		xyGraph.repaint();
 	}
 
 	/**
+	 * Returns True if axis is inverted, False otherwise
 	 * 
 	 * @return
 	 */

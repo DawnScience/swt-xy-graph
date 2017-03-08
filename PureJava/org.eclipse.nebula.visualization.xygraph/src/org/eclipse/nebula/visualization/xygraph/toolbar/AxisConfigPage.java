@@ -316,9 +316,11 @@ public class AxisConfigPage {
 		axis.setPrimarySide(primaryButton.getSelection());
 		
 		axis.setLogScale(logButton.getSelection());
+		// must be set before autoScale as we update the maxOrAutoScaleThrText button as well
+		setInverted(invertAxisButton.getSelection());
 		axis.setAutoScale(autoScaleButton.getSelection());
 		if(autoScaleButton.getSelection())
-			axis.setAutoScaleThreshold(maxOrAutoScaleThrText.getDoubleValue());			
+			axis.setAutoScaleThreshold(maxOrAutoScaleThrText.getDoubleValue());
 		else
 			axis.setRange(minText.getDoubleValue(), maxOrAutoScaleThrText.getDoubleValue());
 		axis.setDateEnabled(dateEnabledButton.getSelection());
@@ -343,11 +345,21 @@ public class AxisConfigPage {
 		axis.setMajorGridColor( XYGraphMediaFactory.getInstance().getColor(
 				gridColorSelector.getColorValue()));
 		axis.setVisible(showAxisButton.getSelection());
-		axis.setInverted(invertAxisButton.getSelection());
 	}
 
+	private void setInverted(boolean isInverted) {
+		axis.setInverted(isInverted);
+		double min = minText.getDoubleValue();
+		double max = maxOrAutoScaleThrText.getDoubleValue();
+		if ((isInverted && (min < max)) || (!isInverted && (min > max))) {
+			minText.getText().setText(String.valueOf(max));
+			if (autoScaleButton.getSelection())
+				maxOrAutoScaleThrText.getText().setText(String.valueOf(axis.getAutoScaleThreshold()));
+			else
+				maxOrAutoScaleThrText.getText().setText(String.valueOf(min));
+		}
+	}
 
-	
 	private void initialize(){
 		titleText.setText(axis.getTitle());
 		scaleFontLabel.setForeground(axis.getForegroundColor());
