@@ -302,6 +302,7 @@ public class Axis extends LinearScale{
     {
         double low = Double.POSITIVE_INFINITY;
         double high = Double.NEGATIVE_INFINITY;
+        final boolean positiveOnly = isLogScaleEnabled();
         for (Trace trace : traceList)
         {
         	if (!trace.isVisible()) continue;
@@ -309,9 +310,9 @@ public class Axis extends LinearScale{
                 continue;
             final Range range;
             if (isHorizontal())
-                range = trace.getDataProvider().getXDataMinMax();
+                range = trace.getDataProvider().getXDataMinMax(positiveOnly);
             else
-                range = trace.getDataProvider().getYDataMinMax();
+                range = trace.getDataProvider().getYDataMinMax(positiveOnly);
             if (range == null)
             	continue;
 

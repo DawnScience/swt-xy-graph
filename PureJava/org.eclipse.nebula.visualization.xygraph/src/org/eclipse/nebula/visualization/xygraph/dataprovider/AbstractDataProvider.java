@@ -57,26 +57,45 @@ public abstract class AbstractDataProvider implements IDataProvider{
 	
 	/**
 	 * update xDataMinMax and yDataMinMax whenever data changed.
+	 * @param positiveOnly
 	 */
-	protected abstract void updateDataRange();
-	
+	protected abstract void updateDataRange(boolean positiveOnly);
+
 	/* (non-Javadoc)
 	 * @see org.csstudio.sns.widgets.figureparts.IDataProvider#getXDataMinMax()
 	 */
-	synchronized public Range getXDataMinMax(){		
+	@Override
+	public Range getXDataMinMax(){
+		return getXDataMinMax(false);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.csstudio.sns.widgets.figureparts.IDataProvider#getYDataMinMax()
+	 */
+	@Override
+	public Range getYDataMinMax(){
+		return getYDataMinMax(false);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.csstudio.sns.widgets.figureparts.IDataProvider#getXDataMinMax(boolean)
+	 */
+	@Override
+	synchronized public Range getXDataMinMax(boolean positiveOnly) {		
 		if(getSize() <=0)
 			return null;
-		updateDataRange();
+		updateDataRange(positiveOnly);
 		return xDataMinMax;
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.csstudio.sns.widgets.figureparts.IDataProvider#getYDataMinMax()
+	 * @see org.csstudio.sns.widgets.figureparts.IDataProvider#getYDataMinMax(boolean)
 	 */
-	synchronized public Range getYDataMinMax(){
+	@Override
+	synchronized public Range getYDataMinMax(boolean positiveOnly) {
 		if(getSize() <=0)
 			return null;
-		updateDataRange();
+		updateDataRange(positiveOnly);
 		return yDataMinMax;
 	}
 	
