@@ -1,3 +1,4 @@
+package org.eclipse.nebula.visualization.xygraph.examples;
 import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.nebula.visualization.xygraph.dataprovider.CircularBufferDataProvider;
 import org.eclipse.nebula.visualization.xygraph.figures.ToolbarArmedXYGraph;
