@@ -389,30 +389,50 @@ public class CircularBufferDataProvider extends AbstractDataProvider{
 	}
 	
 	@Override
-    protected void updateDataRange(){
+    protected void updateDataRange(boolean positiveOnly) {
 		if(!dataRangedirty)
 			return;
 		dataRangedirty = false;
-		if(getSize() > 0){
-			double xMin;
-			double xMax;
-			xMin = traceData.getHead().getXValue();
-			xMax = xMin;
-			
-			double yMin;
-			double yMax;
-			yMin = traceData.getHead().getYValue();
-			yMax = yMin;
+		if(getSize() > 0){ // does not handle NaNs
+			double xMin = Double.POSITIVE_INFINITY;
+			double xMax = positiveOnly ? 0 : Double.NEGATIVE_INFINITY;
+
+			double value = traceData.getHead().getXValue();
+			if ((!positiveOnly || value > 0) && xMin > value) {
+				xMin = value;
+			}
+			if (xMax < value) {
+				xMax = value;
+			}
+			double yMin = Double.POSITIVE_INFINITY;
+			double yMax = positiveOnly ? 0 : Double.NEGATIVE_INFINITY;
+
+			value = traceData.getHead().getYValue();
+			if ((!positiveOnly || value > 0) && yMin > value) {
+				yMin = value;
+			}
+			if (yMax < value) {
+				yMax = value;
+			}
+
 			for(ISample dp : traceData){
-				if(xMin > dp.getXValue()-dp.getXMinusError())
-					xMin = dp.getXValue()-dp.getXMinusError();
-				if(xMax < dp.getXValue()+dp.getXPlusError())
-					xMax = dp.getXValue()+ dp.getXPlusError();	
+				value = dp.getXValue() - dp.getXMinusError();
+				if ((!positiveOnly || value > 0) && xMin > value) {
+					xMin = value;
+				}
+				value = dp.getXValue() + dp.getXMinusError();
+				if (xMax < value) {
+					xMax = value;
+				}
 				
-				if(yMin > dp.getYValue() - dp.getYMinusError())
-					yMin = dp.getYValue() - dp.getYMinusError();
-				if(yMax < dp.getYValue() + dp.getYPlusError())
-					yMax = dp.getYValue() + dp.getYPlusError();	
+				value = dp.getYValue() - dp.getYMinusError();
+				if ((!positiveOnly || value > 0) && yMin > value) {
+					yMin = value;
+				}
+				value = dp.getYValue() + dp.getYMinusError();
+				if (yMax < value) {
+					yMax = value;
+				}
 			}
 			
 			xDataMinMax = new Range(xMin, xMax);
