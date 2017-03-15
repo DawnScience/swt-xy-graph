@@ -1,9 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: Test Fragment
-Bundle-SymbolicName: org.csstudio.swt.widgets.test
-Bundle-Version: 1.0.0.qualifier
-Bundle-Vendor: Xihui Chen (ztyaner11@gmail.com)
-Fragment-Host: org.csstudio.swt.widgets;bundle-version="1.0.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Require-Bundle: org.junit
