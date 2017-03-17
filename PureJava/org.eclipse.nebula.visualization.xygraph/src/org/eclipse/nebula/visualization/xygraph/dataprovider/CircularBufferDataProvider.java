@@ -420,7 +420,7 @@ public class CircularBufferDataProvider extends AbstractDataProvider{
 				if ((!positiveOnly || value > 0) && xMin > value) {
 					xMin = value;
 				}
-				value = dp.getXValue() + dp.getXMinusError();
+				value = dp.getXValue() + dp.getXPlusError();
 				if (xMax < value) {
 					xMax = value;
 				}
@@ -429,7 +429,7 @@ public class CircularBufferDataProvider extends AbstractDataProvider{
 				if ((!positiveOnly || value > 0) && yMin > value) {
 					yMin = value;
 				}
-				value = dp.getYValue() + dp.getYMinusError();
+				value = dp.getYValue() + dp.getYPlusError();
 				if (yMax < value) {
 					yMax = value;
 				}
