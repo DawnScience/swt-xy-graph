@@ -107,7 +107,7 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 
 	private Pointer pointer;
 
-	private XYGraph xyGraph;
+	private IXYGraph xyGraph;
 
 	private final static int POINT_SIZE = 6;
 	private final static int CURSOR_LINE_LENGTH = 3;
@@ -622,6 +622,16 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 	}
 
 	/**
+	 * @param xyGraph
+	 *            the xyGraph to set
+	 */
+	public void setxyGraph(IXYGraph xyGraph) {
+		this.xyGraph = xyGraph;
+	}
+
+	/**
+	 * Use {@link #setxyGraph(IXYGraph)} instead
+	 * 
 	 * @param xyGraph
 	 *            the xyGraph to set
 	 */

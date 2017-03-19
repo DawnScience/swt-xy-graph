@@ -16,6 +16,7 @@ import org.eclipse.nebula.visualization.internal.xygraph.undo.XYGraphConfigComma
 import org.eclipse.nebula.visualization.xygraph.Activator;
 import org.eclipse.nebula.visualization.xygraph.figures.Annotation;
 import org.eclipse.nebula.visualization.xygraph.figures.Axis;
+import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace;
 import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
 import org.eclipse.swt.SWT;
@@ -51,10 +52,21 @@ public class XYGraphConfigDialog extends Dialog {
 	protected Combo axisCombo;
 	protected Combo annotationsCombo;
 	protected List<TraceConfigPage> traceConfigPageList;
-	protected XYGraph xyGraph;
+	protected IXYGraph xyGraph;
 	protected XYGraphConfigCommand command;
 	private boolean changed = false;
 
+	public XYGraphConfigDialog(Shell parentShell, IXYGraph xyGraph) {
+		this(parentShell, (XYGraph) xyGraph);
+	}
+
+	/**
+	 * Use {@link #XYGraphConfigDialog(Shell, IXYGraph)} instead
+	 * 
+	 * @param parentShell
+	 * @param xyGraph
+	 */
+	@Deprecated
 	protected XYGraphConfigDialog(Shell parentShell, XYGraph xyGraph) {
 		super(parentShell);
 		this.xyGraph = xyGraph;

@@ -19,13 +19,13 @@ import org.eclipse.draw2d.SWTGraphics;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.nebula.visualization.internal.xygraph.undo.OperationsManager;
+import org.eclipse.nebula.visualization.internal.xygraph.undo.XYGraphMemento;
 import org.eclipse.nebula.visualization.internal.xygraph.undo.ZoomCommand;
-import org.eclipse.nebula.visualization.internal.xygraph.undo.ZoomType;
 import org.eclipse.nebula.visualization.xygraph.linearscale.Range;
 import org.eclipse.nebula.visualization.xygraph.linearscale.AbstractScale.LabelSide;
 import org.eclipse.nebula.visualization.xygraph.util.GraphicsUtil;
 import org.eclipse.nebula.visualization.xygraph.util.Log10;
-import org.eclipse.nebula.visualization.xygraph.util.SingleSourceHelper;
+import org.eclipse.nebula.visualization.xygraph.util.SingleSourceHelper2;
 import org.eclipse.nebula.visualization.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -42,7 +42,7 @@ import org.eclipse.swt.widgets.Display;
  * @author Xihui Chen
  * @author Kay Kasemir (performStagger)
  */
-public class XYGraph extends Figure {
+public class XYGraph extends Figure implements IXYGraph {
 
 	public static final String X_AXIS = "X-Axis";
 	public static final String Y_AXIS = "Y-Axis";
@@ -71,10 +71,10 @@ public class XYGraph extends Figure {
 			new RGB(219, 128, 4), // orange
 	};
 
-	private boolean transparent = false;
+	protected boolean transparent = false;
 	protected boolean showLegend = true;
 
-	private Map<Axis, Legend> legendMap;
+	protected Map<Axis, Legend> legendMap;
 
 	/**
 	 * Graph title. Should never be <code>null</code> because otherwise the
@@ -82,18 +82,24 @@ public class XYGraph extends Figure {
 	 */
 	private String title = "";
 	private Color titleColor;
-	private Label titleLabel;
+	protected Label titleLabel;
 
-	private List<Axis> xAxisList;
-	private List<Axis> yAxisList;
-	private PlotArea plotArea;
+	protected List<Axis> xAxisList;
+	protected List<Axis> yAxisList;
+	protected PlotArea plotArea;
 
-	// TODO Clients can set these to null. Should these be 'final'? Or provider
-	// getter?
-	public Axis primaryXAxis;
-	public Axis primaryYAxis;
+	/**
+	 * Use {@link #getPrimaryXAxis()} instead
+	 */
+	@Deprecated
+	final public Axis primaryXAxis;
+	/**
+	 * Use {@link #getPrimaryYAxis()} instead
+	 */
+	@Deprecated
+	final public Axis primaryYAxis;
 
-	private OperationsManager operationsManager;
+	protected OperationsManager operationsManager;
 
 	private ZoomType zoomType;
 
@@ -126,7 +132,7 @@ public class XYGraph extends Figure {
 		operationsManager = new OperationsManager();
 	}
 
-	protected PlotArea createPlotArea(XYGraph xyGraph) {
+	protected PlotArea createPlotArea(IXYGraph xyGraph) {
 		return new PlotArea(xyGraph);
 	}
 
@@ -344,7 +350,7 @@ public class XYGraph extends Figure {
 			yAxisList.add(axis);
 		plotArea.addGrid(new Grid(axis));
 		add(axis);
-		axis.setXyGraph(this);
+		axis.setXyGraph((IXYGraph) this);
 		revalidate();
 	}
 
@@ -386,7 +392,7 @@ public class XYGraph extends Figure {
 		if (legendMap.containsKey(trace.getYAxis()))
 			legendMap.get(trace.getYAxis()).addTrace(trace);
 		else {
-			legendMap.put(trace.getYAxis(), new Legend(this));
+			legendMap.put(trace.getYAxis(), new Legend((IXYGraph) this));
 			legendMap.get(trace.getYAxis()).addTrace(trace);
 			add(legendMap.get(trace.getYAxis()));
 		}
@@ -406,7 +412,7 @@ public class XYGraph extends Figure {
 		}
 
 		plotArea.addTrace(trace);
-		trace.setXYGraph(this);
+		trace.setXYGraph((IXYGraph) this);
 		trace.dataChanged(null);
 		revalidate();
 		repaint();
@@ -519,7 +525,7 @@ public class XYGraph extends Figure {
 
 	/** @return Image of the XYFigure. Receiver must dispose. */
 	public Image getImage() {
-		return SingleSourceHelper.getXYGraphSnapShot(this);
+		return SingleSourceHelper2.getXYGraphSnapShot(this);
 	}
 
 	/**
@@ -698,4 +704,19 @@ public class XYGraph extends Figure {
 		}
 	}
 
+	@Override
+	public Axis getPrimaryXAxis() {
+		if (xAxisList.size() > 0) {
+			return xAxisList.get(0);
+		}
+		return null;
+	}
+
+	@Override
+	public Axis getPrimaryYAxis() {
+		if (yAxisList.size() > 0) {
+			return yAxisList.get(0);
+		}
+		return null;
+	}
 }

@@ -15,19 +15,20 @@ import org.eclipse.draw2d.KeyListener;
 import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.draw2d.MouseEvent;
 import org.eclipse.draw2d.MouseListener;
-import org.eclipse.nebula.visualization.internal.xygraph.undo.ZoomType;
 import org.eclipse.nebula.visualization.xygraph.dataprovider.CircularBufferDataProvider;
 import org.eclipse.nebula.visualization.xygraph.dataprovider.Sample;
 import org.eclipse.nebula.visualization.xygraph.figures.Axis;
+import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.ToolbarArmedXYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace;
-import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace.BaseLine;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace.ErrorBarType;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace.PointStyle;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace.TraceType;
-import org.eclipse.nebula.visualization.xygraph.linearscale.Range;
+import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
+import org.eclipse.nebula.visualization.xygraph.figures.ZoomType;
 import org.eclipse.nebula.visualization.xygraph.linearscale.AbstractScale.LabelSide;
+import org.eclipse.nebula.visualization.xygraph.linearscale.Range;
 import org.eclipse.nebula.visualization.xygraph.util.SingleSourceHelper;
 import org.eclipse.nebula.visualization.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.swt.SWT;
@@ -65,7 +66,7 @@ class ComprehensiveExampleGraph extends Figure {
 	public Trace trace1;
 	public Trace trace2;
 	public Trace trace3;
-	public XYGraph xyGraph;
+	public IXYGraph xyGraph;
 	public Runnable updater;
 	private double updateIndex = 0;
 	private final CircularBufferDataProvider trace2Provider;
@@ -79,15 +80,15 @@ class ComprehensiveExampleGraph extends Figure {
 		xyGraph = new XYGraph();
 		xyGraph.setTitle("XY Graph Test");
 		xyGraph.setFont(XYGraphMediaFactory.getInstance().getFont(XYGraphMediaFactory.FONT_TAHOMA));
-		xyGraph.primaryXAxis.setTitle("Time");
-		xyGraph.primaryYAxis.setTitle("Amplitude");
-		xyGraph.primaryXAxis.setRange(new Range(0, 200));
-		xyGraph.primaryXAxis.setDateEnabled(true);
-		xyGraph.primaryYAxis.setAutoScale(true);
-		xyGraph.primaryXAxis.setAutoScale(true);
-		xyGraph.primaryXAxis.setShowMajorGrid(true);
-		xyGraph.primaryYAxis.setShowMajorGrid(true);
-		xyGraph.primaryXAxis.setAutoScaleThreshold(0);
+		xyGraph.getPrimaryXAxis().setTitle("Time");
+		xyGraph.getPrimaryYAxis().setTitle("Amplitude");
+		xyGraph.getPrimaryXAxis().setRange(new Range(0, 200));
+		xyGraph.getPrimaryXAxis().setDateEnabled(true);
+		xyGraph.getPrimaryYAxis().setAutoScale(true);
+		xyGraph.getPrimaryXAxis().setAutoScale(true);
+		xyGraph.getPrimaryXAxis().setShowMajorGrid(true);
+		xyGraph.getPrimaryYAxis().setShowMajorGrid(true);
+		xyGraph.getPrimaryXAxis().setAutoScaleThreshold(0);
 
 		final Axis x2Axis = new Axis("X-2", false);
 		x2Axis.setTickLabelSide(LabelSide.Secondary);
@@ -114,7 +115,7 @@ class ComprehensiveExampleGraph extends Figure {
 		trace2Provider.setBufferSize(100);
 		trace2Provider.setUpdateDelay(100);
 
-		trace2 = new Trace("Trace 2", xyGraph.primaryXAxis, xyGraph.primaryYAxis, trace2Provider);
+		trace2 = new Trace("Trace 2", xyGraph.getPrimaryXAxis(), xyGraph.getPrimaryYAxis(), trace2Provider);
 		trace2.setDataProvider(trace2Provider);
 		trace2.setTraceType(TraceType.SOLID_LINE);
 		trace2.setLineWidth(1);
@@ -130,7 +131,7 @@ class ComprehensiveExampleGraph extends Figure {
 		trace2.setErrorBarCapWidth(3);
 
 		final CircularBufferDataProvider trace3Provider = new CircularBufferDataProvider(true);
-		trace3 = new Trace("Trace3", xyGraph.primaryXAxis, xyGraph.primaryYAxis, trace3Provider);
+		trace3 = new Trace("Trace3", xyGraph.getPrimaryXAxis(), xyGraph.getPrimaryYAxis(), trace3Provider);
 		trace3.setPointStyle(PointStyle.XCROSS);
 		trace3.setTraceType(TraceType.BAR);
 		trace3.setLineWidth(4);

@@ -5,11 +5,10 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  ******************************************************************************/
-package org.eclipse.nebula.visualization.internal.xygraph.undo;
+package org.eclipse.nebula.visualization.xygraph.figures;
 
 import org.eclipse.nebula.visualization.xygraph.Messages;
-import org.eclipse.nebula.visualization.xygraph.figures.XYGraphFlags;
-import org.eclipse.nebula.visualization.xygraph.util.SingleSourceHelper;
+import org.eclipse.nebula.visualization.xygraph.util.SingleSourceHelper2;
 import org.eclipse.nebula.visualization.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Cursor;
@@ -111,7 +110,7 @@ public enum ZoomType {
 		if (cursorImage == null)
 			cursor = new Cursor(Display.getDefault(), SWT.CURSOR_ARROW);
 		else
-			cursor = SingleSourceHelper.createCursor(Display.getDefault(), cursorImage.getImageData(), 8, 8,
+			cursor = SingleSourceHelper2.createCursor(Display.getDefault(), cursorImage.getImageData(), 8, 8,
 					backUpSWTCursorType);
 		XYGraphMediaFactory.getInstance().registerCursor(cursor);
 		this.flags = flags;

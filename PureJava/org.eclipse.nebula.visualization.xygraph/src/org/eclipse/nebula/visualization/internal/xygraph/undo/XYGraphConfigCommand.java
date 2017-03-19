@@ -9,6 +9,7 @@ package org.eclipse.nebula.visualization.internal.xygraph.undo;
 
 import org.eclipse.nebula.visualization.xygraph.figures.Annotation;
 import org.eclipse.nebula.visualization.xygraph.figures.Axis;
+import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace;
 import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
 
@@ -20,9 +21,19 @@ import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
  */
 public class XYGraphConfigCommand implements IUndoableCommand {
 
-	private XYGraph xyGraph;
+	private IXYGraph xyGraph;
 	protected XYGraphMemento previousXYGraphMem, afterXYGraphMem;
 
+	public XYGraphConfigCommand(IXYGraph xyGraph) {
+		this((XYGraph) xyGraph);
+	}
+
+	/**
+	 * Use {@link #XYGraphConfigCommand(IXYGraph)} instead
+	 * 
+	 * @param xyGraph
+	 */
+	@Deprecated
 	public XYGraphConfigCommand(XYGraph xyGraph) {
 		this.xyGraph = xyGraph;
 		previousXYGraphMem = new XYGraphMemento();
@@ -70,7 +81,7 @@ public class XYGraphConfigCommand implements IUndoableCommand {
 		return "Configure XYGraph Settings";
 	}
 
-	protected void saveXYGraphPropsToMemento(XYGraph xyGraph, XYGraphMemento memento) {
+	protected void saveXYGraphPropsToMemento(IXYGraph xyGraph, XYGraphMemento memento) {
 		memento.setTitle(xyGraph.getTitle());
 		memento.setTitleFont(xyGraph.getTitleFont());
 		memento.setTitleColor(xyGraph.getTitleColor());
@@ -91,7 +102,7 @@ public class XYGraphConfigCommand implements IUndoableCommand {
 			saveTracePropsToMemento(trace, memento.getTraceMementoList().get(i++));
 	}
 
-	protected void restoreXYGraphPropsFromMemento(XYGraph xyGraph, XYGraphMemento memento) {
+	protected void restoreXYGraphPropsFromMemento(IXYGraph xyGraph, XYGraphMemento memento) {
 		xyGraph.setTitle(memento.getTitle());
 		xyGraph.setTitleFont(memento.getTitleFont());
 		xyGraph.setTitleColor(memento.getTitleColor());

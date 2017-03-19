@@ -1,4 +1,4 @@
-package org.eclipse.nebula.visualization.internal.xygraph.toolbar;
+package org.eclipse.nebula.visualization.xygraph.figures;
 
 import java.util.List;
 
@@ -23,13 +23,16 @@ import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.Window;
+import org.eclipse.nebula.visualization.internal.xygraph.toolbar.AddAnnotationDialog;
+import org.eclipse.nebula.visualization.internal.xygraph.toolbar.CheckableActionGroup;
+import org.eclipse.nebula.visualization.internal.xygraph.toolbar.GrayableButton;
+import org.eclipse.nebula.visualization.internal.xygraph.toolbar.RemoveAnnotationDialog;
+import org.eclipse.nebula.visualization.internal.xygraph.toolbar.WrappableToolbarLayout;
+import org.eclipse.nebula.visualization.internal.xygraph.toolbar.XYGraphConfigDialog;
 import org.eclipse.nebula.visualization.internal.xygraph.undo.AddAnnotationCommand;
 import org.eclipse.nebula.visualization.internal.xygraph.undo.IOperationsManagerListener;
 import org.eclipse.nebula.visualization.internal.xygraph.undo.OperationsManager;
 import org.eclipse.nebula.visualization.internal.xygraph.undo.RemoveAnnotationCommand;
-import org.eclipse.nebula.visualization.internal.xygraph.undo.ZoomType;
-import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
-import org.eclipse.nebula.visualization.xygraph.figures.XYGraphFlags;
 import org.eclipse.nebula.visualization.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -55,7 +58,7 @@ public class XYGraphToolbar extends Figure {
 
 	private final static int BUTTON_SIZE = 25;
 
-	final protected XYGraph xyGraph;
+	final protected IXYGraph xyGraph;
 
 	final protected ButtonGroup zoomGroup;
 
@@ -73,6 +76,22 @@ public class XYGraphToolbar extends Figure {
 	 * @see XYGraphFlags#COMBINED_ZOOM
 	 * @see XYGraphFlags#SEPARATE_ZOOM
 	 */
+	public XYGraphToolbar(final IXYGraph xyGraph, final int flags) {
+		this((XYGraph) xyGraph, flags);
+	}
+
+	/**
+	 * Use {@link #XYGraphToolbar(IXYGraph, int)} instead<br>
+	 * Initialize
+	 * 
+	 * @param xyGraph
+	 *            XYGraph on which this toolbar operates
+	 * @param flags
+	 *            Bitwise 'or' of flags
+	 * @see XYGraphFlags#COMBINED_ZOOM
+	 * @see XYGraphFlags#SEPARATE_ZOOM
+	 */
+	@Deprecated
 	public XYGraphToolbar(final XYGraph xyGraph, final int flags) {
 		this.xyGraph = xyGraph;
 		setLayoutManager(new WrappableToolbarLayout());

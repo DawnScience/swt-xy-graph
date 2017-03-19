@@ -20,7 +20,6 @@ import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.nebula.visualization.internal.xygraph.undo.AxisPanOrZoomCommand;
 import org.eclipse.nebula.visualization.internal.xygraph.undo.SaveStateCommand;
-import org.eclipse.nebula.visualization.internal.xygraph.undo.ZoomType;
 import org.eclipse.nebula.visualization.xygraph.dataprovider.IDataProvider;
 import org.eclipse.nebula.visualization.xygraph.linearscale.LinearScale;
 import org.eclipse.nebula.visualization.xygraph.linearscale.Range;
@@ -54,7 +53,7 @@ public class Axis extends LinearScale {
 
 	final private List<Trace> traceList = new ArrayList<Trace>();
 
-	private XYGraph xyGraph;
+	private IXYGraph xyGraph;
 	private Grid grid;
 
 	private Font titleFont;
@@ -564,6 +563,17 @@ public class Axis extends LinearScale {
 	 * @param xyGraph
 	 *            the xyGraph to set
 	 */
+	public void setXyGraph(final IXYGraph xyGraph) {
+		this.xyGraph = xyGraph;
+	}
+
+	/**
+	 * Use {@link #setXyGraph(IXYGraph)} instead
+	 * 
+	 * @param xyGraph
+	 *            the xyGraph to set
+	 */
+	@Deprecated
 	public void setXyGraph(final XYGraph xyGraph) {
 		this.xyGraph = xyGraph;
 	}

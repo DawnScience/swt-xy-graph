@@ -29,12 +29,13 @@ import org.eclipse.nebula.visualization.xygraph.Activator;
 import org.eclipse.nebula.visualization.xygraph.dataprovider.IDataProvider;
 import org.eclipse.nebula.visualization.xygraph.dataprovider.ISample;
 import org.eclipse.nebula.visualization.xygraph.figures.Axis;
+import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace;
-import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace.BaseLine;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace.ErrorBarType;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace.PointStyle;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace.TraceType;
+import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
 import org.eclipse.nebula.visualization.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -84,6 +85,17 @@ public class TraceConfigPage {
 
 	private Composite composite;
 
+	public TraceConfigPage(IXYGraph xyGraph, Trace trace) {
+		this((XYGraph) xyGraph, trace);
+	}
+
+	/**
+	 * Use {@link #TraceConfigPage(IXYGraph, Trace)} instead
+	 * 
+	 * @param xyGraph
+	 * @param trace
+	 */
+	@Deprecated
 	public TraceConfigPage(XYGraph xyGraph, Trace trace) {
 		this.xyGraph = xyGraph;
 		this.trace = trace;

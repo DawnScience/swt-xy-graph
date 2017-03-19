@@ -12,6 +12,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.nebula.visualization.xygraph.Activator;
 import org.eclipse.nebula.visualization.xygraph.figures.Axis;
+import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
 import org.eclipse.nebula.visualization.xygraph.linearscale.Range;
 import org.eclipse.nebula.visualization.xygraph.util.XYGraphMediaFactory;
@@ -39,7 +40,7 @@ import org.eclipse.swt.widgets.Text;
  *
  */
 public class AxisConfigPage {
-	private XYGraph xyGraph;
+	private IXYGraph xyGraph;
 	private Axis axis;
 	private Text titleText;
 	private Label scaleFontLabel;
@@ -70,6 +71,17 @@ public class AxisConfigPage {
 	private Composite composite;
 	private boolean enableRanges;
 
+	public AxisConfigPage(IXYGraph xyGraph, Axis axis, boolean enableRanges) {
+		this((XYGraph) xyGraph, axis, enableRanges);
+	}
+
+	/**
+	 * Use {@link #AxisConfigPage(IXYGraph, Axis)} instead
+	 * 
+	 * @param xyGraph
+	 * @param axis
+	 */
+	@Deprecated
 	public AxisConfigPage(XYGraph xyGraph, Axis axis, boolean enableRanges) {
 		this.xyGraph = xyGraph;
 		this.axis = axis;
@@ -359,7 +371,7 @@ public class AxisConfigPage {
 		titleFontLabel.setText("Title Font: " + titleFont.getFontData()[0].getName());
 		axisColorSelector.setColorValue(axis.getForegroundColor().getRGB());
 		primaryButton.setSelection(axis.isOnPrimarySide());
-		if (axis == xyGraph.primaryXAxis || axis == xyGraph.primaryYAxis)
+		if (axis == xyGraph.getPrimaryXAxis() || axis == xyGraph.getPrimaryYAxis())
 			primaryButton.setEnabled(false);
 		logButton.setSelection(axis.isLogScaleEnabled());
 		autoScaleButton.setSelection(axis.isAutoScale());

@@ -9,6 +9,11 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
+/**
+ * Use {@link SingleSourceHelper2} instead
+ *
+ */
+@Deprecated
 public abstract class SingleSourceHelper {
 
 	private static final SingleSourceHelper IMPL;

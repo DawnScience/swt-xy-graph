@@ -22,7 +22,6 @@ import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.nebula.visualization.internal.xygraph.undo.SaveStateCommand;
 import org.eclipse.nebula.visualization.internal.xygraph.undo.ZoomCommand;
-import org.eclipse.nebula.visualization.internal.xygraph.undo.ZoomType;
 import org.eclipse.nebula.visualization.xygraph.linearscale.Range;
 import org.eclipse.nebula.visualization.xygraph.util.SWTConstants;
 import org.eclipse.nebula.visualization.xygraph.util.XYGraphMediaFactory;
@@ -40,7 +39,7 @@ import org.eclipse.swt.widgets.Display;
  */
 public class PlotArea extends Figure {
 	public static final String BACKGROUND_COLOR = "background_color"; //$NON-NLS-1$
-	final protected XYGraph xyGraph;
+	final protected IXYGraph xyGraph;
 	final private List<Trace> traceList = new ArrayList<Trace>();
 	final private List<Grid> gridList = new ArrayList<Grid>();
 	final private List<Annotation> annotationList = new ArrayList<Annotation>();
@@ -57,6 +56,16 @@ public class PlotArea extends Figure {
 
 	private Color revertBackColor;
 
+	public PlotArea(final IXYGraph xyGraph) {
+		this((XYGraph) xyGraph);
+	}
+
+	/**
+	 * Use {@link #PlotArea(IXYGraph)} instead
+	 * 
+	 * @param xyGraph
+	 */
+	@Deprecated
 	public PlotArea(final XYGraph xyGraph) {
 		this.xyGraph = xyGraph;
 		setBackgroundColor(XYGraphMediaFactory.getInstance().getColor(255, 255, 255));
