@@ -115,7 +115,8 @@ public class LinearScaleTicks2 implements ITicksProvider {
 		if (scale.isLogScaleEnabled() && (min <= 0 || max <= 0))
 			throw new IllegalArgumentException("Range for log scale must be in positive range");
 
-		final int maximumNumTicks = Math.min(MAX_TICKS, length / (scale.isHorizontal() ? TICKMINDIST_IN_PIXELS_X : TICKMINDIST_IN_PIXELS_Y) + 1);
+		final int maximumNumTicks = Math.min(MAX_TICKS,
+				length / (scale.isHorizontal() ? TICKMINDIST_IN_PIXELS_X : TICKMINDIST_IN_PIXELS_Y) + 1);
 		int numTicks = Math.max(3, maximumNumTicks);
 
 		final TickFactory tf;
@@ -151,7 +152,7 @@ public class LinearScaleTicks2 implements ITicksProvider {
 			}
 		} while (!updateLabelPositionsAndCheckGaps(length, hMargin, tMargin, min > max) && numTicks-- > MIN_TICKS);
 
-		updateMinorTicks(hMargin+length);
+		updateMinorTicks(hMargin + length);
 		if (scale.hasTicksAtEnds() && ticks.size() > 1)
 			return new Range(ticks.get(0).getValue(), ticks.get(ticks.size() - 1).getValue());
 
@@ -165,7 +166,7 @@ public class LinearScaleTicks2 implements ITicksProvider {
 		// calculate the default decimal format
 		double mantissa = Math.max(Math.abs(min), Math.abs(max));
 		double power = mantissa == 0 ? -1 : Math.log10(mantissa);
-	
+
 		if (power >= AbstractScale.ENGINEERING_LIMIT || power < -6) {
 			format = AbstractScale.DEFAULT_ENGINEERING_FORMAT;
 		} else if (power <= 0) {
@@ -184,13 +185,13 @@ public class LinearScaleTicks2 implements ITicksProvider {
 	@Override
 	public int getHeadMargin() {
 		if (ticks == null || ticks.size() == 0 || maxWidth == 0 || maxHeight == 0) {
-//			System.err.println("No ticks yet!");
+			// System.err.println("No ticks yet!");
 			final Dimension l = scale.calculateDimension(scale.getScaleRange().getLower());
 			if (scale.isHorizontal()) {
-//				System.err.println("calculate X margin with " + r);
+				// System.err.println("calculate X margin with " + r);
 				return l.width;
 			}
-//			System.err.println("calculate Y margin with " + r);
+			// System.err.println("calculate Y margin with " + r);
 			return l.height;
 		}
 		return scale.isHorizontal() ? (maxWidth + 1) / 2 : (maxHeight + 1) / 2;
@@ -199,13 +200,13 @@ public class LinearScaleTicks2 implements ITicksProvider {
 	@Override
 	public int getTailMargin() {
 		if (ticks == null || ticks.size() == 0 || maxWidth == 0 || maxHeight == 0) {
-//			System.err.println("No ticks yet!");
+			// System.err.println("No ticks yet!");
 			final Dimension h = scale.calculateDimension(scale.getScaleRange().getUpper());
 			if (scale.isHorizontal()) {
-//				System.err.println("calculate X margin with " + r);
+				// System.err.println("calculate X margin with " + r);
 				return h.width;
 			}
-//			System.err.println("calculate Y margin with " + r);
+			// System.err.println("calculate Y margin with " + r);
 			return h.height;
 		}
 		return scale.isHorizontal() ? (maxWidth + 1) / 2 : (maxHeight + 1) / 2;
@@ -218,7 +219,8 @@ public class LinearScaleTicks2 implements ITicksProvider {
 	 * 
 	 * @return true if there is no overlaps
 	 */
-	private boolean updateLabelPositionsAndCheckGaps(int length, final int hMargin, final int tMargin, final boolean isReversed) {
+	private boolean updateLabelPositionsAndCheckGaps(int length, final int hMargin, final int tMargin,
+			final boolean isReversed) {
 		final int imax = ticks.size();
 		if (imax == 0) {
 			return true;
@@ -245,7 +247,8 @@ public class LinearScaleTicks2 implements ITicksProvider {
 		if (length <= 0)
 			return true; // sanity check
 
-//		System.err.println("Max labels have w:" + maxWidth + ", h:" + maxHeight);
+		// System.err.println("Max labels have w:" + maxWidth + ", h:" +
+		// maxHeight);
 		if (isReversed) {
 			for (Tick t : ticks) {
 				t.setPosition(length - length * t.getPosition() + hMargin);
@@ -255,7 +258,8 @@ public class LinearScaleTicks2 implements ITicksProvider {
 				t.setPosition(length * t.getPosition() + hMargin);
 			}
 		}
-		length += hMargin + tMargin; // re-expand length (so labels can flow into margins)
+		length += hMargin + tMargin; // re-expand length (so labels can flow
+										// into margins)
 		if (scale.isHorizontal()) {
 			final int space = (int) (0.67 * scale.calculateDimension(" ").width);
 			int last = 0;
@@ -296,7 +300,11 @@ public class LinearScaleTicks2 implements ITicksProvider {
 		return true;
 	}
 
-	private static final double LAST_STEP_FRAC = 1 - Math.log10(9); // fraction of major tick step between 9 and 10
+	private static final double LAST_STEP_FRAC = 1 - Math.log10(9); // fraction
+																	// of major
+																	// tick step
+																	// between 9
+																	// and 10
 
 	private void updateMinorTicks(final int end) {
 		minorPositions.clear();
@@ -305,7 +313,7 @@ public class LinearScaleTicks2 implements ITicksProvider {
 		if (jmax <= 1)
 			return;
 
-		double majorStepInPixel = (ticks.get(jmax-1).getPosition() - ticks.get(0).getPosition()) / (jmax - 1);
+		double majorStepInPixel = (ticks.get(jmax - 1).getPosition() - ticks.get(0).getPosition()) / (jmax - 1);
 		if (majorStepInPixel == 0)
 			return;
 
@@ -313,7 +321,8 @@ public class LinearScaleTicks2 implements ITicksProvider {
 
 		if (scale.isLogScaleEnabled()) {
 			if (majorStepInPixel * LAST_STEP_FRAC >= scale.getMinorTickMarkStepHint()) {
-				minorTicks = 10 * (int) Math.round(Math.abs(Math.log10(ticks.get(1).getValue() / ticks.get(0).getValue())));
+				minorTicks = 10
+						* (int) Math.round(Math.abs(Math.log10(ticks.get(1).getValue() / ticks.get(0).getValue())));
 				if (minorTicks > 10)
 					return; // gap is greater than a decade
 				double p = ticks.get(0).getPosition();
@@ -340,7 +349,7 @@ public class LinearScaleTicks2 implements ITicksProvider {
 				minorTicks = (int) Math.abs(ticks.get(1).getValue() - ticks.get(0).getValue());
 				if (minorTicks == 1)
 					return;
-				if (minorTicks > step/5) {
+				if (minorTicks > step / 5) {
 					if (step / 5 >= scale.getMinorTickMarkStepHint()) {
 						minorTicks = 5;
 					} else if (step / 4 >= scale.getMinorTickMarkStepHint()) {
@@ -384,7 +393,8 @@ public class LinearScaleTicks2 implements ITicksProvider {
 	}
 
 	/**
-	 * @param isTicksIndexBased if true, make ticks based on axis dataset indexes
+	 * @param isTicksIndexBased
+	 *            if true, make ticks based on axis dataset indexes
 	 */
 	public void setTicksIndexBased(boolean isTicksIndexBased) {
 		ticksIndexBased = isTicksIndexBased;

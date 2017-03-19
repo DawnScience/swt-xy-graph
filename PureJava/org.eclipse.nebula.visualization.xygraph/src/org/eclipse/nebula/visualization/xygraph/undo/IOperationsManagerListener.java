@@ -7,7 +7,9 @@
  ******************************************************************************/
 package org.eclipse.nebula.visualization.xygraph.undo;
 
-/**The listener on a operations manager.
+/**
+ * The listener on a operations manager.
+ * 
  * @author Xihui Chen
  *
  */

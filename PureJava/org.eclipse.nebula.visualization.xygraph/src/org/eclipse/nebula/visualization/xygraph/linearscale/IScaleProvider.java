@@ -47,7 +47,8 @@ public interface IScaleProvider {
 
 	/**
 	 * @param obj
-	 * @return dimension of object that has been formatted as a string in current font
+	 * @return dimension of object that has been formatted as a string in
+	 *         current font
 	 */
 	public Dimension calculateDimension(Object obj);
 
@@ -63,6 +64,7 @@ public interface IScaleProvider {
 
 	/**
 	 * If the scale has labels, this will return the label for the tick value
+	 * 
 	 * @param value
 	 * @return
 	 */

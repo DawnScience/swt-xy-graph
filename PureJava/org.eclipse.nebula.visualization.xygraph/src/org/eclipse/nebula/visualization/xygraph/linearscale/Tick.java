@@ -6,42 +6,43 @@ public class Tick {
 	private double value;
 	private double position;
 	private int tPosition;
-	
+
 	/**
 	 * @param tickText
 	 */
 	public void setText(String tickText) {
 		text = tickText;
 	}
-	
+
 	/**
 	 * @return the tick text
 	 */
 	public String getText() {
 		return text;
 	}
-	
+
 	/**
 	 * @param tickValue
 	 */
 	public void setValue(double tickValue) {
 		value = tickValue;
 	}
-	
+
 	/**
 	 * @return the tick value
 	 */
 	public double getValue() {
 		return value;
 	}
-	
+
 	/**
-	 * @param tickPosition in pixels
+	 * @param tickPosition
+	 *            in pixels
 	 */
 	public void setPosition(double tickPosition) {
 		position = tickPosition;
 	}
-	
+
 	/**
 	 * @return the tick position in pixels
 	 */
@@ -50,7 +51,8 @@ public class Tick {
 	}
 
 	/**
-	 * @param textPosition in pixels
+	 * @param textPosition
+	 *            in pixels
 	 */
 	public void setTextPosition(int textPosition) {
 		tPosition = textPosition;

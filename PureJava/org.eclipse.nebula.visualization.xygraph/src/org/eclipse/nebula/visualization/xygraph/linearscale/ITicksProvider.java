@@ -23,95 +23,95 @@ import java.util.List;
  */
 public interface ITicksProvider {
 
-    /**
-     * Gets the tick positions.
-     * 
-     * @return the tick positions
-     */
-    public List<Integer> getPositions();
+	/**
+	 * Gets the tick positions.
+	 * 
+	 * @return the tick positions
+	 */
+	public List<Integer> getPositions();
 
-    /**
-     * @param index
-     * @return tick position
-     */
-    public int getPosition(int index);
+	/**
+	 * @param index
+	 * @return tick position
+	 */
+	public int getPosition(int index);
 
-    /**
-     * @param index
-     * @return tick value
-     */
-    public double getValue(int index);
+	/**
+	 * @param index
+	 * @return tick value
+	 */
+	public double getValue(int index);
 
-    /**
-     * @param index
-     * @return tick label
-     */
-    public String getLabel(int index);
+	/**
+	 * @param index
+	 * @return tick label
+	 */
+	public String getLabel(int index);
 
-    /**
-     * @param index
-     * @return label position
-     */
-    public int getLabelPosition(int index);
+	/**
+	 * @param index
+	 * @return label position
+	 */
+	public int getLabelPosition(int index);
 
-    /**
-     * @param index
-     * @return true if tick is visible
-     */
-    public boolean isVisible(int index);
+	/**
+	 * @param index
+	 * @return true if tick is visible
+	 */
+	public boolean isVisible(int index);
 
-    /**
-     * @return number of major ticks
-     */
-    public int getMajorCount();
+	/**
+	 * @return number of major ticks
+	 */
+	public int getMajorCount();
 
-    /**
-     * @param index
-     * @return minor tick position
-     */
-    public int getMinorPosition(int index);
+	/**
+	 * @param index
+	 * @return minor tick position
+	 */
+	public int getMinorPosition(int index);
 
-    /**
-     * @return number of minor ticks
-     */
-    public int getMinorCount();
+	/**
+	 * @return number of minor ticks
+	 */
+	public int getMinorCount();
 
-    /**
-     * Update ticks
-     * 
-     * @param min
-     * @param max
-     * @param length
-     * @return new axis range
-     */
-    public Range update(double min , double max, int length);
+	/**
+	 * Update ticks
+	 * 
+	 * @param min
+	 * @param max
+	 * @param length
+	 * @return new axis range
+	 */
+	public Range update(double min, double max, int length);
 
-    /**
-     * 
-     * @return maximum width in pixels of tick labels
-     */
-    public int getMaxWidth();
+	/**
+	 * 
+	 * @return maximum width in pixels of tick labels
+	 */
+	public int getMaxWidth();
 
-    /**
-     * 
-     * @return maximum height in pixels of tick labels
-     */
-    public int getMaxHeight();
+	/**
+	 * 
+	 * @return maximum height in pixels of tick labels
+	 */
+	public int getMaxHeight();
 
-    /**
-     * @param min
-     * @param max
-     * @return default format pattern for labels
-     */
-    public String getDefaultFormatPattern(double min , double max);
+	/**
+	 * @param min
+	 * @param max
+	 * @return default format pattern for labels
+	 */
+	public String getDefaultFormatPattern(double min, double max);
 
-    /**
-     * @return margin in pixel between edge of client area and head of axis line
-     */
-    public int getHeadMargin();
+	/**
+	 * @return margin in pixel between edge of client area and head of axis line
+	 */
+	public int getHeadMargin();
 
-    /**
-     * @return margin in pixel between edge of client area and tail of axis line
-     */
-    public int getTailMargin();
+	/**
+	 * @return margin in pixel between edge of client area and tail of axis line
+	 */
+	public int getTailMargin();
 }

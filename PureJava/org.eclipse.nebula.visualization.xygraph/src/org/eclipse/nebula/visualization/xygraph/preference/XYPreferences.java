@@ -7,34 +7,31 @@
  ******************************************************************************/
 package org.eclipse.nebula.visualization.xygraph.preference;
 
-
-/** Access to preference settings.
+/**
+ * Access to preference settings.
  * 
- *  See preferences.ini for details on the available settings
- *  @author Kay Kasemir
+ * See preferences.ini for details on the available settings
+ * 
+ * @author Kay Kasemir
  */
 @SuppressWarnings("nls")
-public class XYPreferences
-{
-    // useAdvancedGraphics() is called from many drawing operations, so
-    // only determine it once
-    private static boolean use_advanced_graphics = true;
+public class XYPreferences {
+	// useAdvancedGraphics() is called from many drawing operations, so
+	// only determine it once
+	private static boolean use_advanced_graphics = true;
 
-  
-    public static boolean useAdvancedGraphics()
-    {
-    	if(use_advanced_graphics){
-    		String value = System.getProperty("prohibit_advanced_graphics"); //$NON-NLS-1$
-    		if(value == null || !value.equals("true")) //$NON-NLS-1$
-    			return true;
-    		return  false;
-    	}
-        return false;
-    }
+	public static boolean useAdvancedGraphics() {
+		if (use_advanced_graphics) {
+			String value = System.getProperty("prohibit_advanced_graphics"); //$NON-NLS-1$
+			if (value == null || !value.equals("true")) //$NON-NLS-1$
+				return true;
+			return false;
+		}
+		return false;
+	}
 
-    public static final String TICKS_PROVIDER = "swt.xygraph.ticksProvider";
-    public static final String TICKS_PROVIDER_ORIGINAL = "original";
-    public static final String TICKS_PROVIDER_MARK_2 = "mark2";
-
+	public static final String TICKS_PROVIDER = "swt.xygraph.ticksProvider";
+	public static final String TICKS_PROVIDER_ORIGINAL = "original";
+	public static final String TICKS_PROVIDER_MARK_2 = "mark2";
 
 }

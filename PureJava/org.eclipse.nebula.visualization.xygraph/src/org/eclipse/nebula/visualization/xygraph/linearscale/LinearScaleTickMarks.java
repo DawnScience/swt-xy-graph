@@ -8,92 +8,91 @@ import org.eclipse.nebula.visualization.xygraph.util.SWTConstants;
 
 /**
  * Linear scale tick marks.
+ * 
  * @author Xihui Chen
  */
-public class LinearScaleTickMarks extends Figure {   
-
-
+public class LinearScaleTickMarks extends Figure {
 
 	/** the scale */
-    private LinearScale scale;
+	private LinearScale scale;
 
-    /** the line width */
-    protected static final int LINE_WIDTH = 1;
+	/** the line width */
+	protected static final int LINE_WIDTH = 1;
 
-    /** the tick length */
-    public static final int MAJOR_TICK_LENGTH = 6;
-    /** the tick length */
-    public static final int MINOR_TICK_LENGTH = 3;
+	/** the tick length */
+	public static final int MAJOR_TICK_LENGTH = 6;
+	/** the tick length */
+	public static final int MINOR_TICK_LENGTH = 3;
 
-    /**
-     * Constructor.
-     * 
-     * @param chart
-     *            the chart
-     * @param style
-     *            the style
-     * @param scale
-     *            the scale
-     */
-    public LinearScaleTickMarks(LinearScale scale) {
-        
-        this.scale = scale;
+	/**
+	 * Constructor.
+	 * 
+	 * @param chart
+	 *            the chart
+	 * @param style
+	 *            the style
+	 * @param scale
+	 *            the scale
+	 */
+	public LinearScaleTickMarks(LinearScale scale) {
 
-        setForegroundColor(scale.getForegroundColor());
-    }
+		this.scale = scale;
 
-   protected void paintClientArea(Graphics graphics) {
-	   graphics.translate(bounds.x, bounds.y);
-	   ITicksProvider ticks = scale.getTicksProvider();
+		setForegroundColor(scale.getForegroundColor());
+	}
 
-	   Dimension d = getSize();
-        int width = d.width;
-        int height = d.height;
+	protected void paintClientArea(Graphics graphics) {
+		graphics.translate(bounds.x, bounds.y);
+		ITicksProvider ticks = scale.getTicksProvider();
 
-        try {
-        	graphics.pushState();
-        	graphics.setAlpha(100);
-        	if (scale.isHorizontal()) {
-        		drawXTickMarks(graphics, ticks, scale.getTickLabelSide(), width, height);
-        	} else {
-        		drawYTickMarks(graphics, ticks, scale.getTickLabelSide(), width, height);
-        	}
-        } finally {
-        	graphics.popState();
-        }
-  };
+		Dimension d = getSize();
+		int width = d.width;
+		int height = d.height;
 
-    /**
-     * Draw the X tick marks.
-     * 
-     * @param tickLabelPositions
-     *            the tick label positions
-     * @param tickLabelSide
-     *            the side of tick label relative to tick marks
-     * @param width
-     *            the width to draw tick marks
-     * @param height
-     *            the height to draw tick marks
-     * @param gc
-     *            the graphics context
-     */
-    private void drawXTickMarks(Graphics gc, ITicksProvider ticks,
-            LabelSide tickLabelSide, int width, int height) {
-    	
-        // draw tick marks
-        gc.setLineStyle(SWTConstants.LINE_SOLID);
-        int imax = ticks.getMajorCount();
+		try {
+			graphics.pushState();
+			graphics.setAlpha(100);
+			if (scale.isHorizontal()) {
+				drawXTickMarks(graphics, ticks, scale.getTickLabelSide(), width, height);
+			} else {
+				drawYTickMarks(graphics, ticks, scale.getTickLabelSide(), width, height);
+			}
+		} finally {
+			graphics.popState();
+		}
+	};
+
+	/**
+	 * Draw the X tick marks.
+	 * 
+	 * @param tickLabelPositions
+	 *            the tick label positions
+	 * @param tickLabelSide
+	 *            the side of tick label relative to tick marks
+	 * @param width
+	 *            the width to draw tick marks
+	 * @param height
+	 *            the height to draw tick marks
+	 * @param gc
+	 *            the graphics context
+	 */
+	private void drawXTickMarks(Graphics gc, ITicksProvider ticks, LabelSide tickLabelSide, int width, int height) {
+
+		// draw tick marks
+		gc.setLineStyle(SWTConstants.LINE_SOLID);
+		int imax = ticks.getMajorCount();
 		if (scale.isLogScaleEnabled()) {
-            int y;
-        	for (int i = 0; i < imax; i++) {
-                int x = ticks.getPosition(i);
-                int tickLength = ticks.isVisible(i) ? MAJOR_TICK_LENGTH : MINOR_TICK_LENGTH;
-                y = tickLabelSide == LabelSide.Primary ? 0 : height - 1 - LINE_WIDTH - tickLength;;
+			int y;
+			for (int i = 0; i < imax; i++) {
+				int x = ticks.getPosition(i);
+				int tickLength = ticks.isVisible(i) ? MAJOR_TICK_LENGTH : MINOR_TICK_LENGTH;
+				y = tickLabelSide == LabelSide.Primary ? 0 : height - 1 - LINE_WIDTH - tickLength;
+				;
 
 				// draw minor ticks for log scale
 				if (ticks.isVisible(i) || scale.isMinorTicksVisible())
-                	gc.drawLine(x, y, x, y + tickLength);
-        	}
+					gc.drawLine(x, y, x, y + tickLength);
+			}
 
 			// draw minor ticks for log scale
 			if (scale.isMinorTicksVisible()) {
@@ -106,12 +105,12 @@ public class LinearScaleTickMarks extends Figure {
 						gc.drawLine(x, y, x, y + MINOR_TICK_LENGTH);
 				}
 			}
-        } else {
-        	int y = tickLabelSide == LabelSide.Primary ? 0 : height - 1 - LINE_WIDTH - MAJOR_TICK_LENGTH;
-        	for (int i = 0; i < imax; i++) {
-                int x = ticks.getPosition(i);
-                gc.drawLine(x, y, x, y + MAJOR_TICK_LENGTH);
-            }
+		} else {
+			int y = tickLabelSide == LabelSide.Primary ? 0 : height - 1 - LINE_WIDTH - MAJOR_TICK_LENGTH;
+			for (int i = 0; i < imax; i++) {
+				int x = ticks.getPosition(i);
+				gc.drawLine(x, y, x, y + MAJOR_TICK_LENGTH);
+			}
 
 			// draw minor ticks for linear scale
 			if (scale.isMinorTicksVisible()) {
@@ -126,9 +125,9 @@ public class LinearScaleTickMarks extends Figure {
 						gc.drawLine(x, y, x, y + MINOR_TICK_LENGTH);
 				}
 			}
-        }
+		}
 
-        //draw scale line
+		// draw scale line
 		if (scale.isScaleLineVisible()) {
 			if (tickLabelSide == LabelSide.Primary) {
 				gc.drawLine(scale.getMargin(), 0, width - scale.getMargin(), 0);
@@ -136,35 +135,35 @@ public class LinearScaleTickMarks extends Figure {
 				gc.drawLine(scale.getMargin(), height - 1, width - scale.getMargin(), height - 1);
 			}
 		}
-    }
+	}
 
-    /**
-     * Draw the Y tick marks.
-     * 
-     * @param tickLabelPositions
-     *            the tick label positions
-     * @param tickLabelSide
-     *            the side of tick label relative to tick marks
-     * @param width
-     *            the width to draw tick marks
-     * @param height
-     *            the height to draw tick marks
-     * @param gc
-     *            the graphics context
-     */
-    private void drawYTickMarks(Graphics gc, ITicksProvider ticks, LabelSide tickLabelSide, int width, int height) {
-        // draw tick marks
-        gc.setLineStyle(SWTConstants.LINE_SOLID);
-        int y = 0;
-        int imax = ticks.getMajorCount();
+	/**
+	 * Draw the Y tick marks.
+	 * 
+	 * @param tickLabelPositions
+	 *            the tick label positions
+	 * @param tickLabelSide
+	 *            the side of tick label relative to tick marks
+	 * @param width
+	 *            the width to draw tick marks
+	 * @param height
+	 *            the height to draw tick marks
+	 * @param gc
+	 *            the graphics context
+	 */
+	private void drawYTickMarks(Graphics gc, ITicksProvider ticks, LabelSide tickLabelSide, int width, int height) {
+		// draw tick marks
+		gc.setLineStyle(SWTConstants.LINE_SOLID);
+		int y = 0;
+		int imax = ticks.getMajorCount();
 		if (scale.isLogScaleEnabled()) {
-            int x;
-        	for (int i = 0; i < imax; i++) {
-                int tickLength = ticks.isVisible(i) ? MAJOR_TICK_LENGTH : MINOR_TICK_LENGTH;
-                x = tickLabelSide == LabelSide.Primary ? width - 1 - LINE_WIDTH - tickLength : LINE_WIDTH;
-                y = height - ticks.getPosition(i);
+			int x;
+			for (int i = 0; i < imax; i++) {
+				int tickLength = ticks.isVisible(i) ? MAJOR_TICK_LENGTH : MINOR_TICK_LENGTH;
+				x = tickLabelSide == LabelSide.Primary ? width - 1 - LINE_WIDTH - tickLength : LINE_WIDTH;
+				y = height - ticks.getPosition(i);
 				if (ticks.isVisible(i) || scale.isMinorTicksVisible())
-                	gc.drawLine(x, y, x + tickLength, y);
+					gc.drawLine(x, y, x + tickLength, y);
 			}
 
 			// draw minor ticks for log scale
@@ -178,12 +177,12 @@ public class LinearScaleTickMarks extends Figure {
 						gc.drawLine(x, y, x + MINOR_TICK_LENGTH, y);
 				}
 			}
-        } else {        
-            int x = tickLabelSide == LabelSide.Primary ? width - LINE_WIDTH - MAJOR_TICK_LENGTH : LINE_WIDTH;
-            for (int i = 0; i < imax; i++) {
-                y = height - ticks.getPosition(i);
-                gc.drawLine(x, y, x + MAJOR_TICK_LENGTH, y);
-            }
+		} else {
+			int x = tickLabelSide == LabelSide.Primary ? width - LINE_WIDTH - MAJOR_TICK_LENGTH : LINE_WIDTH;
+			for (int i = 0; i < imax; i++) {
+				y = height - ticks.getPosition(i);
+				gc.drawLine(x, y, x + MAJOR_TICK_LENGTH, y);
+			}
 
 			// draw minor ticks for linear scale
 			if (scale.isMinorTicksVisible()) {
@@ -208,5 +207,5 @@ public class LinearScaleTickMarks extends Figure {
 				gc.drawLine(0, scale.getMargin(), 0, height - scale.getMargin());
 			}
 		}
-    }
+	}
 }

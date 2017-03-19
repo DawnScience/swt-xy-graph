@@ -31,23 +31,26 @@ public class Activator extends AbstractUIPlugin {
 
 	final private static Logger logger = Logger.getLogger(PLUGIN_ID);
 
-	
 	/*
 	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
+	 * 
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.
+	 * BundleContext)
 	 */
 	@Override
-    public void start(BundleContext context) throws Exception {
+	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
+	 * 
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.
+	 * BundleContext)
 	 */
 	@Override
-    public void stop(BundleContext context) throws Exception {
+	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		super.stop(context);
 	}
@@ -60,17 +63,17 @@ public class Activator extends AbstractUIPlugin {
 	public static Activator getDefault() {
 		return plugin;
 	}
-	
+
 	public static Logger getLogger() {
 		return logger;
 	}
-	
+
 	public static ImageDescriptor getImageDescriptor(String imageFilePath) {
-		if (plugin!=null) {
-		    return imageDescriptorFromPlugin(PLUGIN_ID, imageFilePath);
+		if (plugin != null) {
+			return imageDescriptorFromPlugin(PLUGIN_ID, imageFilePath);
 		} else {
-			final File  iconPath = new File(imageFilePath);
-			final Image image    = new Image(null, iconPath.getAbsolutePath());
+			final File iconPath = new File(imageFilePath);
+			final Image image = new Image(null, iconPath.getAbsolutePath());
 			return ImageDescriptor.createFromImage(image);
 		}
 	}

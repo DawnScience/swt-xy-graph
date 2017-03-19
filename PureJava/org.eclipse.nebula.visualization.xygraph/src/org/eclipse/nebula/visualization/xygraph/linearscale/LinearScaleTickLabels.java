@@ -6,6 +6,7 @@ import org.eclipse.nebula.visualization.xygraph.preference.XYPreferences;
 
 /**
  * Linear Scale tick labels.
+ * 
  * @author Xihui Chen
  */
 public class LinearScaleTickLabels extends Figure {
@@ -33,69 +34,69 @@ public class LinearScaleTickLabels extends Figure {
 		return ticks;
 	}
 
-    /**
-     * Updates the tick labels.
-     * 
-     * @param length
-     *            scale tick length (without margin)
-     */
-    protected Range update(int length) {
-    	final Range range = scale.getScaleRange();
+	/**
+	 * Updates the tick labels.
+	 * 
+	 * @param length
+	 *            scale tick length (without margin)
+	 */
+	protected Range update(int length) {
+		final Range range = scale.getScaleRange();
 		return ticks.update(range.getLower(), range.getUpper(), length);
-    }
+	}
 
-    @Override
-    protected void paintClientArea(Graphics graphics) {
-    	graphics.translate(bounds.x, bounds.y);
-    	graphics.setFont(getFont());
-    	if (scale.isHorizontal()) {
-            drawXTick(graphics);
-        } else {
-            drawYTick(graphics);
-        }
+	@Override
+	protected void paintClientArea(Graphics graphics) {
+		graphics.translate(bounds.x, bounds.y);
+		graphics.setFont(getFont());
+		if (scale.isHorizontal()) {
+			drawXTick(graphics);
+		} else {
+			drawYTick(graphics);
+		}
 
-    	super.paintClientArea(graphics);
-    };
+		super.paintClientArea(graphics);
+	};
 
-    /**
-     * Draw the X tick.
-     * 
-     * @param graphics
-     *            the graphics context
-     */
-    private void drawXTick(Graphics graphics) {
-        // draw tick labels
-        final int imax = ticks.getMajorCount();
-        for (int i = 0; i < imax; i++) {
-            if (ticks.isVisible(i)) {
-                graphics.drawText(ticks.getLabel(i), ticks.getLabelPosition(i), 0);
-            }
-        }
-    }
+	/**
+	 * Draw the X tick.
+	 * 
+	 * @param graphics
+	 *            the graphics context
+	 */
+	private void drawXTick(Graphics graphics) {
+		// draw tick labels
+		final int imax = ticks.getMajorCount();
+		for (int i = 0; i < imax; i++) {
+			if (ticks.isVisible(i)) {
+				graphics.drawText(ticks.getLabel(i), ticks.getLabelPosition(i), 0);
+			}
+		}
+	}
 
-    private static final String MINUS = "-";
+	private static final String MINUS = "-";
 
-    /**
-     * Draw the Y tick.
-     * 
-     * @param graphics
-     *            the graphics context
-     */
-    private void drawYTick(Graphics graphics) {
-        // draw tick labels
-        final int imax = ticks.getMajorCount();
-        if (imax < 1)
-            return;
-        final boolean hasNegative = ticks.getLabel(0).startsWith(MINUS);
-        final int minus = scale.calculateDimension(MINUS).width;
-        for (int i = 0; i < imax; i++) {
-            if (ticks.isVisible(i)) {
-                String text = ticks.getLabel(i);
-                int x = (hasNegative && !text.startsWith(MINUS)) ? minus : 0;
-                graphics.drawText(text, x, ticks.getLabelPosition(i));
-            }
-        }
-    }
+	/**
+	 * Draw the Y tick.
+	 * 
+	 * @param graphics
+	 *            the graphics context
+	 */
+	private void drawYTick(Graphics graphics) {
+		// draw tick labels
+		final int imax = ticks.getMajorCount();
+		if (imax < 1)
+			return;
+		final boolean hasNegative = ticks.getLabel(0).startsWith(MINUS);
+		final int minus = scale.calculateDimension(MINUS).width;
+		for (int i = 0; i < imax; i++) {
+			if (ticks.isVisible(i)) {
+				String text = ticks.getLabel(i);
+				int x = (hasNegative && !text.startsWith(MINUS)) ? minus : 0;
+				graphics.drawText(text, x, ticks.getLabelPosition(i));
+			}
+		}
+	}
 
 	/**
 	 * @return the tickLabelMaxLength
@@ -120,7 +121,8 @@ public class LinearScaleTickLabels extends Figure {
 	}
 
 	/**
-	 * @param isTicksIndexBased if true, make ticks based on axis dataset indexes
+	 * @param isTicksIndexBased
+	 *            if true, make ticks based on axis dataset indexes
 	 */
 	public void setTicksIndexBased(boolean isTicksIndexBased) {
 		if (ticks instanceof LinearScaleTicks2) {
