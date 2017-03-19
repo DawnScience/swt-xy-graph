@@ -21,17 +21,17 @@ public class DefaultAxesFactory implements IAxesFactory {
 
 	@Override
 	public Axis createXAxis() {
-		Axis newAxis = new Axis("X-Axis", false);
+		Axis newAxis = new Axis(IXYGraph.X_AXIS, false);
 		newAxis.setOrientation(Orientation.HORIZONTAL);
-		newAxis.setTickLableSide(LabelSide.Primary);
+		newAxis.setTickLabelSide(LabelSide.Primary);
 		return newAxis;
 	}
 
 	@Override
 	public Axis createYAxis() {
-		Axis newAxis = new Axis("Y-Axis", true);
+		Axis newAxis = new Axis(IXYGraph.Y_AXIS, true);
 		newAxis.setOrientation(Orientation.VERTICAL);
-		newAxis.setTickLableSide(LabelSide.Primary);
+		newAxis.setTickLabelSide(LabelSide.Primary);
 		newAxis.setAutoScaleThreshold(0.1);
 		return newAxis;
 	}

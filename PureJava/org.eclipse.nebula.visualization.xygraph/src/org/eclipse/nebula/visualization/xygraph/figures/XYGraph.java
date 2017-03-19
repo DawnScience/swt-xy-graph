@@ -19,10 +19,9 @@ import org.eclipse.draw2d.SWTGraphics;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.nebula.visualization.internal.xygraph.undo.OperationsManager;
-import org.eclipse.nebula.visualization.internal.xygraph.undo.XYGraphMemento;
 import org.eclipse.nebula.visualization.internal.xygraph.undo.ZoomCommand;
-import org.eclipse.nebula.visualization.xygraph.linearscale.Range;
 import org.eclipse.nebula.visualization.xygraph.linearscale.AbstractScale.LabelSide;
+import org.eclipse.nebula.visualization.xygraph.linearscale.Range;
 import org.eclipse.nebula.visualization.xygraph.util.GraphicsUtil;
 import org.eclipse.nebula.visualization.xygraph.util.Log10;
 import org.eclipse.nebula.visualization.xygraph.util.SingleSourceHelper2;
@@ -43,9 +42,6 @@ import org.eclipse.swt.widgets.Display;
  * @author Kay Kasemir (performStagger)
  */
 public class XYGraph extends Figure implements IXYGraph {
-
-	public static final String X_AXIS = "X-Axis";
-	public static final String Y_AXIS = "Y-Axis";
 
 	private static final int GAP = 2;
 	// public final static Color WHITE_COLOR = ColorConstants.white;

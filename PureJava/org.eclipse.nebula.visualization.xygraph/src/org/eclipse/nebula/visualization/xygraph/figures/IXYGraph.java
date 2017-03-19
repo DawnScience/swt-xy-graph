@@ -29,6 +29,9 @@ public interface IXYGraph extends IFigure {
 
 	public static final String PROPERTY_ZOOMTYPE = "zoomType"; //$NON-NLS-1$
 
+	public static final String X_AXIS = "X-Axis";
+	public static final String Y_AXIS = "Y-Axis";
+
 	/**
 	 * @param zoomType
 	 *            the zoomType to set
