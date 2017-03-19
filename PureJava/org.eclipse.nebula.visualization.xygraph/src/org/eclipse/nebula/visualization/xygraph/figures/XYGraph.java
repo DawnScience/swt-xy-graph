@@ -107,6 +107,17 @@ public class XYGraph extends Figure implements IXYGraph {
 	 * Constructor.
 	 */
 	public XYGraph() {
+		this(new DefaultAxesFactory());
+	}
+
+	/**
+	 * Constructor.
+	 * 
+	 * @param axesFactory
+	 *            The {@link IAxesFactory} to use to create the primary axes for
+	 *            the graph. Should not be {@code null}
+	 */
+	public XYGraph(IAxesFactory axesFactory) {
 		setOpaque(!transparent);
 		legendMap = new LinkedHashMap<Axis, Legend>();
 		titleLabel = new Label();
@@ -120,13 +131,10 @@ public class XYGraph extends Figure implements IXYGraph {
 
 		add(titleLabel);
 		add(plotArea);
-		primaryYAxis = new Axis(Y_AXIS, true);
-		primaryYAxis.setTickLabelSide(LabelSide.Primary);
-		primaryYAxis.setAutoScaleThreshold(0.1);
+		primaryYAxis = axesFactory.createYAxis();
 		addAxis(primaryYAxis);
 
-		primaryXAxis = new Axis(X_AXIS, false);
-		primaryXAxis.setTickLabelSide(LabelSide.Primary);
+		primaryXAxis = axesFactory.createXAxis();
 		addAxis(primaryXAxis);
 
 		operationsManager = new OperationsManager();
