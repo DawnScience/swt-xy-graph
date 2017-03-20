@@ -9,7 +9,6 @@ package org.eclipse.nebula.visualization.widgets.examples;
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.nebula.visualization.widgets.datadefinition.IManualValueChangeListener;
-import org.eclipse.nebula.visualization.widgets.figures.KnobFigure;
 import org.eclipse.nebula.visualization.widgets.figures.ScaledSliderFigure;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;

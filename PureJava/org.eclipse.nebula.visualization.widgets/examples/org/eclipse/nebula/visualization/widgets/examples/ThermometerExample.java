@@ -48,6 +48,7 @@ public class ThermometerExample {
 		thermo.setLoloLevel(-80);
 		thermo.setHiLevel(60);
 		thermo.setHihiLevel(80);
+		thermo.setShowHi(false);
 		thermo.setMajorTickMarkStepHint(50);
 		
 		lws.setContents(thermo);		

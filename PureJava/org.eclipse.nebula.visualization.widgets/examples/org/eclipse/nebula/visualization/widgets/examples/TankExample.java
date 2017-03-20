@@ -14,7 +14,6 @@ import java.util.concurrent.TimeUnit;
 import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.draw2d.SchemeBorder;
 import org.eclipse.nebula.visualization.widgets.figures.TankFigure;
-import org.eclipse.nebula.visualization.widgets.figures.ThermometerFigure;
 import org.eclipse.nebula.visualization.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
