@@ -22,7 +22,10 @@ import java.util.Map;
  * Y=5, negative Y error 1 and positive Y error 2 represents a number of 5 that
  * could also be anywhere in 4 .. 7. The errors are not percentages. The
  * 'negative' error is actually a positive number.
- *
+ * <p>
+ * Note: Only the x/y value is used in equals()! Error ranges and info texts are
+ * ignored when determining equality with another Sample.
+ * 
  * @author Xihui Chen
  * @author Kay Kasemir Comments, made immutable
  */

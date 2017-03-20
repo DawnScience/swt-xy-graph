@@ -1,3 +1,10 @@
+/*******************************************************************************
+ * Copyright (c) 2010 Oak Ridge National Laboratory.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ ******************************************************************************/
 package org.eclipse.nebula.visualization.widgets.figureparts;
 
 import org.eclipse.draw2d.ColorConstants;
@@ -422,29 +429,9 @@ public class ROIFigure extends Figure {
 		}
 		
 		public void setROIGeoBounds(int x, int y, int w, int h){
-//			Rectangle clA = getClientArea();
-//			if(x < clA.x)
-//				x = clA.x;
-//			else if(x>=clA.x + clA.width){
-//				x = clA.x + clA.width-2;
-//				w = 1;
-//			}
-//
-//			if(y < clA.y)
-//				y = clA.y;
-//			else if(y>=clA.y + clA.height){
-//				y = clA.y + clA.height-2;
-//				h=1;
-//			}
-//			
-//			
-//			if(w+x>clA.x + clA.width)
-//				w = clA.x + clA.width - x;
 			if(w <=0)
 				w=1;
-//			
-//			if(h+y>clA.y + clA.height)
-//				h = clA.y + clA.height - y;			
+		
 			if(h <=0)
 				h=1;
 			

@@ -381,7 +381,7 @@ public class IntensityGraphFigure extends Figure implements Introspectable {
 			}else
 				return dataArray;			
 		}
-
+		
 		
 		/**Get data index location on cropped data array from geometry location.
 		 * @param x x much be inside graph area.
@@ -617,7 +617,7 @@ public class IntensityGraphFigure extends Figure implements Introspectable {
 		
 		public void mouseReleased(MouseEvent me) {
 			if(armed && end != null && start != null){
-				zoom();
+				zoom();				
 			}
 			armed = false;
 			end = null; 

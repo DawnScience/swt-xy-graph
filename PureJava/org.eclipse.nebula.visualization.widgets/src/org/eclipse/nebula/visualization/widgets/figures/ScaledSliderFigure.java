@@ -56,27 +56,27 @@ import org.eclipse.swt.widgets.Display;
  */
 public class ScaledSliderFigure extends AbstractLinearMarkedFigure {
 	
-
+	private Color fillColor = BLUE_COLOR;
+	
+	private Color fillBackgroundColor = GRAY_COLOR;
 	private Color thumbColor = XYGraphMediaFactory.getInstance().getColor(
 			new RGB(172,172, 172)); 
 	private boolean effect3D = true; 
 	private boolean horizontal = false;
-	private final Color WHITE_COLOR = XYGraphMediaFactory.getInstance().getColor(
+	private final static Color WHITE_COLOR = XYGraphMediaFactory.getInstance().getColor(
 			XYGraphMediaFactory.COLOR_WHITE); 
 	
 	//border color for track and thumb
-	private final Color GRAY_COLOR = XYGraphMediaFactory.getInstance().getColor(
+	private final static Color GRAY_COLOR = XYGraphMediaFactory.getInstance().getColor(
 			XYGraphMediaFactory.COLOR_GRAY);	
 	
-	private final Color GREEN_COLOR = XYGraphMediaFactory.getInstance().getColor(
+	private final static Color GREEN_COLOR = XYGraphMediaFactory.getInstance().getColor(
 			XYGraphMediaFactory.COLOR_GREEN);
-	private final Color BLUE_COLOR = XYGraphMediaFactory.getInstance().getColor(
+	private final static Color BLUE_COLOR = XYGraphMediaFactory.getInstance().getColor(
 			XYGraphMediaFactory.COLOR_BLUE);
-	private final Color LABEL_COLOR = XYGraphMediaFactory.getInstance().getColor(
+	private final static Color LABEL_COLOR = XYGraphMediaFactory.getInstance().getColor(
 			new RGB(255, 255, 150));
-	private Color fillColor = BLUE_COLOR;
 	
-	private Color fillBackgroundColor = GRAY_COLOR;
 	/** The alpha (0 is transparency and 255 is opaque) for disabled paint */
 	private static final int DISABLED_ALPHA = 100;
 	private Track track;
@@ -321,7 +321,7 @@ public class ScaledSliderFigure extends AbstractLinearMarkedFigure {
 			graphics.setForegroundColor(ColorConstants.black);
 			graphics.setBackgroundColor(ColorConstants.white);
 
-			Rectangle area = getClientArea();			
+			Rectangle area = getClientArea();					
 			graphics.drawFocus(area.x, area.y, area.width-1, area.height-1);
 		}
 		if(!isEnabled()) {

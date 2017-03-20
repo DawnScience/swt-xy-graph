@@ -39,22 +39,23 @@ import org.eclipse.swt.widgets.Display;
  */
 public class ProgressBarFigure extends AbstractLinearMarkedFigure {
 	
+	private Color fillColor = BLUE_COLOR;
+	private Color fillBackgroundColor = GRAY_COLOR;
+	
 	private boolean effect3D = true;
 	private boolean horizontal = false; 
 	
 	private boolean indicatorMode = false;	
 	
-	private final Color WHITE_COLOR = XYGraphMediaFactory.getInstance().getColor(
+	private final static Color WHITE_COLOR = XYGraphMediaFactory.getInstance().getColor(
 			XYGraphMediaFactory.COLOR_WHITE);
 	//border color for track and thumb
-	private final Color GRAY_COLOR = XYGraphMediaFactory.getInstance().getColor(
+	private final static Color GRAY_COLOR = XYGraphMediaFactory.getInstance().getColor(
 			XYGraphMediaFactory.COLOR_GRAY);
-	private final Color BLUE_COLOR = XYGraphMediaFactory.getInstance().getColor(
+	private final static Color BLUE_COLOR = XYGraphMediaFactory.getInstance().getColor(
 			XYGraphMediaFactory.COLOR_BLUE);
 
-	private Color fillColor = BLUE_COLOR;
-	private Color fillBackgroundColor = GRAY_COLOR;
-	
+
 	private Track track;
 	private Label label;
 	

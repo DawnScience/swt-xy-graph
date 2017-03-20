@@ -33,12 +33,12 @@ import org.eclipse.swt.widgets.Display;
  */
 public class TankFigure extends AbstractLinearMarkedFigure {	
 
-	private final Color WHITE_COLOR = XYGraphMediaFactory.getInstance().getColor(
+	private final static Color WHITE_COLOR = XYGraphMediaFactory.getInstance().getColor(
 			XYGraphMediaFactory.COLOR_WHITE);
-	private final Color GRAY_COLOR = XYGraphMediaFactory.getInstance().getColor(
+	private final static Color GRAY_COLOR = XYGraphMediaFactory.getInstance().getColor(
 			XYGraphMediaFactory.COLOR_GRAY);
 	
-	private final Color BLUE_COLOR = XYGraphMediaFactory.getInstance().getColor(
+	private final static Color BLUE_COLOR = XYGraphMediaFactory.getInstance().getColor(
 			XYGraphMediaFactory.COLOR_BLUE);
 	
 	private boolean effect3D = true;

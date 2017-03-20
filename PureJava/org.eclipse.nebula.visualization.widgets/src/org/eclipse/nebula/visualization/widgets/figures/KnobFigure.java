@@ -252,12 +252,12 @@ public class KnobFigure extends AbstractRoundRampedFigure {
 			graphics.setForegroundColor(thumbColor);
 		}		
 	} 
-	private final Color WHITE_COLOR = XYGraphMediaFactory.getInstance().getColor(
+	private final static Color WHITE_COLOR = XYGraphMediaFactory.getInstance().getColor(
 			XYGraphMediaFactory.COLOR_WHITE);
-	private final Color GRAY_COLOR = XYGraphMediaFactory.getInstance().getColor(
+	private final static Color GRAY_COLOR = XYGraphMediaFactory.getInstance().getColor(
 			XYGraphMediaFactory.COLOR_GRAY);
 	
-	private final Font DEFAULT_LABEL_FONT = XYGraphMediaFactory.getInstance().getFont(
+	private final static Font DEFAULT_LABEL_FONT = XYGraphMediaFactory.getInstance().getFont(
 			new FontData("Arial", 12, SWT.BOLD));	
 	
 	private final static int BORDER_WIDTH = 2;

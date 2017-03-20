@@ -40,7 +40,7 @@ import org.eclipse.swt.graphics.FontData;
  */
 public class MeterFigure extends AbstractRoundRampedFigure {
 
-	private final Font DEFAULT_LABEL_FONT = XYGraphMediaFactory.getInstance().getFont(
+	private final static Font DEFAULT_LABEL_FONT = XYGraphMediaFactory.getInstance().getFont(
 			new FontData("Arial", 12, SWT.BOLD));	
 //	private Ellipse needleCenter;
 	

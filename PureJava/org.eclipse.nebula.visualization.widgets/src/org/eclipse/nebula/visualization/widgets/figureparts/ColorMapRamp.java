@@ -34,7 +34,6 @@ public class ColorMapRamp extends Figure {
 	private ColorMap colorMap;
 	private LinearScale scale;
 	private ColorMapFigure colorMapFigure;
-
 	private final static int RAMP_WIDTH = 25;
 	public ColorMapRamp() {
 		mapData = new double[256];
@@ -59,7 +58,8 @@ public class ColorMapRamp extends Figure {
 
 
 	private void updateMapData() {
-		for(int j=0; j<256; j++) mapData[j] = max-j*(max-min)/255.0;
+		for(int j=0; j<256; j++)
+			mapData[j] = max-j*(max-min)/255.0;
 	}
 	
 	
@@ -71,11 +71,10 @@ public class ColorMapRamp extends Figure {
 		Rectangle clientArea = getClientArea();
 		Dimension scaleSize = scale.getPreferredSize(clientArea.width, clientArea.height);		
 		scale.setBounds(new Rectangle(clientArea.x + clientArea.width - scaleSize.width, clientArea.y,
-				                      scaleSize.width, clientArea.height));
+				scaleSize.width, clientArea.height));
 		
-		final int maxPos = scale.getValuePosition(max, false);
-		colorMapFigure.setBounds(new Rectangle(clientArea.x, maxPos,
-				                               clientArea.width - scaleSize.width, scale.getTickLength()-maxPos+scale.getMargin()+6));
+		colorMapFigure.setBounds(new Rectangle(clientArea.x, scale.getValuePosition(max, false),
+				clientArea.width - scaleSize.width, scale.getTickLength()));
 		super.layout();
 		
 	}

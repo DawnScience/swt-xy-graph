@@ -71,7 +71,7 @@ public class ThermometerFigure extends AbstractLinearMarkedFigure {
 	}
 	private Color fillColor;
 	
-
+	private Color fillBackgroundColor = GRAY_COLOR;
 	private Color contrastFillColor;
 	private TemperatureUnit temperatureUnit;
 	
@@ -83,20 +83,18 @@ public class ThermometerFigure extends AbstractLinearMarkedFigure {
 	
 	private boolean effect3D = true;
 	
-	private final Color RED_COLOR = XYGraphMediaFactory.getInstance().getColor(
+	private final static Color RED_COLOR = XYGraphMediaFactory.getInstance().getColor(
 			XYGraphMediaFactory.COLOR_RED);
 	
 	
 
-	private final Color GRAY_COLOR = XYGraphMediaFactory.getInstance().getColor(
+	private final static Color GRAY_COLOR = XYGraphMediaFactory.getInstance().getColor(
 			XYGraphMediaFactory.COLOR_GRAY);		
 	
-	private final Color WHITE_COLOR = XYGraphMediaFactory.getInstance().getColor(
+	private final static Color WHITE_COLOR = XYGraphMediaFactory.getInstance().getColor(
 			XYGraphMediaFactory.COLOR_WHITE);
-	private final Color BLACK_COLOR = XYGraphMediaFactory.getInstance().getColor(
+	private final static Color BLACK_COLOR = XYGraphMediaFactory.getInstance().getColor(
 			XYGraphMediaFactory.COLOR_BLACK);
-	
-	private Color fillBackgroundColor = GRAY_COLOR;
 	
 	public ThermometerFigure() {
 		

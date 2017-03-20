@@ -320,7 +320,8 @@ public class AxisConfigPage {
 		axis.setPrimarySide(primaryButton.getSelection());
 
 		axis.setLogScale(logButton.getSelection());
-		// must be set before autoScale as we update the maxOrAutoScaleThrText button as well
+		// must be set before autoScale as we update the maxOrAutoScaleThrText
+		// button as well
 		setInverted(invertAxisButton.getSelection());
 		axis.setAutoScale(autoScaleButton.getSelection());
 		if (autoScaleButton.getSelection())
