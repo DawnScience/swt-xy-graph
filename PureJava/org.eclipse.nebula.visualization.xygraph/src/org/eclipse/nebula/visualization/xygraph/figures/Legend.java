@@ -18,7 +18,7 @@ import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
-import org.eclipse.nebula.visualization.xygraph.preference.XYPreferences;
+import org.eclipse.nebula.visualization.xygraph.util.Preferences;
 import org.eclipse.nebula.visualization.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -139,7 +139,7 @@ public class Legend extends RectangleFigure {
 
 	private void drawTraceLegend(Trace trace, Graphics graphics, int hPos, int vPos) {
 		graphics.pushState();
-		if (XYPreferences.useAdvancedGraphics())
+		if (Preferences.useAdvancedGraphics())
 			graphics.setAntialias(SWT.ON);
 		graphics.setForegroundColor(trace.getTraceColor());
 		// draw symbol
@@ -151,12 +151,12 @@ public class Legend extends RectangleFigure {
 			break;
 		case AREA:
 			graphics.setBackgroundColor(trace.getTraceColor());
-			if (XYPreferences.useAdvancedGraphics())
+			if (Preferences.useAdvancedGraphics())
 				graphics.setAlpha(trace.getAreaAlpha());
 			graphics.fillPolygon(new int[] { hPos, vPos + ICON_WIDTH / 2, hPos + ICON_WIDTH / 2,
 					vPos + trace.getPointSize() / 2, hPos + ICON_WIDTH, vPos + ICON_WIDTH / 2, hPos + ICON_WIDTH,
 					vPos + ICON_WIDTH, hPos, vPos + ICON_WIDTH });
-			if (XYPreferences.useAdvancedGraphics())
+			if (Preferences.useAdvancedGraphics())
 				graphics.setAlpha(255);
 			trace.drawPoint(graphics, new Point(hPos + ICON_WIDTH / 2, vPos + trace.getPointSize() / 2));
 			break;

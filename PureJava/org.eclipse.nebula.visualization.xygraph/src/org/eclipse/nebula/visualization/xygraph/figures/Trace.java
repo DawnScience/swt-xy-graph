@@ -20,7 +20,7 @@ import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.PointList;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.nebula.visualization.xygraph.Messages;
-import org.eclipse.nebula.visualization.xygraph.Preferences;
+import org.eclipse.nebula.visualization.xygraph.util.Preferences;
 import org.eclipse.nebula.visualization.xygraph.dataprovider.IDataProvider;
 import org.eclipse.nebula.visualization.xygraph.dataprovider.IDataProviderListener;
 import org.eclipse.nebula.visualization.xygraph.dataprovider.ISample;

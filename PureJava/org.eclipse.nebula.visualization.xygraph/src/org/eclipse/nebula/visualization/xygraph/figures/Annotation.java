@@ -29,7 +29,7 @@ import org.eclipse.nebula.visualization.xygraph.dataprovider.IDataProvider;
 import org.eclipse.nebula.visualization.xygraph.dataprovider.IDataProviderListener;
 import org.eclipse.nebula.visualization.xygraph.dataprovider.ISample;
 import org.eclipse.nebula.visualization.xygraph.linearscale.Range;
-import org.eclipse.nebula.visualization.xygraph.preference.XYPreferences;
+import org.eclipse.nebula.visualization.xygraph.util.Preferences;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -175,7 +175,7 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 		if (trace != null && currentSnappedSample == null && !pointerDragged)
 			updateToDefaultPosition();
 
-		if (XYPreferences.useAdvancedGraphics())
+		if (Preferences.useAdvancedGraphics())
 			graphics.setAntialias(SWT.ON);
 		Color tempColor;
 		if (annotationColor == null) {
@@ -842,7 +842,7 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 		@Override
 		protected void paintClientArea(Graphics graphics) {
 			super.paintClientArea(graphics);
-			if (XYPreferences.useAdvancedGraphics())
+			if (Preferences.useAdvancedGraphics())
 				graphics.setAntialias(SWT.ON);
 			// draw X-cross point
 			Rectangle clientArea = getClientArea().getCopy().shrink(POINT_SIZE / 2, POINT_SIZE / 2);

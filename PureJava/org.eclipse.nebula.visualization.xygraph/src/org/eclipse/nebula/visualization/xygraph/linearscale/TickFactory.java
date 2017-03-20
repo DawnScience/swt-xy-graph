@@ -24,7 +24,7 @@ import java.util.List;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.nebula.visualization.xygraph.Activator;
-import org.eclipse.nebula.visualization.xygraph.preference.XYPreferences;
+import org.eclipse.nebula.visualization.xygraph.util.Preferences;
 
 /**
  * Tick factory produces the different axis ticks. When specifying a format and
@@ -766,16 +766,16 @@ public class TickFactory {
 		String provider;
 		if (Activator.getDefault() != null) { // We are in OSGI
 			IPreferenceStore store = Activator.getDefault().getPreferenceStore();
-			provider = store.getString(XYPreferences.TICKS_PROVIDER);
+			provider = store.getString(Preferences.TICKS_PROVIDER);
 		} else {
 			provider = defaultProviderName;
 		}
 
 		if (provider == null)
-			provider = XYPreferences.TICKS_PROVIDER_ORIGINAL;
+			provider = Preferences.TICKS_PROVIDER_ORIGINAL;
 
 		ITicksProvider ticks;
-		if (XYPreferences.TICKS_PROVIDER_ORIGINAL.equals(provider))
+		if (Preferences.TICKS_PROVIDER_ORIGINAL.equals(provider))
 			ticks = new LinearScaleTicks(scale);
 		else
 			ticks = new LinearScaleTicks2(scale);

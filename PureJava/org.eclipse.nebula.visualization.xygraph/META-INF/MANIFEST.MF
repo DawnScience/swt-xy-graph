@@ -5,7 +5,6 @@ Export-Package: org.eclipse.nebula.visualization.internal.xygraph.toolbar,
  org.eclipse.nebula.visualization.xygraph.dataprovider,
  org.eclipse.nebula.visualization.xygraph.figures,
  org.eclipse.nebula.visualization.xygraph.linearscale,
- org.eclipse.nebula.visualization.xygraph.preference,
  org.eclipse.nebula.visualization.xygraph.util
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources,

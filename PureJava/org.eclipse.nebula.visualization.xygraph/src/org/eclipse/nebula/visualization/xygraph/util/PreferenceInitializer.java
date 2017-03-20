@@ -1,18 +1,18 @@
-package org.eclipse.nebula.visualization.xygraph.preference;
+package org.eclipse.nebula.visualization.xygraph.util;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.nebula.visualization.xygraph.Activator;
 
-public class XYPreferenceInitializer extends AbstractPreferenceInitializer {
+public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
-	public XYPreferenceInitializer() {
+	public PreferenceInitializer() {
 	}
 
 	@Override
 	public void initializeDefaultPreferences() {
 		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
 
-		store.setDefault(XYPreferences.TICKS_PROVIDER, XYPreferences.TICKS_PROVIDER_MARK_2);
+		store.setDefault(Preferences.TICKS_PROVIDER, Preferences.TICKS_PROVIDER_MARK_2);
 	}
 }

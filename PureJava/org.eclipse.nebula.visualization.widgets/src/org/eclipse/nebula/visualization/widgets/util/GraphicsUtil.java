@@ -8,7 +8,7 @@
 package org.eclipse.nebula.visualization.widgets.util;
 
 import org.eclipse.draw2d.Graphics;
-import org.eclipse.nebula.visualization.xygraph.Preferences;
+import org.eclipse.nebula.visualization.xygraph.util.Preferences;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
 
