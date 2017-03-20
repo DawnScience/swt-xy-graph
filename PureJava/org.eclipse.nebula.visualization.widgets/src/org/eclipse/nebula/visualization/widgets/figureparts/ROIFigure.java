@@ -10,11 +10,9 @@ package org.eclipse.nebula.visualization.widgets.figureparts;
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.Cursors;
 import org.eclipse.draw2d.Figure;
-import org.eclipse.draw2d.FigureListener;
 import org.eclipse.draw2d.FocusEvent;
 import org.eclipse.draw2d.FocusListener;
 import org.eclipse.draw2d.Graphics;
-import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.MouseEvent;
 import org.eclipse.draw2d.MouseListener;
@@ -378,6 +376,10 @@ public class ROIFigure extends Figure {
 			return contain || roiRectFigure.containsPoint(x, y) ;
 		}
 		
+		public String getName() {
+			return name;
+		}
+		
 		@Override
 		protected void layout() {
 			Rectangle clientArea = getClientArea();
@@ -457,6 +459,31 @@ public class ROIFigure extends Figure {
 			roiDataBounds.setBounds(xIndex, yIndex, width, height);		
 			updateROIGeoBounds();
 			updateChildrenBounds();
+		}
+		
+		public void setROIDataBoundsX(int xIndex){
+			if(roiDataBounds == null){
+				roiDataBounds = new PrecisionRectangle();
+			}
+			setROIDataBounds(xIndex, roiDataBounds.y, roiDataBounds.width, roiDataBounds.height);
+		}
+		public void setROIDataBoundsY(int yIndex){
+			if(roiDataBounds == null){
+				roiDataBounds = new PrecisionRectangle();
+			}
+			setROIDataBounds(roiDataBounds.x, yIndex, roiDataBounds.width, roiDataBounds.height);
+		}
+		public void setROIDataBoundsW(int width){
+			if(roiDataBounds == null){
+				roiDataBounds = new PrecisionRectangle();
+			}
+			setROIDataBounds(roiDataBounds.x, roiDataBounds.y, width, roiDataBounds.height);
+		}
+		public void setROIDataBoundsH(int height){
+			if(roiDataBounds == null){
+				roiDataBounds = new PrecisionRectangle();
+			}
+			setROIDataBounds(roiDataBounds.x, roiDataBounds.y, roiDataBounds.width, height);
 		}
 		
 		private void updateROIGeoBounds(){			
