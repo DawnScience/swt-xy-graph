@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  ******************************************************************************/
-package org.eclipse.nebula.visualization.widgets.introspection;
+package org.eclipse.nebula.visualization.internal.widgets.introspection;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;

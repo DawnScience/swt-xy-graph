@@ -30,6 +30,8 @@ import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.PointList;
 import org.eclipse.draw2d.geometry.PrecisionPoint;
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.nebula.visualization.internal.widgets.introspection.DefaultWidgetIntrospector;
+import org.eclipse.nebula.visualization.internal.widgets.introspection.Introspectable;
 import org.eclipse.nebula.visualization.widgets.datadefinition.ByteArrayWrapper;
 import org.eclipse.nebula.visualization.widgets.datadefinition.ColorMap;
 import org.eclipse.nebula.visualization.widgets.datadefinition.DoubleArrayWrapper;
@@ -41,8 +43,6 @@ import org.eclipse.nebula.visualization.widgets.datadefinition.ShortArrayWrapper
 import org.eclipse.nebula.visualization.widgets.datadefinition.ColorMap.PredefinedColorMap;
 import org.eclipse.nebula.visualization.widgets.figureparts.ColorMapRamp;
 import org.eclipse.nebula.visualization.widgets.figureparts.ROIFigure;
-import org.eclipse.nebula.visualization.widgets.introspection.DefaultWidgetIntrospector;
-import org.eclipse.nebula.visualization.widgets.introspection.Introspectable;
 import org.eclipse.nebula.visualization.xygraph.figures.Axis;
 import org.eclipse.nebula.visualization.xygraph.linearscale.Range;
 import org.eclipse.nebula.visualization.xygraph.util.GraphicsUtil;

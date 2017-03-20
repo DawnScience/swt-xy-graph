@@ -5,27 +5,22 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  ******************************************************************************/
-package org.eclipse.nebula.visualization.widgets.introspection;
+package org.eclipse.nebula.visualization.internal.widgets.introspection;
 
-import org.eclipse.draw2d.Label;
+import org.eclipse.nebula.visualization.widgets.figures.AbstractScaledWidgetFigure;
 
-/**The introspector for widget inherited from {@link Label}.
+/**The introspector for widget inherited from {@link AbstractScaledWidgetFigure}.
  * @author Xihui Chen
  *
  */
-public class LabelWidgetIntrospector extends DefaultWidgetIntrospector {
-	public static String[] LABEL_WIDGET_NON_PROPERTIES = new String[]{
-		"icon",
-		"iconAlignment",
-		"iconTextGap",
-		"labelAlignment",
-		"textAlignment",
-		"textPlacement"
+public class MeterIntrospector extends ScaleWidgetIntrospector {
+	public static String[] METER_WIDGET_NON_PROPERTIES = new String[]{
+		"transparent"
 	};
 	@Override
 	public String[] getNonProperties() {
 	
-		return concatenateStringArrays(super.getNonProperties(), LABEL_WIDGET_NON_PROPERTIES);
+		return concatenateStringArrays(super.getNonProperties(), METER_WIDGET_NON_PROPERTIES);
 	}
 	
 }

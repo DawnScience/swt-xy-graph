@@ -5,23 +5,23 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  ******************************************************************************/
-package org.eclipse.nebula.visualization.widgets.introspection;
+package org.eclipse.nebula.visualization.internal.widgets.introspection;
 
-import org.eclipse.draw2d.AbstractPointListShape;
+import org.eclipse.nebula.visualization.widgets.figures.AbstractScaledWidgetFigure;
 
-/**The introspector for widget inherited from {@link AbstractPointListShape}.
+/**The introspector for widget inherited from {@link AbstractScaledWidgetFigure}.
  * @author Xihui Chen
  *
  */
-public class PolyWidgetIntrospector extends ShapeWidgetIntrospector {
-	public static String[] POLY_WIDGET_NON_PROPERTIES = new String[]{
-		"start",
-		"end"		
+public class ScaleWidgetIntrospector extends DefaultWidgetIntrospector {
+	public static String[] SCALE_WIDGET_NON_PROPERTIES = new String[]{
+		"scale",
+		"opaque"
 	};
 	@Override
 	public String[] getNonProperties() {
 	
-		return concatenateStringArrays(super.getNonProperties(), POLY_WIDGET_NON_PROPERTIES);
+		return concatenateStringArrays(super.getNonProperties(), SCALE_WIDGET_NON_PROPERTIES);
 	}
 	
 }
