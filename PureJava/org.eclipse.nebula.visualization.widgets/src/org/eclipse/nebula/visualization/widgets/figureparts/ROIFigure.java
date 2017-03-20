@@ -381,15 +381,9 @@ public class ROIFigure extends Figure {
 		}
 		
 		@Override
-		protected void layout() {
-			Rectangle clientArea = getClientArea();
+		protected void layout() {			
 			if(roiDataBounds == null){
-				roiGeoBounds = new PrecisionRectangle(clientArea.x + clientArea.width/2 - clientArea.width/10,
-						clientArea.y + clientArea.height/2 - clientArea.height/10,
-						clientArea.width/5, clientArea.height/5);
-				roiDataBounds = getROIFromGeoBounds(new PrecisionRectangle(roiGeoBounds.preciseX() + getBounds().x,
-						roiGeoBounds.preciseY() + getBounds().y, roiGeoBounds.preciseWidth(), roiGeoBounds.preciseHeight()));
-				fireROIUpdated();
+				return;
 			}
 			updateROIGeoBounds();
 			updateChildrenBounds();
@@ -398,7 +392,7 @@ public class ROIFigure extends Figure {
 
 		@Override
 		protected void paintFigure(Graphics graphics) {
-			if(roiInfoProvider!=null){
+			if(roiInfoProvider!=null && roiDataBounds!=null){
 				String text = roiInfoProvider.getROIInfo(roiDataBounds.x, roiDataBounds.y, 
 						roiDataBounds.width, roiDataBounds.height);
 				Dimension size = TextUtilities.INSTANCE.getTextExtents(text, getFont());
