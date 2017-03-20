@@ -56,8 +56,8 @@ public final class PointsUtil {
 		double cos = Math.cos(trueAngle);
 		
 		//Relative coordinates to the rotation point
-		double relX = point.preciseX-rotationPoint.preciseX;
-		double relY = point.preciseY-rotationPoint.preciseY;
+		double relX = point.preciseX()-rotationPoint.preciseX();
+		double relY = point.preciseY()-rotationPoint.preciseY();
 		
 		double temp = relX * cos - relY * sin;
 
