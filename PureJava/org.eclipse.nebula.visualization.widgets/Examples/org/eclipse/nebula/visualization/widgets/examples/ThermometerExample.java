@@ -1,3 +1,4 @@
+package org.eclipse.nebula.visualization.widgets.examples;
 /*******************************************************************************
  * Copyright (c) 2010 Oak Ridge National Laboratory.
  * All rights reserved. This program and the accompanying materials
@@ -12,46 +13,46 @@ import java.util.concurrent.TimeUnit;
 
 import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.draw2d.SchemeBorder;
-import org.eclipse.nebula.visualization.widgets.figures.MeterFigure;
+import org.eclipse.nebula.visualization.widgets.figures.ThermometerFigure;
 import org.eclipse.nebula.visualization.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 
 /**
- * A live updated Gauge Example.
+ * A live updated Thermometer Example.
  * @author Xihui Chen
  *
  */
-public class MeterExample {
+public class ThermometerExample {
 	private static int counter = 0;
 	public static void main(String[] args) {
 		final Shell shell = new Shell();
-		shell.setSize(300, 150);
+		shell.setSize(300, 250);
 	    shell.open();
 	    
 	    //use LightweightSystem to create the bridge between SWT and draw2D
 		final LightweightSystem lws = new LightweightSystem(shell);		
 		
-		//Create Gauge
-		final MeterFigure meterFigure = new MeterFigure();
+		//Create widget
+		final ThermometerFigure thermo = new ThermometerFigure();
 		
-		//Init gauge
-		meterFigure.setBackgroundColor(
+		//Init widget
+		thermo.setBackgroundColor(
 				XYGraphMediaFactory.getInstance().getColor(255, 255, 255));
 		
-		meterFigure.setBorder(new SchemeBorder(SchemeBorder.SCHEMES.ETCHED));
+		thermo.setBorder(new SchemeBorder(SchemeBorder.SCHEMES.ETCHED));
 		
-		meterFigure.setRange(-100, 100);
-		meterFigure.setLoLevel(-50);
-		meterFigure.setLoloLevel(-80);
-		meterFigure.setHiLevel(60);
-		meterFigure.setHihiLevel(80);
-		meterFigure.setMajorTickMarkStepHint(50);
+		thermo.setRange(-100, 100);
+		thermo.setLoLevel(-50);
+		thermo.setLoloLevel(-80);
+		thermo.setHiLevel(60);
+		thermo.setHihiLevel(80);
+		thermo.setMajorTickMarkStepHint(50);
 		
-		lws.setContents(meterFigure);		
+		lws.setContents(thermo);		
 		
-		//Update the gauge in another thread.
+		//Update the widget in another thread.
 		ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 		ScheduledFuture<?> future = scheduler.scheduleAtFixedRate(new Runnable() {
 			
@@ -60,7 +61,7 @@ public class MeterExample {
 				Display.getDefault().asyncExec(new Runnable() {					
 					@Override
 					public void run() {
-						meterFigure.setValue(Math.sin(counter++/10.0)*100);						
+						thermo.setValue(Math.sin(counter++/10.0)*100);						
 					}
 				});
 			}

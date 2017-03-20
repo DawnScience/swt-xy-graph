@@ -1,3 +1,4 @@
+package org.eclipse.nebula.visualization.widgets.examples;
 /*******************************************************************************
  * Copyright (c) 2010 Oak Ridge National Laboratory.
  * All rights reserved. This program and the accompanying materials
@@ -12,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.draw2d.SchemeBorder;
+import org.eclipse.nebula.visualization.widgets.figures.TankFigure;
 import org.eclipse.nebula.visualization.widgets.figures.ThermometerFigure;
 import org.eclipse.nebula.visualization.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.swt.widgets.Display;
@@ -19,11 +21,11 @@ import org.eclipse.swt.widgets.Shell;
 
 
 /**
- * A live updated Thermometer Example.
+ * A live updated tank Example.
  * @author Xihui Chen
  *
  */
-public class ThermometerExample {
+public class TankExample {
 	private static int counter = 0;
 	public static void main(String[] args) {
 		final Shell shell = new Shell();
@@ -34,22 +36,22 @@ public class ThermometerExample {
 		final LightweightSystem lws = new LightweightSystem(shell);		
 		
 		//Create widget
-		final ThermometerFigure thermo = new ThermometerFigure();
+		final TankFigure tank = new TankFigure();
 		
 		//Init widget
-		thermo.setBackgroundColor(
+		tank.setBackgroundColor(
 				XYGraphMediaFactory.getInstance().getColor(255, 255, 255));
 		
-		thermo.setBorder(new SchemeBorder(SchemeBorder.SCHEMES.ETCHED));
+		tank.setBorder(new SchemeBorder(SchemeBorder.SCHEMES.ETCHED));
 		
-		thermo.setRange(-100, 100);
-		thermo.setLoLevel(-50);
-		thermo.setLoloLevel(-80);
-		thermo.setHiLevel(60);
-		thermo.setHihiLevel(80);
-		thermo.setMajorTickMarkStepHint(50);
+		tank.setRange(-100, 100);
+		tank.setLoLevel(-50);
+		tank.setLoloLevel(-80);
+		tank.setHiLevel(60);
+		tank.setHihiLevel(80);
+		tank.setMajorTickMarkStepHint(50);
 		
-		lws.setContents(thermo);		
+		lws.setContents(tank);		
 		
 		//Update the widget in another thread.
 		ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
@@ -60,7 +62,7 @@ public class ThermometerExample {
 				Display.getDefault().asyncExec(new Runnable() {					
 					@Override
 					public void run() {
-						thermo.setValue(Math.sin(counter++/10.0)*100);						
+						tank.setValue(Math.sin(counter++/10.0)*100);						
 					}
 				});
 			}

@@ -1,3 +1,4 @@
+package org.eclipse.nebula.visualization.widgets.examples;
 /*******************************************************************************
  * Copyright (c) 2010 Oak Ridge National Laboratory.
  * All rights reserved. This program and the accompanying materials
@@ -11,7 +12,8 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.draw2d.LightweightSystem;
-import org.eclipse.nebula.visualization.widgets.figures.ProgressBarFigure;
+import org.eclipse.draw2d.SchemeBorder;
+import org.eclipse.nebula.visualization.widgets.figures.MeterFigure;
 import org.eclipse.nebula.visualization.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -22,33 +24,33 @@ import org.eclipse.swt.widgets.Shell;
  * @author Xihui Chen
  *
  */
-public class ProgressBarExample {
+public class MeterExample {
 	private static int counter = 0;
 	public static void main(String[] args) {
 		final Shell shell = new Shell();
-		shell.setSize(300, 120);
+		shell.setSize(300, 150);
 	    shell.open();
 	    
 	    //use LightweightSystem to create the bridge between SWT and draw2D
 		final LightweightSystem lws = new LightweightSystem(shell);		
 		
 		//Create Gauge
-		final ProgressBarFigure progressBarFigure = new ProgressBarFigure();
+		final MeterFigure meterFigure = new MeterFigure();
 		
 		//Init gauge
-		progressBarFigure.setFillColor(
-				XYGraphMediaFactory.getInstance().getColor(0, 255, 0));
-				
-		progressBarFigure.setRange(-100, 100);
-		progressBarFigure.setLoLevel(-50);
-		progressBarFigure.setLoloLevel(-80);
-		progressBarFigure.setHiLevel(60);
-		progressBarFigure.setHihiLevel(80);
-		progressBarFigure.setMajorTickMarkStepHint(50);
-		progressBarFigure.setHorizontal(true);
-		progressBarFigure.setOriginIgnored(true);
+		meterFigure.setBackgroundColor(
+				XYGraphMediaFactory.getInstance().getColor(255, 255, 255));
 		
-		lws.setContents(progressBarFigure);		
+		meterFigure.setBorder(new SchemeBorder(SchemeBorder.SCHEMES.ETCHED));
+		
+		meterFigure.setRange(-100, 100);
+		meterFigure.setLoLevel(-50);
+		meterFigure.setLoloLevel(-80);
+		meterFigure.setHiLevel(60);
+		meterFigure.setHihiLevel(80);
+		meterFigure.setMajorTickMarkStepHint(50);
+		
+		lws.setContents(meterFigure);		
 		
 		//Update the gauge in another thread.
 		ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
@@ -59,7 +61,7 @@ public class ProgressBarExample {
 				Display.getDefault().asyncExec(new Runnable() {					
 					@Override
 					public void run() {
-						progressBarFigure.setValue(Math.sin(counter++/10.0)*100);						
+						meterFigure.setValue(Math.sin(counter++/10.0)*100);						
 					}
 				});
 			}

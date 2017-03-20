@@ -1,3 +1,4 @@
+package org.eclipse.nebula.visualization.widgets.examples;
 /*******************************************************************************
  * Copyright (c) 2010 Oak Ridge National Laboratory.
  * All rights reserved. This program and the accompanying materials
