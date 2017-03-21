@@ -14,6 +14,7 @@ import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.nebula.visualization.xygraph.linearscale.AbstractScale.LabelSide;
+import org.eclipse.nebula.visualization.xygraph.util.SingleSourceHelper2;
 import org.eclipse.swt.SWT;
 
 /**
@@ -97,10 +98,7 @@ public class RoundScaleTickMarks extends Figure {
 		return;
 	} 
 
-	/**
-	 * Not present in RAP SWT
-	 */
-	public static final int LINE_SOLID = 1;
+   
    
     /**
      * Draw the X tick marks.
@@ -122,7 +120,7 @@ public class RoundScaleTickMarks extends Figure {
     	//add gap to avoid overlap
     	double minRadians = scale.convertPixelToRadians(2);
         // draw tick marks
-    	if (!SWT.getPlatform().startsWith("rap")) graphics.setLineStyle(LINE_SOLID);
+		SingleSourceHelper2.setLineStyle_LINE_SOLID(graphics);
         int r = scale.getRadius();
         
         if(scale.isLogScaleEnabled()) {

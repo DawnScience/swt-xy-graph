@@ -8,6 +8,7 @@
 package org.eclipse.nebula.visualization.xygraph.util;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.draw2d.Graphics;
 import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
@@ -64,6 +65,10 @@ public abstract class SingleSourceHelper2 {
 		return IMPL.getProjectSaveFilePath(name);
 	}
 
+	public static void setLineStyle_LINE_SOLID(Graphics graphics) {
+		IMPL.internalSetLineStyle_LINE_SOLID(graphics);
+	}
+
 	protected abstract String getInternalImageSavePath(final String[] filterExtensions);
 
 	protected abstract IFile getProjectSaveFilePath(String name);
@@ -75,4 +80,5 @@ public abstract class SingleSourceHelper2 {
 
 	protected abstract Image getInternalXYGraphSnapShot(IXYGraph xyGraph);
 
+	protected abstract void internalSetLineStyle_LINE_SOLID(Graphics graphics);
 }

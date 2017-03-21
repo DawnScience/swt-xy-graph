@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.draw2d.FigureUtilities;
+import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.SWTGraphics;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
@@ -138,6 +139,12 @@ public class SingleSourceHelperImpl extends SingleSourceHelper2 {
 		} catch (Throwable ne) {
 			throw new RuntimeException(ne.getMessage(), ne);
 		}
+	}
+
+
+	@Override
+	protected void internalSetLineStyle_LINE_SOLID(Graphics graphics) {
+		graphics.setLineStyle(SWT.LINE_SOLID);
 	}
 
 }
