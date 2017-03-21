@@ -12,6 +12,7 @@ import org.eclipse.draw2d.Graphics;
 import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.RGB;
@@ -54,7 +55,7 @@ public abstract class SingleSourceHelper2 {
 	}
 
 	public static String getImageSavePath() {
-		return IMPL.getInternalImageSavePath(null);
+		return IMPL.getInternalImageSavePath();
 	}
 
 	public static String getImageSavePath(String[] filter) {
@@ -65,13 +66,23 @@ public abstract class SingleSourceHelper2 {
 		return IMPL.getProjectSaveFilePath(name);
 	}
 
+	public static GC getImageGC(final Image image) {
+		if (IMPL == null)
+			return null;
+		return IMPL.internalGetImageGC(image);
+	}
+
 	public static void setLineStyle_LINE_SOLID(Graphics graphics) {
 		IMPL.internalSetLineStyle_LINE_SOLID(graphics);
 	}
 
+	protected abstract String getInternalImageSavePath();
+
 	protected abstract String getInternalImageSavePath(final String[] filterExtensions);
 
 	protected abstract IFile getProjectSaveFilePath(String name);
+
+	protected abstract GC internalGetImageGC(final Image image);
 
 	protected abstract Cursor createInternalCursor(Display display, ImageData imageData, int width, int height,
 			int backUpSWTCursorStyle);

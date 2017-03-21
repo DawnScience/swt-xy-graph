@@ -1,5 +1,5 @@
 /*************************************************************************
- * Copyright (c) 2008 Stiftung Deutsches Elektronen-Synchrotron,
+ * Copyright (c) 2008, 2017 Stiftung Deutsches Elektronen-Synchrotron and others.
  * Member of the Helmholtz Association, (DESY), HAMBURG, GERMANY.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -11,15 +11,11 @@ package org.eclipse.nebula.visualization.xygraph.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 
-import org.eclipse.draw2d.Cursors;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.nebula.visualization.xygraph.Activator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
@@ -63,44 +59,36 @@ public final class XYGraphMediaFactory {
 	 */
 	private FontRegistry _fontRegistry;
 
-	private Set<Cursor> cursorRegistry;
+	private HashMap<String, Cursor> cursorRegistry;
 
 	/**
 	 * Map that holds the provided image descriptors.
 	 */
 	private HashMap<ImageDescriptor, Image> _imageCache;
 
-	public enum CURSOR_TYPE {
-		GRABBING;
-	}
-
-	private volatile static Cursor CURSOR_GRABBING;
+	public final static String CURSOR_GRABBING_PATH = "images/Grabbing.png";
 
 	public void disposeResources() {
-		if (CURSOR_GRABBING != null && !CURSOR_GRABBING.isDisposed())
-			CURSOR_GRABBING.dispose();
-		if (cursorRegistry != null)
-			for (Cursor cursor : cursorRegistry) {
+
+		if (cursorRegistry != null) {
+			for (Cursor cursor : cursorRegistry.values()) {
 				if (cursor != null && !cursor.isDisposed())
 					cursor.dispose();
 			}
+			cursorRegistry.clear();
+		}
 
 	}
 
-	public static Cursor getCursor(CURSOR_TYPE cursorType) {
-		switch (cursorType) {
-		case GRABBING:
-			if (CURSOR_GRABBING == null) {
-
-				CURSOR_GRABBING = GraphicsUtil.createCursor(Display.getDefault(),
-						getInstance().getImage("images/Grabbing.png").getImageData(), 8, 8);
-			}
-			return CURSOR_GRABBING;
-
-		default:
-			return Cursors.HAND;
-
+	public Cursor getCursor(String cursorImagePath) {
+		Cursor cursor = cursorRegistry.get(cursorImagePath);
+		if (cursor == null) {
+			cursor = GraphicsUtil.createCursor(Display.getDefault(),
+					getInstance().getImage(cursorImagePath).getImageData(), 8, 8);
+			cursorRegistry.put(cursorImagePath, cursor);
 		}
+		return cursor;
+
 	}
 
 	/**
@@ -110,7 +98,7 @@ public final class XYGraphMediaFactory {
 		_colorRegistry = new ColorRegistry();
 		_imageRegistry = new ImageRegistry();
 		_fontRegistry = new FontRegistry();
-
+		cursorRegistry = new HashMap<String, Cursor>();
 		_imageCache = new HashMap<ImageDescriptor, Image>();
 
 		// dispose all images from the image cache, when the display is disposed
@@ -285,15 +273,10 @@ public final class XYGraphMediaFactory {
 		if (_imageRegistry.get(relativePath) == null) {
 
 			InputStream stream = XYGraphMediaFactory.class.getResourceAsStream(relativePath);
-			Image image;
-			if (stream == null) {
-				image = Activator.getImageDescriptor(relativePath).createImage();
-			} else {
-				image = new Image(Display.getCurrent(), stream);
-				try {
-					stream.close();
-				} catch (IOException ioe) {
-				}
+			Image image = new Image(Display.getCurrent(), stream);
+			try {
+				stream.close();
+			} catch (IOException ioe) {
 			}
 
 			// Must be running as JUnit test or demo w/o plugin environment.
@@ -312,11 +295,8 @@ public final class XYGraphMediaFactory {
 	 * 
 	 * @param cursor
 	 */
-	public void registerCursor(Cursor cursor) {
-		if (cursorRegistry == null) {
-			cursorRegistry = new HashSet<Cursor>();
-		}
-		cursorRegistry.add(cursor);
+	public void registerCursor(String key, Cursor cursor) {
+		cursorRegistry.put(key, cursor);
 	}
 
 	/** the color for light blue */

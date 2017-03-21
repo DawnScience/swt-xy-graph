@@ -29,7 +29,7 @@ import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.ZoomType;
 import org.eclipse.nebula.visualization.xygraph.linearscale.AbstractScale.LabelSide;
 import org.eclipse.nebula.visualization.xygraph.linearscale.Range;
-import org.eclipse.nebula.visualization.xygraph.util.SingleSourceHelper;
+import org.eclipse.nebula.visualization.xygraph.util.SingleSourceHelper2;
 import org.eclipse.nebula.visualization.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.ImageData;
@@ -180,7 +180,7 @@ class ComprehensiveExampleGraph extends Figure {
 				if ((ke.getState() == SWT.CONTROL) && (ke.keycode == 's')) {
 					final ImageLoader loader = new ImageLoader();
 					loader.data = new ImageData[] { xyGraph.getImage().getImageData() };
-					final String path = SingleSourceHelper.getImageSavePath();
+					final String path = SingleSourceHelper2.getImageSavePath();
 					if ((path != null) && !path.equals("")) {
 						loader.save(path, SWT.IMAGE_PNG);
 					}

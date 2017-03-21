@@ -36,7 +36,9 @@ public class SingleSourceHelperImpl extends SingleSourceHelper2 {
 
 	@Override
 	protected Cursor createInternalCursor(Display display, ImageData imageData, int width, int height, int style) {
-		return GraphicsUtil.createCursor(display, imageData, width, height);
+		Cursor cursor = GraphicsUtil.createCursor(display, imageData, width, height);
+		XYGraphMediaFactory.getInstance().registerCursor(cursor.toString(), cursor);
+		return cursor;
 	}
 
 	@Override
@@ -121,6 +123,14 @@ public class SingleSourceHelperImpl extends SingleSourceHelper2 {
 		}
 	}
 
+	/**
+	 * Use reflection so that we can single source without fragments.
+	 */
+	@Override
+	protected String getInternalImageSavePath() {
+		return getInternalImageSavePath(null);
+	}
+
 	@Override
 	protected IFile getProjectSaveFilePath(final String name) {
 
@@ -141,6 +151,10 @@ public class SingleSourceHelperImpl extends SingleSourceHelper2 {
 		}
 	}
 
+	@Override
+	protected GC internalGetImageGC(Image image) {
+		return GraphicsUtil.createGC(image);
+	}
 
 	@Override
 	protected void internalSetLineStyle_LINE_SOLID(Graphics graphics) {

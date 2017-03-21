@@ -117,7 +117,6 @@ public enum ZoomType {
 		else
 			cursor = SingleSourceHelper2.createCursor(Display.getDefault(), cursorImage.getImageData(), 8, 8,
 					backUpSWTCursorType);
-		XYGraphMediaFactory.getInstance().registerCursor(cursor);
 		this.flags = flags;
 		this.isZoom = isZoom;
 	}

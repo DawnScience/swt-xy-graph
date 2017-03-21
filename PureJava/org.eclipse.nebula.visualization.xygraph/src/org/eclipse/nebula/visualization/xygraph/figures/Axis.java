@@ -27,7 +27,6 @@ import org.eclipse.nebula.visualization.xygraph.util.GraphicsUtil;
 import org.eclipse.nebula.visualization.xygraph.util.Log10;
 import org.eclipse.nebula.visualization.xygraph.util.SWTConstants;
 import org.eclipse.nebula.visualization.xygraph.util.XYGraphMediaFactory;
-import org.eclipse.nebula.visualization.xygraph.util.XYGraphMediaFactory.CURSOR_TYPE;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
@@ -103,7 +102,7 @@ public class Axis extends LinearScale {
 		final AxisMouseListener panner = new AxisMouseListener();
 		addMouseListener(panner);
 		addMouseMotionListener(panner);
-		grabbing = XYGraphMediaFactory.getCursor(CURSOR_TYPE.GRABBING);
+		grabbing = XYGraphMediaFactory.getInstance().getCursor(XYGraphMediaFactory.CURSOR_GRABBING_PATH);
 		Font sysFont = Display.getCurrent().getSystemFont();
 		titleFont = XYGraphMediaFactory.getInstance()
 				.getFont(new FontData(sysFont.getFontData()[0].getName(), 12, SWT.BOLD)); // $NON-NLS-1$
