@@ -214,6 +214,11 @@ public enum ZoomType {
 		return description;
 	}
 
+	/**
+	 * Return the unique id for the enum.
+	 * 
+	 * @return class name . enum name
+	 */
 	public String getId() {
 		return getClass().getName() + "." + name();
 	}
