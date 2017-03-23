@@ -1,12 +1,21 @@
+/*******************************************************************************
+ * Copyright (c) 2010, 2017 Oak Ridge National Laboratory and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ ******************************************************************************/
 package org.eclipse.nebula.visualization.xygraph.figures;
 
-import java.util.List;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.draw2d.ActionEvent;
 import org.eclipse.draw2d.ActionListener;
 import org.eclipse.draw2d.Button;
 import org.eclipse.draw2d.ButtonGroup;
-import org.eclipse.draw2d.ButtonModel;
 import org.eclipse.draw2d.ChangeEvent;
 import org.eclipse.draw2d.ChangeListener;
 import org.eclipse.draw2d.Clickable;
@@ -17,14 +26,8 @@ import org.eclipse.draw2d.ImageFigure;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.ToggleButton;
 import org.eclipse.draw2d.ToggleModel;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IContributionManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.Window;
 import org.eclipse.nebula.visualization.internal.xygraph.toolbar.AddAnnotationDialog;
-import org.eclipse.nebula.visualization.internal.xygraph.toolbar.CheckableActionGroup;
 import org.eclipse.nebula.visualization.internal.xygraph.toolbar.GrayableButton;
 import org.eclipse.nebula.visualization.internal.xygraph.toolbar.RemoveAnnotationDialog;
 import org.eclipse.nebula.visualization.internal.xygraph.toolbar.WrappableToolbarLayout;
@@ -33,19 +36,14 @@ import org.eclipse.nebula.visualization.internal.xygraph.undo.AddAnnotationComma
 import org.eclipse.nebula.visualization.internal.xygraph.undo.IOperationsManagerListener;
 import org.eclipse.nebula.visualization.internal.xygraph.undo.OperationsManager;
 import org.eclipse.nebula.visualization.internal.xygraph.undo.RemoveAnnotationCommand;
+import org.eclipse.nebula.visualization.xygraph.util.SingleSourceHelper2;
 import org.eclipse.nebula.visualization.xygraph.util.XYGraphMediaFactory;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.printing.PrintDialog;
-import org.eclipse.swt.printing.Printer;
-import org.eclipse.swt.printing.PrinterData;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -55,16 +53,13 @@ import org.eclipse.swt.widgets.Display;
  * @author Kay Kasemir (some zoom operations)
  */
 public class XYGraphToolbar extends Figure {
-
 	private final static int BUTTON_SIZE = 25;
 
-	final protected IXYGraph xyGraph;
+	final private IXYGraph xyGraph;
 
-	final protected ButtonGroup zoomGroup;
+	final private ButtonGroup zoomGroup;
 
-	public XYGraphToolbar(final XYGraph xyGraph) {
-		this(xyGraph, XYGraphFlags.COMBINED_ZOOM);
-	}
+	final private Map<ZoomType, ToggleModel> zoomButtonModelMap = new HashMap<ZoomType, ToggleModel>();
 
 	/**
 	 * Initialize
@@ -96,16 +91,18 @@ public class XYGraphToolbar extends Figure {
 		this.xyGraph = xyGraph;
 		setLayoutManager(new WrappableToolbarLayout());
 
-		final Button configButton = new Button(createImage("images/Configure.png"));
+		final Button configButton = new Button(XYGraphMediaFactory.getInstance().getImage("images/Configure.png"));
 		configButton.setToolTip(new Label("Configure Settings..."));
 		addButton(configButton);
 		configButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				openConfigurationDialog();
+				XYGraphConfigDialog dialog = new XYGraphConfigDialog(Display.getCurrent().getActiveShell(), xyGraph);
+				dialog.open();
 			}
 		});
 
-		final ToggleButton showLegend = new ToggleButton("", createImage("images/ShowLegend.png"));
+		final ToggleButton showLegend = new ToggleButton("",
+				XYGraphMediaFactory.getInstance().getImage("images/ShowLegend.png"));
 		showLegend.setToolTip(new Label("Show Legend"));
 		addButton(showLegend);
 		showLegend.addActionListener(new ActionListener() {
@@ -116,8 +113,9 @@ public class XYGraphToolbar extends Figure {
 
 		showLegend.setSelected(xyGraph.isShowLegend());
 
-		addSeparator("org.csstudio.swt.xygraph.toolbar.showLegend");
-		final Button addAnnotationButton = new Button(createImage("images/Add_Annotation.png"));
+		addSeparator();
+		final Button addAnnotationButton = new Button(
+				XYGraphMediaFactory.getInstance().getImage("images/Add_Annotation.png"));
 		addAnnotationButton.setToolTip(new Label("Add Annotation..."));
 		addButton(addAnnotationButton);
 		addAnnotationButton.addActionListener(new ActionListener() {
@@ -131,7 +129,8 @@ public class XYGraphToolbar extends Figure {
 			}
 		});
 
-		final Button delAnnotationButton = new Button(createImage("images/Del_Annotation.png"));
+		final Button delAnnotationButton = new Button(
+				XYGraphMediaFactory.getInstance().getImage("images/Del_Annotation.png"));
 		delAnnotationButton.setToolTip(new Label("Remove Annotation..."));
 		addButton(delAnnotationButton);
 		delAnnotationButton.addActionListener(new ActionListener() {
@@ -146,11 +145,9 @@ public class XYGraphToolbar extends Figure {
 			}
 		});
 
-		addSeparator("org.csstudio.swt.xygraph.toolbar.annotation");
-		addSeparator("org.csstudio.swt.xygraph.toolbar.extra");
-
+		addSeparator();
 		if ((flags & XYGraphFlags.STAGGER) > 0) { // stagger axes button
-			final Button staggerButton = new Button(createImage("images/stagger.png"));
+			final Button staggerButton = new Button(XYGraphMediaFactory.getInstance().getImage("images/stagger.png"));
 			staggerButton.setToolTip(new Label("Stagger axes so they don't overlap"));
 			addButton(staggerButton);
 			staggerButton.addActionListener(new ActionListener() {
@@ -159,7 +156,8 @@ public class XYGraphToolbar extends Figure {
 				}
 			});
 		} else { // auto scale button
-			final Button autoScaleButton = new Button(createImage("images/AutoScale.png"));
+			final Button autoScaleButton = new Button(
+					XYGraphMediaFactory.getInstance().getImage("images/AutoScale.png"));
 			autoScaleButton.setToolTip(new Label("Perform Auto Scale"));
 			addButton(autoScaleButton);
 			autoScaleButton.addActionListener(new ActionListener() {
@@ -173,85 +171,48 @@ public class XYGraphToolbar extends Figure {
 		zoomGroup = new ButtonGroup();
 		createZoomButtons(flags);
 
-		addSeparator("org.csstudio.swt.xygraph.toolbar.undoredo");
+		addSeparator();
 		addUndoRedoButtons();
 
-		addSeparator("org.csstudio.swt.xygraph.toolbar.snapshot");
-		addSnapshotButton();
+		addSeparator();
+		if (!SWT.getPlatform().startsWith("rap")) //$NON-NLS-1$
+			addSnapshotButton();
 	}
 
-	protected static Image createImage(String path) {
-		Image image = XYGraphMediaFactory.getInstance().getImage(path);
-		return image;
-	}
+	// @Override
+	// public boolean isOpaque() {
+	// return true;
+	// }
 
-	protected void addSnapshotButton() {
-		Button snapShotButton = new Button(createImage("images/camera.png"));
-		snapShotButton.setToolTip(new Label("Print scaled image to printer"));
+	private void addSnapshotButton() {
+		Button snapShotButton = new Button(XYGraphMediaFactory.getInstance().getImage("images/camera.png"));
+		snapShotButton.setToolTip(new Label("Save Snapshot to PNG file"));
 		addButton(snapShotButton);
 		snapShotButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-
-				// Show the Choose Printer dialog
-				PrintDialog dialog = new PrintDialog(Display.getCurrent().getActiveShell(), SWT.NULL);
-				PrinterData printerData = dialog.open();
-				if (printerData != null) {
-					printerData.orientation = PrinterData.LANDSCAPE; // force
-																		// landscape
-
-					if (printerData != null) {
-						// Create the printer object
-						Printer printer = new Printer(printerData);
-
-						// Calculate the scale factor between the screen
-						// resolution
-						// and printer
-						// resolution in order to correctly size the image for
-						// the
-						// printer
-						Point screenDPI = Display.getCurrent().getDPI();
-						Point printerDPI = printer.getDPI();
-
-						int scaleFactorX = printerDPI.x / screenDPI.x;
-
-						// Determine the bounds of the entire area of the
-						// printer
-						Rectangle size = printer.getClientArea();
-						Rectangle trim = printer.computeTrim(0, 0, 0, 0);
-
-						Rectangle imageSize = new Rectangle(size.x / scaleFactorX, size.y / scaleFactorX,
-								size.width / scaleFactorX, size.height / scaleFactorX);
-
-						if (printer.startJob("Print Plot")) {
-							if (printer.startPage()) {
-								GC gc = new GC(printer);
-
-								Image xyImage = xyGraph.getImage(imageSize);
-								Image printerImage = new Image(printer, xyImage.getImageData());
-								xyImage.dispose();
-
-								// Draw the image
-								gc.drawImage(printerImage, imageSize.x, imageSize.y, imageSize.width, imageSize.height,
-										-trim.x, -trim.y, size.width - trim.width, size.height - trim.height);
-
-								// Clean up
-								printerImage.dispose();
-								gc.dispose();
-								printer.endPage();
-							}
-						}
-						// End the job and dispose the printer
-						printer.endJob();
-						printer.dispose();
-					}
-				}
+				// Have valid name, so get image
+				ImageLoader loader = new ImageLoader();
+				Image image = xyGraph.getImage();
+				loader.data = new ImageData[] { image.getImageData() };
+				image.dispose();
+				// Prompt for file name
+				String path = SingleSourceHelper2.getImageSavePath();
+				if (path == null || path.length() <= 0)
+					return;
+				// Assert *.png at end of file name
+				if (!path.toLowerCase().endsWith(".png"))
+					path = path + ".png";
+				// Save
+				loader.save(path, SWT.IMAGE_PNG);
 			}
 		});
 	}
 
 	private void addUndoRedoButtons() {
 		// undo button
-		final GrayableButton undoButton = new GrayableButton(createImage("images/Undo.png"));
+		final GrayableButton undoButton = new GrayableButton(
+				XYGraphMediaFactory.getInstance().getImage("images/Undo.png"), //$NON-NLS-1$
+				XYGraphMediaFactory.getInstance().getImage("images/Undo_Gray.png")); //$NON-NLS-1$
 		undoButton.setToolTip(new Label("Undo"));
 		undoButton.setEnabled(false);
 		addButton(undoButton);
@@ -265,7 +226,7 @@ public class XYGraphToolbar extends Figure {
 				if (manager.getUndoCommandsSize() > 0) {
 					undoButton.setEnabled(true);
 					final String cmd_name = manager.getUndoCommands()[manager.getUndoCommandsSize() - 1].toString();
-					undoButton.setToolTip(new Label(NLS.bind("Undo {0}", cmd_name)));
+					undoButton.setToolTip(new Label("Undo" + cmd_name));
 				} else {
 					undoButton.setEnabled(false);
 					undoButton.setToolTip(new Label("Undo"));
@@ -274,7 +235,9 @@ public class XYGraphToolbar extends Figure {
 		});
 
 		// redo button
-		final GrayableButton redoButton = new GrayableButton(createImage("images/Redo.png"));
+		final GrayableButton redoButton = new GrayableButton(
+				XYGraphMediaFactory.getInstance().getImage("images/Redo.png"), //$NON-NLS-1$
+				XYGraphMediaFactory.getInstance().getImage("images/Redo_Gray.png")); //$NON-NLS-1$
 		redoButton.setToolTip(new Label("Redo"));
 		redoButton.setEnabled(false);
 		addButton(redoButton);
@@ -288,7 +251,7 @@ public class XYGraphToolbar extends Figure {
 				if (manager.getRedoCommandsSize() > 0) {
 					redoButton.setEnabled(true);
 					final String cmd_name = manager.getRedoCommands()[manager.getRedoCommandsSize() - 1].toString();
-					redoButton.setToolTip(new Label(NLS.bind("Redo {0}", cmd_name)));
+					redoButton.setToolTip(new Label("Redo" + cmd_name));
 				} else {
 					redoButton.setEnabled(false);
 					redoButton.setToolTip(new Label("Redo"));
@@ -305,11 +268,10 @@ public class XYGraphToolbar extends Figure {
 	 * @see XYGraphFlags#COMBINED_ZOOM
 	 * @see XYGraphFlags#SEPARATE_ZOOM
 	 */
-	protected void createZoomButtons(final int flags) {
+	private void createZoomButtons(final int flags) {
 		for (final ZoomType zoomType : ZoomType.values()) {
 			if (!zoomType.useWithFlags(flags))
 				continue;
-
 			final ImageFigure imageFigure = new ImageFigure(zoomType.getIconImage());
 			final Label tip = new Label(zoomType.getDescription());
 			final ToggleButton button = new ToggleButton(imageFigure);
@@ -325,6 +287,7 @@ public class XYGraphToolbar extends Figure {
 			});
 
 			button.setModel(model);
+			zoomButtonModelMap.put(zoomType, model);
 			button.setToolTip(tip);
 			addButton(button);
 			zoomGroup.add(model);
@@ -332,11 +295,12 @@ public class XYGraphToolbar extends Figure {
 			if (zoomType == ZoomType.NONE)
 				zoomGroup.setDefault(model);
 		}
-	}
-
-	protected void openConfigurationDialog() {
-		XYGraphConfigDialog dialog = new XYGraphConfigDialog(Display.getCurrent().getActiveShell(), xyGraph);
-		dialog.open();
+		xyGraph.addPropertyChangeListener(IXYGraph.PROPERTY_ZOOMTYPE, new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				zoomGroup.setSelected(zoomButtonModelMap.get(evt.getNewValue()));
+			}
+		});
 	}
 
 	public void addButton(Clickable button) {
@@ -344,19 +308,13 @@ public class XYGraphToolbar extends Figure {
 		add(button);
 	}
 
-	public void addSeparator(final String id) {
-		ToolbarSeparator separator = new ToolbarSeparator(id);
+	public void addSeparator() {
+		ToolbarSeparator separator = new ToolbarSeparator();
 		separator.setPreferredSize(BUTTON_SIZE / 2, BUTTON_SIZE);
 		add(separator);
 	}
 
-	protected static final class ToolbarSeparator extends Figure {
-
-		protected String id;
-
-		ToolbarSeparator(String id) {
-			this.id = id;
-		}
+	private static class ToolbarSeparator extends Figure {
 
 		private final Color GRAY_COLOR = XYGraphMediaFactory.getInstance().getColor(new RGB(130, 130, 130));
 
@@ -367,87 +325,6 @@ public class XYGraphToolbar extends Figure {
 			graphics.setLineWidth(1);
 			graphics.drawLine(bounds.x + bounds.width / 2, bounds.y, bounds.x + bounds.width / 2,
 					bounds.y + bounds.height);
-		}
-
-		public String getId() {
-			return id;
-		}
-	}
-
-	/**
-	 * Bodges up a normal toolbar from the Figure toolbar.
-	 * 
-	 * @param xyGraph
-	 * @param man
-	 */
-	public void createGraphActions(final IContributionManager tool, final IContributionManager men) {
-
-		final CheckableActionGroup zoomG = new CheckableActionGroup();
-
-		for (Object child : getChildren()) {
-
-			if (!(child instanceof Figure))
-				continue;
-			final Figure c = (Figure) child;
-			if (c instanceof Clickable) {
-
-				final Clickable button = (Clickable) c;
-				final int flag = button instanceof ToggleButton ? IAction.AS_CHECK_BOX : IAction.AS_PUSH_BUTTON;
-
-				final String text = ((Label) button.getToolTip()).getText();
-
-				final Object cont = button.getChildren().get(0);
-				final Image image = cont instanceof ImageFigure ? ((ImageFigure) cont).getImage()
-						: ((Label) cont).getIcon();
-
-				final Action action = new Action(text, flag) {
-					public void run() {
-						if (button.getModel() instanceof ToggleModel) {
-							((ToggleModel) button.getModel()).fireActionPerformed();
-						} else {
-							button.doClick();
-						}
-					}
-				};
-
-				if (flag == IAction.AS_CHECK_BOX) {
-					final boolean isSel = button.isSelected();
-					action.setChecked(isSel);
-				}
-
-				if (button instanceof GrayableButton) {
-					final GrayableButton gb = (GrayableButton) button;
-					gb.addChangeListener(new ChangeListener() {
-						@Override
-						public void handleStateChanged(ChangeEvent event) {
-							if (event.getPropertyName().equals(ButtonModel.ENABLED_PROPERTY)) {
-								action.setEnabled(gb.isEnabled());
-							}
-						};
-					});
-
-				}
-				;
-
-				action.setImageDescriptor(new ImageDescriptor() {
-					@Override
-					public ImageData getImageData() {
-						return image.getImageData();
-					}
-				});
-
-				tool.add(action);
-				men.add(action);
-				final List models = zoomGroup.getElements();
-				if (models.contains(button.getModel())) {
-					zoomG.add(action);
-				}
-
-			} else if (c instanceof ToolbarSeparator) {
-
-				tool.add(new Separator(((ToolbarSeparator) c).getId()));
-				men.add(new Separator(((ToolbarSeparator) c).getId()));
-			}
 		}
 	}
 }
