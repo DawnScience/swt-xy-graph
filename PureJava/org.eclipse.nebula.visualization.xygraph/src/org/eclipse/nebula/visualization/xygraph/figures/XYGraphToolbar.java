@@ -195,50 +195,55 @@ public class XYGraphToolbar extends Figure {
 				// Show the Choose Printer dialog
 				PrintDialog dialog = new PrintDialog(Display.getCurrent().getActiveShell(), SWT.NULL);
 				PrinterData printerData = dialog.open();
-				printerData.orientation = PrinterData.LANDSCAPE; // force
-																	// landscape
-
 				if (printerData != null) {
-					// Create the printer object
-					Printer printer = new Printer(printerData);
+					printerData.orientation = PrinterData.LANDSCAPE; // force
+																		// landscape
 
-					// Calculate the scale factor between the screen resolution
-					// and printer
-					// resolution in order to correctly size the image for the
-					// printer
-					Point screenDPI = Display.getCurrent().getDPI();
-					Point printerDPI = printer.getDPI();
+					if (printerData != null) {
+						// Create the printer object
+						Printer printer = new Printer(printerData);
 
-					int scaleFactorX = printerDPI.x / screenDPI.x;
+						// Calculate the scale factor between the screen
+						// resolution
+						// and printer
+						// resolution in order to correctly size the image for
+						// the
+						// printer
+						Point screenDPI = Display.getCurrent().getDPI();
+						Point printerDPI = printer.getDPI();
 
-					// Determine the bounds of the entire area of the printer
-					Rectangle size = printer.getClientArea();
-					Rectangle trim = printer.computeTrim(0, 0, 0, 0);
+						int scaleFactorX = printerDPI.x / screenDPI.x;
 
-					Rectangle imageSize = new Rectangle(size.x / scaleFactorX, size.y / scaleFactorX,
-							size.width / scaleFactorX, size.height / scaleFactorX);
+						// Determine the bounds of the entire area of the
+						// printer
+						Rectangle size = printer.getClientArea();
+						Rectangle trim = printer.computeTrim(0, 0, 0, 0);
 
-					if (printer.startJob("Print Plot")) {
-						if (printer.startPage()) {
-							GC gc = new GC(printer);
+						Rectangle imageSize = new Rectangle(size.x / scaleFactorX, size.y / scaleFactorX,
+								size.width / scaleFactorX, size.height / scaleFactorX);
 
-							Image xyImage = xyGraph.getImage(imageSize);
-							Image printerImage = new Image(printer, xyImage.getImageData());
-							xyImage.dispose();
+						if (printer.startJob("Print Plot")) {
+							if (printer.startPage()) {
+								GC gc = new GC(printer);
 
-							// Draw the image
-							gc.drawImage(printerImage, imageSize.x, imageSize.y, imageSize.width, imageSize.height,
-									-trim.x, -trim.y, size.width - trim.width, size.height - trim.height);
+								Image xyImage = xyGraph.getImage(imageSize);
+								Image printerImage = new Image(printer, xyImage.getImageData());
+								xyImage.dispose();
 
-							// Clean up
-							printerImage.dispose();
-							gc.dispose();
-							printer.endPage();
+								// Draw the image
+								gc.drawImage(printerImage, imageSize.x, imageSize.y, imageSize.width, imageSize.height,
+										-trim.x, -trim.y, size.width - trim.width, size.height - trim.height);
+
+								// Clean up
+								printerImage.dispose();
+								gc.dispose();
+								printer.endPage();
+							}
 						}
+						// End the job and dispose the printer
+						printer.endJob();
+						printer.dispose();
 					}
-					// End the job and dispose the printer
-					printer.endJob();
-					printer.dispose();
 				}
 			}
 		});
