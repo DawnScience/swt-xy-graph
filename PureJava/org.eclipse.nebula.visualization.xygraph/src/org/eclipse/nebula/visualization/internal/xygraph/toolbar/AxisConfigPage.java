@@ -10,7 +10,6 @@ package org.eclipse.nebula.visualization.internal.xygraph.toolbar;
 import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.nebula.visualization.xygraph.Activator;
 import org.eclipse.nebula.visualization.xygraph.figures.Axis;
 import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
@@ -200,7 +199,7 @@ public class AxisConfigPage {
 			final CLabel info = new CLabel(composite, SWT.WRAP);
 			info.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false, 3, 1));
 			info.setText("Automatic rescale is on, max. and min. therefore cannot be edited.");
-			info.setImage(Activator.getImageDescriptor("icons/rescale.png").createImage());
+			info.setImage(XYGraphMediaFactory.getInstance().getImage("images/rescale.png"));
 
 			Label sep = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
 			sep.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false, 3, 1));

@@ -96,7 +96,7 @@ public class XYGraphToolbar extends Figure {
 		this.xyGraph = xyGraph;
 		setLayoutManager(new WrappableToolbarLayout());
 
-		final Button configButton = new Button(createImage("icons/Configure.png"));
+		final Button configButton = new Button(createImage("images/Configure.png"));
 		configButton.setToolTip(new Label("Configure Settings..."));
 		addButton(configButton);
 		configButton.addActionListener(new ActionListener() {
@@ -105,7 +105,7 @@ public class XYGraphToolbar extends Figure {
 			}
 		});
 
-		final ToggleButton showLegend = new ToggleButton("", createImage("icons/ShowLegend.png"));
+		final ToggleButton showLegend = new ToggleButton("", createImage("images/ShowLegend.png"));
 		showLegend.setToolTip(new Label("Show Legend"));
 		addButton(showLegend);
 		showLegend.addActionListener(new ActionListener() {
@@ -117,7 +117,7 @@ public class XYGraphToolbar extends Figure {
 		showLegend.setSelected(xyGraph.isShowLegend());
 
 		addSeparator("org.csstudio.swt.xygraph.toolbar.showLegend");
-		final Button addAnnotationButton = new Button(createImage("icons/Add_Annotation.png"));
+		final Button addAnnotationButton = new Button(createImage("images/Add_Annotation.png"));
 		addAnnotationButton.setToolTip(new Label("Add Annotation..."));
 		addButton(addAnnotationButton);
 		addAnnotationButton.addActionListener(new ActionListener() {
@@ -131,7 +131,7 @@ public class XYGraphToolbar extends Figure {
 			}
 		});
 
-		final Button delAnnotationButton = new Button(createImage("icons/Del_Annotation.png"));
+		final Button delAnnotationButton = new Button(createImage("images/Del_Annotation.png"));
 		delAnnotationButton.setToolTip(new Label("Remove Annotation..."));
 		addButton(delAnnotationButton);
 		delAnnotationButton.addActionListener(new ActionListener() {
@@ -150,7 +150,7 @@ public class XYGraphToolbar extends Figure {
 		addSeparator("org.csstudio.swt.xygraph.toolbar.extra");
 
 		if ((flags & XYGraphFlags.STAGGER) > 0) { // stagger axes button
-			final Button staggerButton = new Button(createImage("icons/stagger.png"));
+			final Button staggerButton = new Button(createImage("images/stagger.png"));
 			staggerButton.setToolTip(new Label("Stagger axes so they don't overlap"));
 			addButton(staggerButton);
 			staggerButton.addActionListener(new ActionListener() {
@@ -159,7 +159,7 @@ public class XYGraphToolbar extends Figure {
 				}
 			});
 		} else { // auto scale button
-			final Button autoScaleButton = new Button(createImage("icons/AutoScale.png"));
+			final Button autoScaleButton = new Button(createImage("images/AutoScale.png"));
 			autoScaleButton.setToolTip(new Label("Perform Auto Scale"));
 			addButton(autoScaleButton);
 			autoScaleButton.addActionListener(new ActionListener() {
@@ -186,7 +186,7 @@ public class XYGraphToolbar extends Figure {
 	}
 
 	protected void addSnapshotButton() {
-		Button snapShotButton = new Button(createImage("icons/camera.gif"));
+		Button snapShotButton = new Button(createImage("images/camera.gif"));
 		snapShotButton.setToolTip(new Label("Print scaled image to printer"));
 		addButton(snapShotButton);
 		snapShotButton.addActionListener(new ActionListener() {
@@ -246,7 +246,7 @@ public class XYGraphToolbar extends Figure {
 
 	private void addUndoRedoButtons() {
 		// undo button
-		final GrayableButton undoButton = new GrayableButton(createImage("icons/Undo.png"));
+		final GrayableButton undoButton = new GrayableButton(createImage("images/Undo.png"));
 		undoButton.setToolTip(new Label("Undo"));
 		undoButton.setEnabled(false);
 		addButton(undoButton);
@@ -269,7 +269,7 @@ public class XYGraphToolbar extends Figure {
 		});
 
 		// redo button
-		final GrayableButton redoButton = new GrayableButton(createImage("icons/Redo.png"));
+		final GrayableButton redoButton = new GrayableButton(createImage("images/Redo.png"));
 		redoButton.setToolTip(new Label("Redo"));
 		redoButton.setEnabled(false);
 		addButton(redoButton);

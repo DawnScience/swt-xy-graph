@@ -13,12 +13,12 @@ import java.util.List;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.nebula.visualization.internal.xygraph.undo.XYGraphConfigCommand;
-import org.eclipse.nebula.visualization.xygraph.Activator;
 import org.eclipse.nebula.visualization.xygraph.figures.Annotation;
 import org.eclipse.nebula.visualization.xygraph.figures.Axis;
 import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace;
 import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
+import org.eclipse.nebula.visualization.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.StackLayout;
@@ -161,7 +161,7 @@ public class XYGraphConfigDialog extends Dialog {
 			error.setToolTipText(
 					"Currently only the first 50 line traces can have their properties manually edited.\nThis is due to a limitation with the current widget design on the configure form.\nPlease contact your support representative to have this issue resolved.");
 			error.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-			error.setImage(Activator.getImageDescriptor("icons/error.png").createImage());
+			error.setImage(XYGraphMediaFactory.getInstance().getImage("images/warning.png"));
 			error.setVisible(xyGraph.getPlotArea().getTraceList().size() > MAX_TRACE_COUNT);
 
 			Group traceSelectGroup = new Group(traceTabComposite, SWT.NONE);

@@ -25,7 +25,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.preference.ColorSelector;
-import org.eclipse.nebula.visualization.xygraph.Activator;
 import org.eclipse.nebula.visualization.xygraph.dataprovider.IDataProvider;
 import org.eclipse.nebula.visualization.xygraph.dataprovider.ISample;
 import org.eclipse.nebula.visualization.xygraph.figures.Axis;
@@ -240,7 +239,7 @@ public class TraceConfigPage {
 		Button export = new Button(traceCompo, SWT.NONE);
 		export.setText("Export data...");
 		export.setToolTipText("Export trace to ascii (dat file)");
-		export.setImage(Activator.getImageDescriptor("icons/data-export.png").createImage());
+		export.setImage(XYGraphMediaFactory.getInstance().getImage("images/data-export.png"));
 		export.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false, 2, 1));
 		export.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
