@@ -67,6 +67,7 @@ public final class XYGraphMediaFactory {
 	private HashMap<ImageDescriptor, Image> _imageCache;
 
 	public final static String CURSOR_GRABBING_PATH = "images/Grabbing.png";
+	public final static String CURSOR_GRABBING_ON_AXIS_PATH = "images/GrabbingOnAxis.png";
 
 	public void disposeResources() {
 

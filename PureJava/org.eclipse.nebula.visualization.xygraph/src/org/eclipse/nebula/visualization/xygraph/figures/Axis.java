@@ -102,7 +102,7 @@ public class Axis extends LinearScale {
 		final AxisMouseListener panner = new AxisMouseListener();
 		addMouseListener(panner);
 		addMouseMotionListener(panner);
-		grabbing = XYGraphMediaFactory.getInstance().getCursor(XYGraphMediaFactory.CURSOR_GRABBING_PATH);
+		grabbing = XYGraphMediaFactory.getInstance().getCursor(XYGraphMediaFactory.CURSOR_GRABBING_ON_AXIS_PATH);
 		Font sysFont = Display.getCurrent().getSystemFont();
 		titleFont = XYGraphMediaFactory.getInstance()
 				.getFont(new FontData(sysFont.getFontData()[0].getName(), 12, SWT.BOLD)); // $NON-NLS-1$
@@ -626,7 +626,7 @@ public class Axis extends LinearScale {
 		this.zoomType = zoomType;
 		// Set zoom's cursor if axis allows that type of zoom
 		if (isValidZoomType(zoomType))
-			setCursor(zoomType.getCursor());
+			setCursor(zoomType.getCursorOnAxis(isHorizontal()));
 		else
 			setCursor(ZoomType.NONE.getCursor());
 	}
@@ -875,7 +875,7 @@ public class Axis extends LinearScale {
 				return;
 			armed = false;
 			if (zoomType == ZoomType.PANNING)
-				setCursor(zoomType.getCursor());
+				setCursor(zoomType.getCursorOnAxis(isHorizontal()));
 			if (end == null || start == null || command == null)
 				return;
 
