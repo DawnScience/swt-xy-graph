@@ -186,7 +186,7 @@ public class XYGraphToolbar extends Figure {
 	}
 
 	protected void addSnapshotButton() {
-		Button snapShotButton = new Button(createImage("images/camera.gif"));
+		Button snapShotButton = new Button(createImage("images/camera.png"));
 		snapShotButton.setToolTip(new Label("Print scaled image to printer"));
 		addButton(snapShotButton);
 		snapShotButton.addActionListener(new ActionListener() {
