@@ -107,12 +107,12 @@ public class SingleSourceHelperImpl extends SingleSourceHelper2 {
 					.newInstance(Display.getDefault().getShells()[0], SWT.SAVE);
 
 			Method setFilterNamesMethod = clazz.getMethod("setFilterNames", String[].class);
-			setFilterNamesMethod.invoke(dialog, new String[] { "PNG Files", "All Files (*.*)" });
+			setFilterNamesMethod.invoke(dialog, new Object[] { new String[] { "PNG Files", "All Files (*.*)" } });
 
 			if (filterExtensions == null)
 				filterExtensions = new String[] { "*.png", "*.*" };
 			Method setFilterExtensionsMethod = clazz.getMethod("setFilterExtensions", String[].class);
-			setFilterExtensionsMethod.invoke(dialog, filterExtensions);
+			setFilterExtensionsMethod.invoke(dialog, new Object[] { filterExtensions } );
 
 			Method openMethod = clazz.getMethod("open");
 			String path = (String) openMethod.invoke(dialog);
