@@ -56,6 +56,8 @@ public class AxisConfigPage {
 	private Label minLabel;
 	private DoubleInputText minText;
 
+	private Button invertAxisButton;
+
 	private Button dateEnabledButton;
 	private Button autoFormat;
 	private Label formatLabel;
@@ -65,13 +67,37 @@ public class AxisConfigPage {
 	private Button dashGridLineButton;
 	private ColorSelector gridColorSelector;
 	private Button showAxisButton;
-	private Button invertAxisButton;
 
 	private Composite composite;
 	private boolean enableRanges;
 
+	/**
+	 * Create an Axis Configuration Page for the config dialog.
+	 * 
+	 * @param xyGraph
+	 *            graph to configure
+	 * @param axis
+	 *            axis to configure
+	 * @param enableRanges
+	 *            whether min/max controls are enabled
+	 */
 	public AxisConfigPage(IXYGraph xyGraph, Axis axis, boolean enableRanges) {
 		this((XYGraph) xyGraph, axis, enableRanges);
+	}
+
+	public AxisConfigPage(IXYGraph xyGraph, Axis axis) {
+		this((XYGraph) xyGraph, axis);
+	}
+
+	/**
+	 * Use {@link #AxisConfigPage(IXYGraph, Axis)} instead
+	 * 
+	 * @param xyGraph
+	 * @param axis
+	 */
+	@Deprecated
+	public AxisConfigPage(XYGraph xyGraph, Axis axis) {
+		this(xyGraph, axis, true);
 	}
 
 	/**
@@ -236,8 +262,9 @@ public class AxisConfigPage {
 		formatLabel = new Label(composite, 0);
 		labelGd = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
 		formatLabel.setLayoutData(labelGd);
-		formatText = new Text(composite, SWT.BORDER | SWT.SINGLE);
-		gd = new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1);
+		formatText = new Text(composite, SWT.BORDER | SWT.MULTI);
+		gd = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 2);
+		gd.minimumHeight = 40;
 		formatText.setLayoutData(gd);
 
 		dateEnabledButton.addSelectionListener(new SelectionAdapter() {
@@ -313,11 +340,12 @@ public class AxisConfigPage {
 
 	public void applyChanges() {
 		axis.setTitle(titleText.getText());
+
 		axis.setFont(scaleFont);
 		axis.setTitleFont(titleFont);
+
 		axis.setForegroundColor(XYGraphMediaFactory.getInstance().getColor(axisColorSelector.getColorValue()));
 		axis.setPrimarySide(primaryButton.getSelection());
-
 		axis.setLogScale(logButton.getSelection());
 		// must be set before autoScale as we update the maxOrAutoScaleThrText
 		// button as well
