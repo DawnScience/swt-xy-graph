@@ -33,12 +33,12 @@ import org.eclipse.swt.widgets.Display;
  */
 public class TankFigure extends AbstractLinearMarkedFigure {	
 
-	private final Color WHITE_COLOR = XYGraphMediaFactory.getInstance().getColor(
+	private final static Color WHITE_COLOR = XYGraphMediaFactory.getInstance().getColor(
 			XYGraphMediaFactory.COLOR_WHITE);
-	private final Color GRAY_COLOR = XYGraphMediaFactory.getInstance().getColor(
+	private final static Color GRAY_COLOR = XYGraphMediaFactory.getInstance().getColor(
 			XYGraphMediaFactory.COLOR_GRAY);
 	
-	private final Color BLUE_COLOR = XYGraphMediaFactory.getInstance().getColor(
+	private final static Color BLUE_COLOR = XYGraphMediaFactory.getInstance().getColor(
 			XYGraphMediaFactory.COLOR_BLUE);
 	
 	private boolean effect3D = true;
@@ -128,6 +128,7 @@ public class TankFigure extends AbstractLinearMarkedFigure {
 			private final Color EFFECT3D_OUTLINE_COLOR = XYGraphMediaFactory.getInstance().getColor(
 					new RGB(160, 160, 160));
 			private static final int DEFAULT_CORNER = 15;
+			private Boolean support3d;
 			public Tank() {
 				super();
 				setOutline(true);
@@ -148,74 +149,64 @@ public class TankFigure extends AbstractLinearMarkedFigure {
 				corner.width = fill_corner;
 				graphics.setAntialias(SWT.ON);			
 				int valuePosition = ((LinearScale) scale).getValuePosition(getCoercedValue(), false);
-				boolean support3D = GraphicsUtil.testPatternSupported(graphics);
-		//		Pattern pattern = null;
-	//			//just test if pattern is supported on the platform.
-	//			try {
-	//				graphics.pushState();
-	//				pattern = new Pattern(Display.getCurrent(),
-	//								0, 0, 0, 0,	fillBackgroundColor,WHITE_COLOR);
-	//				graphics.setBackgroundPattern(pattern);
-	//			} catch (Exception e) {
-	//				support3D= false;
-	//				if(pattern != null)
-	//					pattern.dispose();	
-	//			}finally{
-	//				graphics.popState();
-	//			}
+				if(support3d == null)
+					support3d = GraphicsUtil.testPatternSupported(graphics);
 				
-				if(effect3D && support3D) {				
+				if(effect3D && support3d) {				
 					graphics.setBackgroundColor(WHITE_COLOR);
 					super.fillShape(graphics);
 					//fill background
 					Rectangle leftRectangle = new Rectangle(
 							bounds.x, bounds.y, rectWidth, bounds.height);
-					Pattern leftGradientPattern = new Pattern(Display.getCurrent(),
+					Pattern leftGradientPattern = GraphicsUtil.createScaledPattern(graphics, Display.getCurrent(),
 							leftRectangle.x, leftRectangle.y,
-							leftRectangle.x + leftRectangle.width, leftRectangle.y,
+							leftRectangle.x + leftRectangle.width+2, leftRectangle.y,
 							fillBackgroundColor, 255, WHITE_COLOR, 0);
 					graphics.setBackgroundPattern(leftGradientPattern);
 					graphics.fillRoundRectangle(leftRectangle, corner.width, corner.height);
-					
 					Rectangle rightRectangle = new Rectangle(
 							bounds.x + bounds.width - rectWidth, bounds.y, rectWidth, bounds.height);
-					Pattern rightGradientPattern = new Pattern(Display.getCurrent(),
-							rightRectangle.x, rightRectangle.y, 
+					Pattern rightGradientPattern = GraphicsUtil.createScaledPattern(graphics, Display.getCurrent(),
+							rightRectangle.x-2, rightRectangle.y, 
 							rightRectangle.x + rightRectangle.width, rightRectangle.y,
 							WHITE_COLOR, 0, fillBackgroundColor, 255);
 					graphics.setBackgroundPattern(rightGradientPattern);
 					graphics.fillRoundRectangle(rightRectangle, corner.width, corner.height);
-					
 					leftGradientPattern.dispose();
 					rightGradientPattern.dispose();
 					
 					//fill value
 					graphics.setBackgroundColor(WHITE_COLOR);
 					int fillHeight = bounds.height - (valuePosition - bounds.y) - getLineWidth();
-					graphics.fillRoundRectangle(new Rectangle(bounds.x,
-							valuePosition, bounds.width, fillHeight), fill_corner, fill_corner);
-					leftRectangle = new Rectangle(
-							bounds.x, valuePosition,
-							rectWidth, fillHeight);
-					leftGradientPattern = new Pattern(Display.getCurrent(),
-							leftRectangle.x, leftRectangle.y ,
-							leftRectangle.x + leftRectangle.width, leftRectangle.y,
-							fillColor, 255, WHITE_COLOR, 0);
-					graphics.setBackgroundPattern(leftGradientPattern);
-					graphics.fillRoundRectangle(leftRectangle, fill_corner, fill_corner);
-					
-					rightRectangle = new Rectangle(
-							bounds.x + bounds.width - rectWidth, valuePosition, 
-							rectWidth, fillHeight);
-					rightGradientPattern = new Pattern(Display.getCurrent(),
-							rightRectangle.x, rightRectangle.y, 
-							rightRectangle.x + rightRectangle.width, rightRectangle.y,
-							WHITE_COLOR, 0, fillColor, 255);
-					graphics.setBackgroundPattern(rightGradientPattern);
-					graphics.fillRoundRectangle(rightRectangle, fill_corner, fill_corner);
-					
-					leftGradientPattern.dispose();
-					rightGradientPattern.dispose();
+					if (fillHeight > 0) {
+						graphics.fillRoundRectangle(new Rectangle(bounds.x,
+								valuePosition, bounds.width, fillHeight),
+								fill_corner, fill_corner);
+						leftRectangle = new Rectangle(bounds.x, valuePosition,
+								rectWidth, fillHeight);
+						leftGradientPattern = GraphicsUtil.createScaledPattern(
+								graphics, Display.getCurrent(), leftRectangle.x,
+								leftRectangle.y, leftRectangle.x
+										+ leftRectangle.width+2, leftRectangle.y,
+								fillColor, 255, WHITE_COLOR, 0);
+						graphics.setBackgroundPattern(leftGradientPattern);
+						graphics.fillRoundRectangle(leftRectangle, fill_corner,
+								fill_corner);
+	
+						rightRectangle = new Rectangle(bounds.x + bounds.width
+								- rectWidth, valuePosition, rectWidth, fillHeight);
+						rightGradientPattern = GraphicsUtil.createScaledPattern(
+								graphics, Display.getCurrent(), rightRectangle.x-2,
+								rightRectangle.y, rightRectangle.x
+										+ rightRectangle.width, rightRectangle.y,
+								WHITE_COLOR, 0, fillColor, 255);
+						graphics.setBackgroundPattern(rightGradientPattern);
+						graphics.fillRoundRectangle(rightRectangle, fill_corner,
+								fill_corner);
+	
+						leftGradientPattern.dispose();
+						rightGradientPattern.dispose();
+					}
 					graphics.setForegroundColor(EFFECT3D_OUTLINE_COLOR);
 					
 				}else {

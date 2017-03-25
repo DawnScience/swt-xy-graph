@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Oak Ridge National Laboratory.
+ * Copyright (c) 2010, 2017 Oak Ridge National Laboratory and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,8 +34,9 @@ public class ColorMapRamp extends Figure {
 	private ColorMap colorMap;
 	private LinearScale scale;
 	private ColorMapFigure colorMapFigure;
-
 	private final static int RAMP_WIDTH = 25;
+	private ImageData imageData;
+
 	public ColorMapRamp() {
 		mapData = new double[256];
 		min = 0;
@@ -59,7 +60,8 @@ public class ColorMapRamp extends Figure {
 
 
 	private void updateMapData() {
-		for(int j=0; j<256; j++) mapData[j] = max-j*(max-min)/255.0;
+		for(int j=0; j<256; j++)
+			mapData[j] = max-j*(max-min)/255.0;
 	}
 	
 	
@@ -67,15 +69,14 @@ public class ColorMapRamp extends Figure {
 	protected void layout() {
 		if (scale.getFont()==null) return;
 		if (getChildren()==null || getChildren().isEmpty()) return;
-		
+
 		Rectangle clientArea = getClientArea();
 		Dimension scaleSize = scale.getPreferredSize(clientArea.width, clientArea.height);		
 		scale.setBounds(new Rectangle(clientArea.x + clientArea.width - scaleSize.width, clientArea.y,
-				                      scaleSize.width, clientArea.height));
+				scaleSize.width, clientArea.height));
 		
-		final int maxPos = scale.getValuePosition(max, false);
-		colorMapFigure.setBounds(new Rectangle(clientArea.x, maxPos,
-				                               clientArea.width - scaleSize.width, scale.getTickLength()-maxPos+scale.getMargin()+6));
+		colorMapFigure.setBounds(new Rectangle(clientArea.x, scale.getValuePosition(max, false),
+				clientArea.width - scaleSize.width, scale.getTickLength()));
 		super.layout();
 		
 	}
@@ -125,8 +126,6 @@ public class ColorMapRamp extends Figure {
 		scale.setFont(f);
 	}
 	
-	private ImageData imageData;
-	
 	class ColorMapFigure extends Figure{
 		
 		@Override
@@ -135,11 +134,11 @@ public class ColorMapRamp extends Figure {
 			ImageData data = imageData==null
 					       ? colorMap.drawImage(mapData, 1, 256, max, min)
 			               : imageData;
-		
+
 			final Rectangle ca = getClientArea();
 			data = data.scaledTo(ca.width, ca.height);
-			
-		    final Image image = new Image(Display.getDefault(), data);
+
+			final Image image = new Image(Display.getDefault(), data);
 			graphics.drawImage(image, ca.x, ca.y);
 			image.dispose();
 		}		
@@ -147,8 +146,13 @@ public class ColorMapRamp extends Figure {
 	}
 
 	/**
-	 * Sets the overridden image imageData
+	 * Sets the overridden image data to use when drawing the color map.
+	 * 
 	 * @param imageData
+	 *            the new image data to use, or <code>null</code> to create the
+	 *            image data from the color map set by
+	 *            {@link ColorMapRamp#setColorMap(ColorMap)}
+	 * @see ColorMapRamp#setColorMap(ColorMap)
 	 */
 	public void setImageData(ImageData imageData) {
 		this.imageData = imageData;

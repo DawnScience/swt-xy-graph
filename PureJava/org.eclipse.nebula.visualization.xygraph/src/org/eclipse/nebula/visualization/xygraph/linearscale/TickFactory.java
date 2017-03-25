@@ -24,7 +24,7 @@ import java.util.List;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.nebula.visualization.xygraph.Activator;
-import org.eclipse.nebula.visualization.xygraph.preference.XYPreferences;
+import org.eclipse.nebula.visualization.xygraph.util.Preferences;
 
 /**
  * Tick factory produces the different axis ticks. When specifying a format and
@@ -42,7 +42,7 @@ public class TickFactory {
 		 */
 		roundAndChopMode,
 		/**
-		 * Use Exponent 
+		 * Use Exponent
 		 */
 		useExponent,
 		/**
@@ -57,9 +57,16 @@ public class TickFactory {
 
 	private TickFormatting formatOfTicks;
 	private final static BigDecimal EPSILON = new BigDecimal("1.0E-20");
-	private static final int DIGITS_UPPER_LIMIT = 6; // limit for number of digits to display left of decimal point
-	private static final int DIGITS_LOWER_LIMIT = -6; // limit for number of zeros to display right of decimal point
-	private static final double ROUND_FRACTION = 2e-6; // fraction of denominator to round to
+	private static final int DIGITS_UPPER_LIMIT = 6; // limit for number of
+														// digits to display
+														// left of decimal point
+	private static final int DIGITS_LOWER_LIMIT = -6; // limit for number of
+														// zeros to display
+														// right of decimal
+														// point
+	private static final double ROUND_FRACTION = 2e-6; // fraction of
+														// denominator to round
+														// to
 	private static final BigDecimal BREL_ERROR = new BigDecimal("1e-15");
 	private static final double REL_ERROR = BREL_ERROR.doubleValue();
 
@@ -86,9 +93,10 @@ public class TickFactory {
 	}
 
 	private String getTickString(double value) {
-		
-		if (scale!=null) value = scale.getLabel(value);
-		
+
+		if (scale != null)
+			value = scale.getLabel(value);
+
 		String returnString = "";
 		if (Double.isNaN(value))
 			return returnString;
@@ -152,9 +160,12 @@ public class TickFactory {
 	}
 
 	/**
-	 * Round numerator down to multiples of denominators 
-	 * @param n numerator
-	 * @param d denominator
+	 * Round numerator down to multiples of denominators
+	 * 
+	 * @param n
+	 *            numerator
+	 * @param d
+	 *            denominator
 	 * @return
 	 */
 	protected static double roundDown(BigDecimal n, BigDecimal d) {
@@ -170,11 +181,11 @@ public class TickFactory {
 		d = d.abs();
 		final BigDecimal[] x = n.divideAndRemainder(d);
 		double rx = x[1].doubleValue();
-		if (rx > (1-ROUND_FRACTION)*d.doubleValue()) {
+		if (rx > (1 - ROUND_FRACTION) * d.doubleValue()) {
 			// trim up if close to denominator
 			x[1] = BigDecimal.ZERO;
 			x[0] = x[0].add(BigDecimal.ONE);
-		} else if (rx < ROUND_FRACTION*d.doubleValue()) {
+		} else if (rx < ROUND_FRACTION * d.doubleValue()) {
 			x[1] = BigDecimal.ZERO;
 		}
 		final int xs = x[1].signum();
@@ -191,9 +202,12 @@ public class TickFactory {
 	}
 
 	/**
-	 * Round numerator up to multiples of denominators 
-	 * @param n numerator
-	 * @param d denominator
+	 * Round numerator up to multiples of denominators
+	 * 
+	 * @param n
+	 *            numerator
+	 * @param d
+	 *            denominator
 	 * @return
 	 */
 	protected static double roundUp(BigDecimal n, BigDecimal d) {
@@ -210,10 +224,10 @@ public class TickFactory {
 		final BigDecimal[] x = n.divideAndRemainder(d);
 		double rx = x[1].doubleValue();
 		if (rx != 0) {
-			if (rx < ROUND_FRACTION*d.doubleValue()) {
+			if (rx < ROUND_FRACTION * d.doubleValue()) {
 				// trim down if close to zero
 				x[1] = BigDecimal.ZERO;
-			} else if (rx > (1-ROUND_FRACTION)*d.doubleValue()) {
+			} else if (rx > (1 - ROUND_FRACTION) * d.doubleValue()) {
 				x[1] = BigDecimal.ZERO;
 				x[0] = x[0].add(BigDecimal.ONE);
 			}
@@ -236,58 +250,58 @@ public class TickFactory {
 	 * @return floor of log 10
 	 */
 	private static int log10(BigDecimal x) {
-		int c = x.compareTo(BigDecimal.ONE); 
+		int c = x.compareTo(BigDecimal.ONE);
 		int e = 0;
 		while (c < 0) {
 			e--;
 			x = x.scaleByPowerOfTen(1);
 			c = x.compareTo(BigDecimal.ONE);
 		}
-	
+
 		c = x.compareTo(BigDecimal.TEN);
 		while (c >= 0) {
 			e++;
 			x = x.scaleByPowerOfTen(-1);
 			c = x.compareTo(BigDecimal.TEN);
 		}
-	
+
 		return e;
 	}
 
 	/**
 	 * @param x
-	 * @param round if true, then round else take ceiling
+	 * @param round
+	 *            if true, then round else take ceiling
 	 * @return a nice number
 	 */
 	protected static BigDecimal nicenum(BigDecimal x, boolean round) {
-			int expv; /* exponent of x */
-			double f; /* fractional part of x */
-			double nf; /* nice, rounded number */
-			BigDecimal bf;
-	
-			expv = log10(x);
-			bf = x.scaleByPowerOfTen(-expv);
-			f = bf.doubleValue(); /* between 1 and 10 */
-			if (round) {
-				if (f < 1.5)
-					nf = 1;
-				else if (f < 2.25)
-					nf = 2;
-				else if (f < 3.25)
-					nf = 2.5;
-				else if (f < 7.5)
-					nf = 5;
-				else
-					nf = 10;
-			}
-			else if (f <= 1.)
+		int expv; /* exponent of x */
+		double f; /* fractional part of x */
+		double nf; /* nice, rounded number */
+		BigDecimal bf;
+
+		expv = log10(x);
+		bf = x.scaleByPowerOfTen(-expv);
+		f = bf.doubleValue(); /* between 1 and 10 */
+		if (round) {
+			if (f < 1.5)
 				nf = 1;
-			else if (f <= 2.)
+			else if (f < 2.25)
 				nf = 2;
-			else if (f <= 5.)
+			else if (f < 3.25)
+				nf = 2.5;
+			else if (f < 7.5)
 				nf = 5;
 			else
 				nf = 10;
+		} else if (f <= 1.)
+			nf = 1;
+		else if (f <= 2.)
+			nf = 2;
+		else if (f <= 5.)
+			nf = 5;
+		else
+			nf = 10;
 		return BigDecimal.valueOf(BigDecimal.valueOf(nf).scaleByPowerOfTen(expv).doubleValue()).stripTrailingZeros();
 	}
 
@@ -318,14 +332,14 @@ public class TickFactory {
 				return 0;
 			}
 		} catch (Throwable ne) {
-			// Might be a big number that doubleValue() does not work on - carry on!
+			// Might be a big number that doubleValue() does not work on - carry
+			// on!
 		}
 
-	
 		bRange = nicenum(bRange, false);
 		BigDecimal bUnit;
 		int nTicks = maxTicks - 1;
-		if (Math.signum(min)*Math.signum(max) < 0) {
+		if (Math.signum(min) * Math.signum(max) < 0) {
 			// straddle case
 			nTicks++;
 		}
@@ -371,7 +385,8 @@ public class TickFactory {
 		 */
 		int d = bUnit.scale() < 0 ? bUnit.precision() + bUnit.scale() - 1 : bUnit.scale();
 		int p = (int) Math.max(Math.floor(Math.log10(Math.abs(graphMin))), Math.floor(Math.log10(Math.abs(graphMax))));
-//		System.err.println(bUnit + " = P: " + bUnit.precision() + ", S: " + bUnit.scale() + " => " + d + ", " + p);
+		// System.err.println(bUnit + " = P: " + bUnit.precision() + ", S: " +
+		// bUnit.scale() + " => " + d + ", " + p);
 		if (p <= DIGITS_LOWER_LIMIT || p >= DIGITS_UPPER_LIMIT) {
 			createFormatString(Math.max(d + p, 0), true);
 		} else {
@@ -388,17 +403,21 @@ public class TickFactory {
 	}
 
 	/**
-	 * Generate a list of ticks that span range given by min and max. The maximum number of
-	 * ticks is exceed by one in the case where the range straddles zero.
+	 * Generate a list of ticks that span range given by min and max. The
+	 * maximum number of ticks is exceed by one in the case where the range
+	 * straddles zero.
+	 * 
 	 * @param min
 	 * @param max
-	 * @param maxTicks 
-	 * @param allowMinMaxOver allow min/maximum overwrite
-	 * @param tight if true then remove ticks outside range 
+	 * @param maxTicks
+	 * @param allowMinMaxOver
+	 *            allow min/maximum overwrite
+	 * @param tight
+	 *            if true then remove ticks outside range
 	 * @return a list of the ticks for the axis
 	 */
-	public List<Tick> generateTicks(double min, double max, int maxTicks,
-			boolean allowMinMaxOver, final boolean tight) {
+	public List<Tick> generateTicks(double min, double max, int maxTicks, boolean allowMinMaxOver,
+			final boolean tight) {
 		List<Tick> ticks = new ArrayList<Tick>();
 		double tickUnit = determineNumTicks(min, max, maxTicks, allowMinMaxOver);
 		if (tickUnit == 0)
@@ -406,7 +425,7 @@ public class TickFactory {
 
 		for (int i = 0; i <= intervals; i++) {
 			double p = graphMin + i * tickUnit;
-			if (Math.abs(p/tickUnit) < REL_ERROR)
+			if (Math.abs(p / tickUnit) < REL_ERROR)
 				p = 0; // ensure positive zero
 			boolean r = inRange(p, min, max);
 			if (!tight || r) {
@@ -470,10 +489,12 @@ public class TickFactory {
 
 	/**
 	 * Generate a list of ticks that span range given by min and max.
+	 * 
 	 * @param min
 	 * @param max
-	 * @param maxTicks 
-	 * @param tight if true then remove ticks outside range  (ignored)
+	 * @param maxTicks
+	 * @param tight
+	 *            if true then remove ticks outside range (ignored)
 	 * @return a list of the ticks for the axis
 	 */
 	public List<Tick> generateIndexBasedTicks(double min, double max, int maxTicks, boolean tight) {
@@ -572,8 +593,7 @@ public class TickFactory {
 	private final static int LOWEST_LOG_10 = -323; // sub-normal value 4.9e-324
 	private final static int HIGHEST_LOG_10 = 308; // 1.80e308
 
-	private int determineNumLogTicks(double min, double max, int maxTicks,
-			boolean allowMinMaxOver) {
+	private int determineNumLogTicks(double min, double max, int maxTicks, boolean allowMinMaxOver) {
 		isReversed = min > max;
 		if (isReversed) {
 			double t = min;
@@ -583,7 +603,8 @@ public class TickFactory {
 
 		graphMin = Math.log10(min);
 		graphMax = Math.log10(max);
-		int loDecade = (int) Math.floor(graphMin); // lowest decade (or power of ten)
+		int loDecade = (int) Math.floor(graphMin); // lowest decade (or power of
+													// ten)
 		if (loDecade < LOWEST_LOG_10) {
 			loDecade = LOWEST_LOG_10;
 		}
@@ -594,15 +615,15 @@ public class TickFactory {
 
 		int decades = hiDecade - loDecade;
 
-		int unit = (int) Math.ceil(1 + decades/(maxTicks + 1));
-		int n = decades/unit;
+		int unit = (int) Math.ceil(1 + decades / (maxTicks + 1));
+		int n = decades / unit;
 
 		if (allowMinMaxOver) {
 			graphMin = loDecade;
-			graphMax = n*unit + loDecade;
+			graphMax = n * unit + loDecade;
 			intervals = n;
 		} else {
-			intervals = (int) Math.floor(graphMax - graphMin)/unit;
+			intervals = (int) Math.floor(graphMax - graphMin) / unit;
 		}
 
 		if (isReversed) {
@@ -622,22 +643,26 @@ public class TickFactory {
 	private boolean inRangeLog(double x, double min, double max) {
 		if (isReversed) {
 			max -= BREL_ERROR.doubleValue();
-			return x >= max  && x <= min;
+			return x >= max && x <= min;
 		}
 		min -= BREL_ERROR.doubleValue();
 		return x >= min && x <= max;
 	}
 
 	/**
-	 * @param min (must be >0)
-	 * @param max (must be >0)
+	 * @param min
+	 *            (must be >0)
+	 * @param max
+	 *            (must be >0)
 	 * @param maxTicks
-	 * @param allowMinMaxOver allow min/maximum overwrite
-	 * @param tight if true then remove ticks outside range 
+	 * @param allowMinMaxOver
+	 *            allow min/maximum overwrite
+	 * @param tight
+	 *            if true then remove ticks outside range
 	 * @return a list of the ticks for the axis
 	 */
-	public List<Tick> generateLogTicks(double min, double max, int maxTicks,
-			boolean allowMinMaxOver, final boolean tight) {
+	public List<Tick> generateLogTicks(double min, double max, int maxTicks, boolean allowMinMaxOver,
+			final boolean tight) {
 		if (min <= 0 || max <= 0) {
 			throw new IllegalArgumentException("Non-positive minimum and maximum values are not allowed");
 		}
@@ -726,29 +751,31 @@ public class TickFactory {
 		}
 		return ticks;
 	}
-	
 
 	/**
 	 * Create a ITicksProvider for a scale.
 	 * 
-	 * @param scale - the scale to create the ticks provider for.
-	 * @param defaultProviderName - may be null
+	 * @param scale
+	 *            - the scale to create the ticks provider for.
+	 * @param defaultProviderName
+	 *            - may be null
 	 * @return
 	 */
 	public static ITicksProvider createTicksProvider(IScaleProvider scale, String defaultProviderName) {
-		
+
 		String provider;
-		if (Activator.getDefault()!=null) { // We are in OSGI
+		if (Activator.getDefault() != null) { // We are in OSGI
 			IPreferenceStore store = Activator.getDefault().getPreferenceStore();
-			provider = store.getString(XYPreferences.TICKS_PROVIDER);
+			provider = store.getString(Preferences.TICKS_PROVIDER);
 		} else {
 			provider = defaultProviderName;
 		}
 
-		if (provider==null) provider = XYPreferences.TICKS_PROVIDER_ORIGINAL;
-		
+		if (provider == null)
+			provider = Preferences.TICKS_PROVIDER_ORIGINAL;
+
 		ITicksProvider ticks;
-		if (XYPreferences.TICKS_PROVIDER_ORIGINAL.equals(provider))
+		if (Preferences.TICKS_PROVIDER_ORIGINAL.equals(provider))
 			ticks = new LinearScaleTicks(scale);
 		else
 			ticks = new LinearScaleTicks2(scale);

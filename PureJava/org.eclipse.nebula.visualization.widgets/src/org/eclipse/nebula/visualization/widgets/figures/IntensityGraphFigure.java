@@ -30,6 +30,8 @@ import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.PointList;
 import org.eclipse.draw2d.geometry.PrecisionPoint;
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.nebula.visualization.internal.widgets.introspection.DefaultWidgetIntrospector;
+import org.eclipse.nebula.visualization.internal.widgets.introspection.Introspectable;
 import org.eclipse.nebula.visualization.widgets.datadefinition.ByteArrayWrapper;
 import org.eclipse.nebula.visualization.widgets.datadefinition.ColorMap;
 import org.eclipse.nebula.visualization.widgets.datadefinition.DoubleArrayWrapper;
@@ -41,8 +43,6 @@ import org.eclipse.nebula.visualization.widgets.datadefinition.ShortArrayWrapper
 import org.eclipse.nebula.visualization.widgets.datadefinition.ColorMap.PredefinedColorMap;
 import org.eclipse.nebula.visualization.widgets.figureparts.ColorMapRamp;
 import org.eclipse.nebula.visualization.widgets.figureparts.ROIFigure;
-import org.eclipse.nebula.visualization.widgets.introspection.DefaultWidgetIntrospector;
-import org.eclipse.nebula.visualization.widgets.introspection.Introspectable;
 import org.eclipse.nebula.visualization.xygraph.figures.Axis;
 import org.eclipse.nebula.visualization.xygraph.linearscale.Range;
 import org.eclipse.nebula.visualization.xygraph.util.GraphicsUtil;
@@ -381,7 +381,7 @@ public class IntensityGraphFigure extends Figure implements Introspectable {
 			}else
 				return dataArray;			
 		}
-
+		
 		
 		/**Get data index location on cropped data array from geometry location.
 		 * @param x x much be inside graph area.
@@ -526,12 +526,17 @@ public class IntensityGraphFigure extends Figure implements Introspectable {
 					if(inRGBMode){
 						int index = (dataLocation.y) * croppedDataWidth * 3
 								+ dataLocation.x * 3;
+						if(index >= croppedDataArray.getSize()-3)
+							return;
 						valueUnderMouse = (croppedDataArray.get(index)
 								+ croppedDataArray.get(index + 1) + croppedDataArray
 								.get(index + 2)) / 3;
+					} else {
+						int index = (dataLocation.y)*croppedDataWidth + dataLocation.x;
+						if(index >= croppedDataArray.getSize())
+							return;
+						valueUnderMouse = croppedDataArray.get(index);
 					}
-					else
-						valueUnderMouse = croppedDataArray.get((dataLocation.y)*croppedDataWidth + dataLocation.x);
 					String text = "(" + xAxis.format(xCoordinate) + ", " + yAxis.format(yCoordinate) + ", "+ 
 						yAxis.format(valueUnderMouse) + ")";
 					text = text + getPixelInfo(dataLocation.x + cropLeft, dataLocation.y + cropTop,
@@ -611,9 +616,9 @@ public class IntensityGraphFigure extends Figure implements Introspectable {
 		}
 		
 		public void mouseReleased(MouseEvent me) {
-			if(!armed || end == null || start == null)
-				return;
-			zoom();
+			if(armed && end != null && start != null){
+				zoom();				
+			}
 			armed = false;
 			end = null; 
 			start = null;			
@@ -686,14 +691,14 @@ public class IntensityGraphFigure extends Figure implements Introspectable {
 	
 	private Map<String, ROIFigure> roiMap;
 //	private long startTime = System.nanoTime();
-	private final static Color WHITE_COLOR = XYGraphMediaFactory.getInstance().getColor(
+	private final Color WHITE_COLOR = XYGraphMediaFactory.getInstance().getColor(
 			XYGraphMediaFactory.COLOR_WHITE);
 	
 	
-	private final static Color BLACK_COLOR = XYGraphMediaFactory.getInstance().getColor(
+	private final Color BLACK_COLOR = XYGraphMediaFactory.getInstance().getColor(
 			XYGraphMediaFactory.COLOR_BLACK);
 	
-	private final static Color TRANSPARENT_COLOR = XYGraphMediaFactory.getInstance().getColor(
+	private final Color TRANSPARENT_COLOR = XYGraphMediaFactory.getInstance().getColor(
 			new RGB(123,0,23));
 	
 	private boolean inRGBMode = false;

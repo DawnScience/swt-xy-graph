@@ -12,11 +12,13 @@ import org.eclipse.draw2d.Graphics;
 import org.eclipse.nebula.visualization.xygraph.linearscale.Range;
 import org.eclipse.nebula.visualization.xygraph.util.SWTConstants;
 
-/**The grid in the plot area.
+/**
+ * The grid in the plot area.
+ * 
  * @author Xihui Chen
  *
  */
-public class Grid extends Figure implements IAxisListener{
+public class Grid extends Figure implements IAxisListener {
 
 	private Axis axis;
 
@@ -31,28 +33,28 @@ public class Grid extends Figure implements IAxisListener{
 	protected void paintFigure(Graphics graphics) {
 		super.paintFigure(graphics);
 		graphics.pushState();
-		if(axis.isShowMajorGrid()){
-			graphics.setLineStyle(axis.isDashGridLine()? SWTConstants.LINE_DASH : SWTConstants.LINE_SOLID);
+		if (axis.isShowMajorGrid()) {
+			graphics.setLineStyle(axis.isDashGridLine() ? SWTConstants.LINE_DASH : SWTConstants.LINE_SOLID);
 			graphics.setForegroundColor(axis.getMajorGridColor());
 			graphics.setLineWidth(1);
-			for(int pos: axis.getTicksProvider().getPositions()){
-				if(axis.isHorizontal())
-					graphics.drawLine(axis.getBounds().x + pos, bounds.y + bounds.height,
-							axis.getBounds().x + pos, bounds.y);
+			for (int pos : axis.getTicksProvider().getPositions()) {
+				if (axis.isHorizontal())
+					graphics.drawLine(axis.getBounds().x + pos, bounds.y + bounds.height, axis.getBounds().x + pos,
+							bounds.y);
 				else
-					graphics.drawLine(bounds.x, axis.getBounds().y + axis.getBounds().height - pos, bounds.x + bounds.width,
-							axis.getBounds().y + axis.getBounds().height - pos);
+					graphics.drawLine(bounds.x, axis.getBounds().y + axis.getBounds().height - pos,
+							bounds.x + bounds.width, axis.getBounds().y + axis.getBounds().height - pos);
 			}
 		}
 		graphics.popState();
 	}
 
-    public void axisRevalidated(Axis axis) {
-		if(axis.isShowMajorGrid())
+	public void axisRevalidated(Axis axis) {
+		if (axis.isShowMajorGrid())
 			repaint();
 	}
 
-    public void axisRangeChanged(Axis axis, Range old_range, Range new_range) {
-		//do nothing
+	public void axisRangeChanged(Axis axis, Range old_range, Range new_range) {
+		// do nothing
 	}
 }

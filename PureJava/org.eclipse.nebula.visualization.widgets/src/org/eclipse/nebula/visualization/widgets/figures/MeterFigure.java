@@ -22,9 +22,9 @@ import org.eclipse.draw2d.geometry.Insets;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.PointList;
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.nebula.visualization.internal.widgets.introspection.MeterIntrospector;
 import org.eclipse.nebula.visualization.widgets.figureparts.RoundScale;
 import org.eclipse.nebula.visualization.widgets.figureparts.RoundScaledRamp;
-import org.eclipse.nebula.visualization.widgets.introspection.MeterIntrospector;
 import org.eclipse.nebula.visualization.widgets.util.PointsUtil;
 import org.eclipse.nebula.visualization.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.swt.SWT;
@@ -40,7 +40,7 @@ import org.eclipse.swt.graphics.FontData;
  */
 public class MeterFigure extends AbstractRoundRampedFigure {
 
-	private final Font DEFAULT_LABEL_FONT = XYGraphMediaFactory.getInstance().getFont(
+	private final static Font DEFAULT_LABEL_FONT = XYGraphMediaFactory.getInstance().getFont(
 			new FontData("Arial", 12, SWT.BOLD));	
 //	private Ellipse needleCenter;
 	

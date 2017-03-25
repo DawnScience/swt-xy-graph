@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Oak Ridge National Laboratory.
+ * Copyright (c) 2010, 2017 Oak Ridge National Laboratory and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,27 +56,27 @@ import org.eclipse.swt.widgets.Display;
  */
 public class ScaledSliderFigure extends AbstractLinearMarkedFigure {
 	
-
+	private Color fillColor = BLUE_COLOR;
+	
+	private Color fillBackgroundColor = GRAY_COLOR;
 	private Color thumbColor = XYGraphMediaFactory.getInstance().getColor(
 			new RGB(172,172, 172)); 
 	private boolean effect3D = true; 
 	private boolean horizontal = false;
-	private final Color WHITE_COLOR = XYGraphMediaFactory.getInstance().getColor(
+	private final static Color WHITE_COLOR = XYGraphMediaFactory.getInstance().getColor(
 			XYGraphMediaFactory.COLOR_WHITE); 
 	
 	//border color for track and thumb
-	private final Color GRAY_COLOR = XYGraphMediaFactory.getInstance().getColor(
+	private final static Color GRAY_COLOR = XYGraphMediaFactory.getInstance().getColor(
 			XYGraphMediaFactory.COLOR_GRAY);	
 	
-	private final Color GREEN_COLOR = XYGraphMediaFactory.getInstance().getColor(
+	private final static Color GREEN_COLOR = XYGraphMediaFactory.getInstance().getColor(
 			XYGraphMediaFactory.COLOR_GREEN);
-	private final Color BLUE_COLOR = XYGraphMediaFactory.getInstance().getColor(
+	private final static Color BLUE_COLOR = XYGraphMediaFactory.getInstance().getColor(
 			XYGraphMediaFactory.COLOR_BLUE);
-	private final Color LABEL_COLOR = XYGraphMediaFactory.getInstance().getColor(
+	private final static Color LABEL_COLOR = XYGraphMediaFactory.getInstance().getColor(
 			new RGB(255, 255, 150));
-	private Color fillColor = BLUE_COLOR;
 	
-	private Color fillBackgroundColor = GRAY_COLOR;
 	/** The alpha (0 is transparency and 255 is opaque) for disabled paint */
 	private static final int DISABLED_ALPHA = 100;
 	private Track track;
@@ -88,7 +88,9 @@ public class ScaledSliderFigure extends AbstractLinearMarkedFigure {
 	private double stepIncrement = 1;
 	
 	private double pageIncrement = 10;
-	
+
+	private boolean drawFocus = true;
+
 	/**
 	 * Listeners that react on slider events.
 	 */
@@ -308,10 +310,24 @@ public class ScaledSliderFigure extends AbstractLinearMarkedFigure {
 		manualSetValue(getValue() + pageIncrement);
 		fireManualValueChange(getValue());
 	}
-	
-	private boolean drawFocus = true;
+
+	/**
+	 * Set the focus rectangle should be drawn on the figure when it has focus.
+	 * 
+	 * @param drawFocus
+	 *            true to draw focus rectangle.
+	 */
 	public void setDrawFocus(boolean drawFocus) {
 		this.drawFocus = drawFocus;
+	}
+
+	/**
+	 * Get whether the focus rectangle is drawn when figure has focus.
+	 * 
+	 * @return true if focus rectangle is drawn
+	 */
+	public boolean isDrawFocus() {
+		return drawFocus;
 	}
 
 	@Override
@@ -321,7 +337,7 @@ public class ScaledSliderFigure extends AbstractLinearMarkedFigure {
 			graphics.setForegroundColor(ColorConstants.black);
 			graphics.setBackgroundColor(ColorConstants.white);
 
-			Rectangle area = getClientArea();			
+			Rectangle area = getClientArea();					
 			graphics.drawFocus(area.x, area.y, area.width-1, area.height-1);
 		}
 		if(!isEnabled()) {
@@ -544,7 +560,7 @@ public class ScaledSliderFigure extends AbstractLinearMarkedFigure {
 			Pattern thumbPattern = null;
 			boolean support3D = GraphicsUtil.testPatternSupported(g);
 			if(effect3D && support3D) {
-				thumbPattern = new Pattern(Display.getCurrent(),
+				thumbPattern = GraphicsUtil.createScaledPattern(g, Display.getCurrent(),
 					leftPoint.x, leftPoint.y, rightPoint.x, rightPoint.y, WHITE_COLOR, 0, 
 					thumbColor, 255);
 				g.setBackgroundPattern(thumbPattern);		
@@ -631,13 +647,13 @@ public class ScaledSliderFigure extends AbstractLinearMarkedFigure {
 					super.fillShape(graphics);
 					Pattern backGroundPattern; 
 					if(horizontal)
-						backGroundPattern= new Pattern(Display.getCurrent(),
+						backGroundPattern= GraphicsUtil.createScaledPattern(graphics, Display.getCurrent(),
 							bounds.x, bounds.y,
 							bounds.x, bounds.y + bounds.height,
 							WHITE_COLOR, 255,
 							fillBackgroundColor, 0);
 					else
-						backGroundPattern= new Pattern(Display.getCurrent(),
+						backGroundPattern= GraphicsUtil.createScaledPattern(graphics, Display.getCurrent(),
 							bounds.x, bounds.y,
 							bounds.x + bounds.width, bounds.y,
 							WHITE_COLOR, 255,
@@ -650,13 +666,13 @@ public class ScaledSliderFigure extends AbstractLinearMarkedFigure {
 					
 					//fill value
 					if(horizontal)
-						backGroundPattern = new Pattern(Display.getCurrent(),
+						backGroundPattern = GraphicsUtil.createScaledPattern(graphics, Display.getCurrent(),
 							bounds.x, bounds.y,
 							bounds.x, bounds.y + bounds.height,
 							WHITE_COLOR, 255,
 							fillColor, 0);
 					else
-						backGroundPattern = new Pattern(Display.getCurrent(),
+						backGroundPattern = GraphicsUtil.createScaledPattern(graphics, Display.getCurrent(),
 							bounds.x, bounds.y,
 							bounds.x + bounds.width, bounds.y,
 							WHITE_COLOR, 255,

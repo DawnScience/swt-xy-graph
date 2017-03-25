@@ -15,8 +15,8 @@ import java.text.DecimalFormat;
 import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.nebula.visualization.widgets.introspection.Introspectable;
-import org.eclipse.nebula.visualization.widgets.introspection.ScaleWidgetIntrospector;
+import org.eclipse.nebula.visualization.internal.widgets.introspection.Introspectable;
+import org.eclipse.nebula.visualization.internal.widgets.introspection.ScaleWidgetIntrospector;
 import org.eclipse.nebula.visualization.xygraph.linearscale.AbstractScale;
 import org.eclipse.nebula.visualization.xygraph.linearscale.Range;
 
