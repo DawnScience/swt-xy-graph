@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Oak Ridge National Laboratory.
+ * Copyright (c) 2010, 2017 Oak Ridge National Laboratory and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,11 +8,7 @@
 package org.eclipse.nebula.visualization.xygraph.util;
 
 import java.lang.reflect.Method;
-import java.util.List;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.draw2d.FigureUtilities;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.SWTGraphics;
@@ -29,8 +25,8 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Transform;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
-import org.osgi.framework.Bundle;
 
 public class SingleSourceHelperImpl extends SingleSourceHelper2 {
 
@@ -129,26 +125,6 @@ public class SingleSourceHelperImpl extends SingleSourceHelper2 {
 	@Override
 	protected String getInternalImageSavePath() {
 		return getInternalImageSavePath(null);
-	}
-
-	@Override
-	protected IFile getProjectSaveFilePath(final String name) {
-
-		try {
-			final Bundle bundle = Platform.getBundle("org.eclipse.emf.common.ui");
-			final Class clazz = bundle.loadClass("org.eclipse.emf.common.ui.dialogs.WorkspaceResourceDialog");
-
-			final Method openNewMethod = clazz.getMethod("openNewFile", Shell.class, String.class, String.class,
-					IPath.class, List.class);
-
-			IFile exportTo = (IFile) openNewMethod.invoke(null, Display.getDefault().getActiveShell(),
-					"Create file to export to", "Export data from " + name + "'", null, null);
-
-			return exportTo;
-
-		} catch (Throwable ne) {
-			throw new RuntimeException(ne.getMessage(), ne);
-		}
 	}
 
 	@Override

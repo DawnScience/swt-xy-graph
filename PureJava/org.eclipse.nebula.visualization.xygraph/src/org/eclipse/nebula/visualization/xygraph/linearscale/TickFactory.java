@@ -1,19 +1,10 @@
-/*
- * Copyright 2012 Diamond Light Source Ltd.
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+/*******************************************************************************
+ * Copyright (c) 2012, 2017 Diamond Light Source Ltd.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ ******************************************************************************/
 package org.eclipse.nebula.visualization.xygraph.linearscale;
 
 import java.math.BigDecimal;
@@ -22,16 +13,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.nebula.visualization.xygraph.Activator;
-import org.eclipse.nebula.visualization.xygraph.util.Preferences;
-
 /**
  * Tick factory produces the different axis ticks. When specifying a format and
  * given the screen size parameters and range it will return a list of Ticks
  */
-
 public class TickFactory {
+	/**
+	 * tick formatting modes
+	 *
+	 */
 	public enum TickFormatting {
 		/**
 		 * Automatically adjust precision
@@ -752,33 +742,4 @@ public class TickFactory {
 		return ticks;
 	}
 
-	/**
-	 * Create a ITicksProvider for a scale.
-	 * 
-	 * @param scale
-	 *            - the scale to create the ticks provider for.
-	 * @param defaultProviderName
-	 *            - may be null
-	 * @return
-	 */
-	public static ITicksProvider createTicksProvider(IScaleProvider scale, String defaultProviderName) {
-
-		String provider;
-		if (Activator.getDefault() != null) { // We are in OSGI
-			IPreferenceStore store = Activator.getDefault().getPreferenceStore();
-			provider = store.getString(Preferences.TICKS_PROVIDER);
-		} else {
-			provider = defaultProviderName;
-		}
-
-		if (provider == null)
-			provider = Preferences.TICKS_PROVIDER_ORIGINAL;
-
-		ITicksProvider ticks;
-		if (Preferences.TICKS_PROVIDER_ORIGINAL.equals(provider))
-			ticks = new LinearScaleTicks(scale);
-		else
-			ticks = new LinearScaleTicks2(scale);
-		return ticks;
-	}
 }

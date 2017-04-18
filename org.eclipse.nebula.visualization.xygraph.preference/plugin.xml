@@ -7,6 +7,8 @@
             class="org.eclipse.nebula.visualization.xygraph.preference.XYPreferenceInitializer">
       </initializer>
    </extension>
+   <!-- Temporarily disactivate this preference page until swt-xy-graph is replaced by the nebula visualization -->
+   <!-- 
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
@@ -16,5 +18,5 @@
             name="XY Graphing">
       </page>
    </extension>
-
+-->
 </plugin>

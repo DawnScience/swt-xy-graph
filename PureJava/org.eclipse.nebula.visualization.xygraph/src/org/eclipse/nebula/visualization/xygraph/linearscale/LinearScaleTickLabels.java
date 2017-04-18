@@ -2,7 +2,6 @@ package org.eclipse.nebula.visualization.xygraph.linearscale;
 
 import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.Graphics;
-import org.eclipse.nebula.visualization.xygraph.util.Preferences;
 
 /**
  * Linear Scale tick labels.
@@ -23,7 +22,8 @@ public class LinearScaleTickLabels extends Figure {
 	 */
 	protected LinearScaleTickLabels(IScaleProvider linearScale) {
 		scale = linearScale;
-		ticks = TickFactory.createTicksProvider(scale, Preferences.TICKS_PROVIDER_ORIGINAL);
+		// use the new tick mark generator by default
+		ticks = new LinearScaleTicks2(scale);
 
 		setTicksIndexBased(scale.isTicksIndexBased());
 		setFont(scale.getFont());

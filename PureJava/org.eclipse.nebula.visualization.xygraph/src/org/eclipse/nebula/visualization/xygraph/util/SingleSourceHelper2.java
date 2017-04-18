@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Oak Ridge National Laboratory.
+ * Copyright (c) 2010, 2017 Oak Ridge National Laboratory and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,6 @@
  ******************************************************************************/
 package org.eclipse.nebula.visualization.xygraph.util;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
 import org.eclipse.swt.graphics.Cursor;
@@ -62,10 +61,6 @@ public abstract class SingleSourceHelper2 {
 		return IMPL.getInternalImageSavePath(filter);
 	}
 
-	public static IFile getProjectSaveFileLocation(String name) {
-		return IMPL.getProjectSaveFilePath(name);
-	}
-
 	public static GC getImageGC(final Image image) {
 		if (IMPL == null)
 			return null;
@@ -79,8 +74,6 @@ public abstract class SingleSourceHelper2 {
 	protected abstract String getInternalImageSavePath();
 
 	protected abstract String getInternalImageSavePath(final String[] filterExtensions);
-
-	protected abstract IFile getProjectSaveFilePath(String name);
 
 	protected abstract GC internalGetImageGC(final Image image);
 

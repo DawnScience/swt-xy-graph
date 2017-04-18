@@ -7,26 +7,9 @@
  ******************************************************************************/
 package org.eclipse.nebula.visualization.internal.xygraph.toolbar;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import org.eclipse.core.commands.Command;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.preference.ColorSelector;
-import org.eclipse.nebula.visualization.xygraph.dataprovider.IDataProvider;
-import org.eclipse.nebula.visualization.xygraph.dataprovider.ISample;
 import org.eclipse.nebula.visualization.xygraph.figures.Axis;
 import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace;
@@ -48,8 +31,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.commands.ICommandService;
 
 /**
  * This will help to create the necessary widgets to configure an axis's
@@ -58,9 +39,9 @@ import org.eclipse.ui.commands.ICommandService;
  * @author Xihui Chen
  *
  */
-public class TraceConfigPage {
+public class TraceConfigPage implements ITraceConfigPage {
 	private XYGraph xyGraph;
-	private Trace trace;
+	protected Trace trace;
 	private Text nameText;
 	private Combo xAxisCombo;
 	private Combo yAxisCombo;
@@ -100,6 +81,7 @@ public class TraceConfigPage {
 		this.trace = trace;
 	}
 
+	@Override
 	public void createPage(final Composite composite) {
 		this.composite = composite;
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -236,31 +218,6 @@ public class TraceConfigPage {
 		antiAliasing.setText("Anti Aliasing Enabled");
 		antiAliasing.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false, 3, 1));
 
-		Button export = new Button(traceCompo, SWT.NONE);
-		export.setText("Export data...");
-		export.setToolTipText("Export trace to ascii (dat file)");
-		export.setImage(XYGraphMediaFactory.getInstance().getImage("images/data-export.png"));
-		export.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false, 2, 1));
-		export.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				// WARNING: this action uses the convert command in
-				// org.dawnsci.plotting plugin
-				// and its handler is
-				// org.dawnsci.plotting.command.ExportLineTraceCommand.
-				// TODO Replace this by an extension point so we can take out
-				// the unnecessary dependencies
-				try {
-					final ICommandService service = (ICommandService) PlatformUI.getWorkbench()
-							.getService(ICommandService.class);
-					final Command export = service.getCommand("org.dawnsci.plotting.export.line.trace.command");
-					final ExecutionEvent event = new ExecutionEvent(export, Collections.EMPTY_MAP, null, trace);
-					export.executeWithChecks(event);
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-			}
-		});
-
 		// error bar settings...
 		errorBarEnabledButton = new Button(errorBarGroup, SWT.CHECK);
 		errorBarEnabledButton.setText("Error Bar Enabled");
@@ -321,46 +278,29 @@ public class TraceConfigPage {
 		drawYErrorInAreaButton.setText("Draw Y Error In Area");
 		drawYErrorInAreaButton.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false, 2, 1));
 
+		// add potential custom button if necessary by overriding this method to
+		// the left composite
+		addCustomButton(traceCompo);
+
 		initialize();
 	}
 
-	protected void exportToDat(IFile exportTo, IDataProvider dataProvider) throws Exception {
-
-		final IFile dat = getUniqueFile(exportTo, null, "dat");
-		final StringBuilder contents = new StringBuilder();
-		final IDataProvider prov = trace.getDataProvider();
-		final NumberFormat format = new DecimalFormat("##0.#####E0");
-		for (int i = 0; i < prov.getSize(); i++) {
-			final ISample isample = prov.getSample(i);
-			contents.append(format.format(isample.getXValue()));
-			contents.append("\t");
-			contents.append(format.format(isample.getYValue()));
-			contents.append("\n");
-		}
-
-		InputStream stream = new ByteArrayInputStream(contents.toString().getBytes());
-		dat.create(stream, true, new NullProgressMonitor());
-		dat.getParent().refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
-
-		// TODO FIXME opening the exported file does not work in the RAP context
-		// of
-		// this plugin.
-		// final IWorkbenchPage page =
-		// PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		// IEditorDescriptor desc =
-		// PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(dat.getName());
-		// if (desc == null) desc =
-		// PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(dat.getName()+".txt");
-		// page.openEditor(new FileEditorInput(dat), desc.getId());
+	/**
+	 * Override this method if a custom set of buttons need to be added to the
+	 * trace page.
+	 * 
+	 * @param composite
+	 */
+	public void addCustomButton(Composite composite) {
+		
 	}
 
-	/**
-	 * @return the composite
-	 */
+	@Override
 	public Composite getComposite() {
 		return composite;
 	}
 
+	@Override
 	public void applyChanges() {
 		trace.setName(nameText.getText());
 		trace.setXAxis(xyGraph.getXAxisList().get(xAxisCombo.getSelectionIndex()));
@@ -415,64 +355,6 @@ public class TraceConfigPage {
 		visible.setSelection(trace.isVisible());
 
 		updateBaseLineComboEnable();
-	}
-
-	/**
-	 * Gets a unique file. The file must have a parent of IFolder.
-	 * 
-	 * @param file
-	 * @return new file, not created.
-	 */
-	public static IFile getUniqueFile(IFile file, final String conjunctive, final String extension) {
-
-		final String name = file.getName();
-		final Matcher matcher = Pattern.compile("(.+)(\\d+)\\." + extension, Pattern.CASE_INSENSITIVE).matcher(name);
-		int start = 0;
-		String frag = name;
-		try {
-			frag = name.substring(0, name.lastIndexOf("."));
-		} catch (Throwable ignored) {
-			// Nowt
-		}
-		String indexStr = "";
-		if (matcher.matches()) {
-			frag = matcher.group(1);
-			indexStr = matcher.group(2);
-			start = Integer.parseInt(indexStr);
-		}
-
-		if (conjunctive != null) {
-			frag = frag + conjunctive;
-		}
-
-		// First try without a start position
-		final IContainer parent = file.getParent();
-		final IFile newFile;
-		if (parent instanceof IFolder) {
-			newFile = ((IFolder) parent).getFile(frag + indexStr + "." + extension);
-		} else if (parent instanceof IProject) {
-			newFile = ((IProject) parent).getFile(frag + indexStr + "." + extension);
-		} else {
-			newFile = null;
-		}
-		if (newFile != null && !newFile.exists())
-			return newFile;
-
-		return getUniqueFile(parent, frag, ++start, extension);
-	}
-
-	private static IFile getUniqueFile(IContainer parent, String frag, int start, final String extension) {
-		final IFile file;
-		if (parent instanceof IFolder) {
-			file = ((IFolder) parent).getFile(frag + start + "." + extension);
-		} else if (parent instanceof IProject) {
-			file = ((IProject) parent).getFile(frag + start + "." + extension);
-		} else {
-			throw new RuntimeException("The parent is neither a project nor a folder.");
-		}
-		if (!file.exists())
-			return file;
-		return getUniqueFile(parent, frag, ++start, extension);
 	}
 
 	private void updateBaseLineComboEnable() {

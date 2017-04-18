@@ -63,7 +63,7 @@ public class XYGraphConfigDialog extends Dialog {
 	protected Combo traceCombo;
 	protected Combo axisCombo;
 	protected Combo annotationsCombo;
-	protected List<TraceConfigPage> traceConfigPageList;
+	protected List<ITraceConfigPage> traceConfigPageList;
 	protected IXYGraph xyGraph;
 	protected XYGraphConfigCommand command;
 	private boolean changed = false;
@@ -85,7 +85,7 @@ public class XYGraphConfigDialog extends Dialog {
 		graphConfigPage = new GraphConfigPage(this.xyGraph);
 		annotationConfigPageList = new ArrayList<AnnotationConfigPage>();
 		axisConfigPageList = new ArrayList<AxisConfigPage>();
-		traceConfigPageList = new ArrayList<TraceConfigPage>();
+		traceConfigPageList = new ArrayList<ITraceConfigPage>();
 		command = new XYGraphConfigCommand(xyGraph);
 		command.savePreviousStates();
 		// Allow resize
@@ -210,7 +210,7 @@ public class XYGraphConfigDialog extends Dialog {
 				Group traceConfigGroup = new Group(traceConfigComposite, SWT.NONE);
 				traceConfigGroup.setText("Change Settings");
 				traceConfigGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-				TraceConfigPage traceConfigPage = new TraceConfigPage(xyGraph, trace);
+				ITraceConfigPage traceConfigPage = createTraceConfigPage(trace);
 				traceConfigPageList.add(traceConfigPage);
 				traceConfigPage.createPage(traceConfigGroup);
 			}
@@ -283,6 +283,16 @@ public class XYGraphConfigDialog extends Dialog {
 		return parent_composite;
 	}
 
+	/**
+	 * Override to create one own trace config page
+	 * 
+	 * @param trace
+	 * @return traceConfigPage
+	 */
+	protected ITraceConfigPage createTraceConfigPage(Trace trace) {
+		return new TraceConfigPage(xyGraph, trace);
+	}
+
 	private void addMaxWarningMessage(Composite composite, String type) {
 		final CLabel warning = new CLabel(composite, SWT.NONE);
 		warning.setText("There are too many " + type + " to edit");
@@ -330,7 +340,7 @@ public class XYGraphConfigDialog extends Dialog {
 		graphConfigPage.applyChanges();
 		for (AxisConfigPage axisConfigPage : axisConfigPageList)
 			axisConfigPage.applyChanges();
-		for (TraceConfigPage traceConfigPage : traceConfigPageList)
+		for (ITraceConfigPage traceConfigPage : traceConfigPageList)
 			traceConfigPage.applyChanges();
 		for (AnnotationConfigPage annotationConfigPage : annotationConfigPageList)
 			annotationConfigPage.applyChanges();
