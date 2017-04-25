@@ -7,6 +7,8 @@
  ******************************************************************************/
 package org.eclipse.nebula.visualization.xygraph.figures;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -19,6 +21,7 @@ import org.eclipse.draw2d.SWTGraphics;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.nebula.visualization.internal.xygraph.undo.OperationsManager;
+import org.eclipse.nebula.visualization.internal.xygraph.undo.XYGraphMemento;
 import org.eclipse.nebula.visualization.internal.xygraph.undo.ZoomCommand;
 import org.eclipse.nebula.visualization.xygraph.linearscale.AbstractScale.LabelSide;
 import org.eclipse.nebula.visualization.xygraph.linearscale.Range;
@@ -44,8 +47,77 @@ import org.eclipse.swt.widgets.Display;
  * 
  * @author Xihui Chen
  * @author Kay Kasemir (performStagger)
+ * @author Laurent PHILIPPE (property change support)
+ * @author Alex Clayton (added {@link IAxesFactory} factory)
  */
 public class XYGraph extends Figure implements IXYGraph {
+
+	/**
+	 * Use {@link IXYGraph#PROPERTY_CONFIG} instead
+	 */
+	@Deprecated
+	public static final String PROPERTY_CONFIG = "config"; //$NON-NLS-1$
+
+	/**
+	 * Use {@link IXYGraph#PROPERTY_XY_GRAPH_MEM} instead
+	 */
+	@Deprecated
+	public static final String PROPERTY_XY_GRAPH_MEM = "xyGraphMem"; //$NON-NLS-1$
+
+	/**
+	 * Use {@link IXYGraph#PROPERTY_ZOOMTYPE} instead
+	 */
+	@Deprecated
+	public static final String PROPERTY_ZOOMTYPE = "zoomType"; //$NON-NLS-1$
+
+	/**
+	 * Add property change support to XYGraph Use for inform listener of
+	 * xyGraphMem property changed
+	 * 
+	 * @author L.PHILIPPE (GANIL)
+	 */
+	private PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
+
+	@Override
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		changeSupport.addPropertyChangeListener(listener);
+	}
+
+	@Override
+	public void addPropertyChangeListener(String property, PropertyChangeListener listener) {
+		changeSupport.addPropertyChangeListener(property, listener);
+	}
+
+	@Override
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		changeSupport.removePropertyChangeListener(listener);
+	}
+
+	@Override
+	public void removePropertyChangeListener(String property, PropertyChangeListener listener) {
+		changeSupport.removePropertyChangeListener(property, listener);
+	}
+
+	public void fireConfigChanged() {
+		changeSupport.firePropertyChange(IXYGraph.PROPERTY_CONFIG, null, this);
+	}
+
+	/**
+	 * Save the Graph settings Send a property changed event when changed
+	 * 
+	 * @author L.PHILIPPE (GANIL)
+	 */
+	private XYGraphMemento xyGraphMem;
+
+	public XYGraphMemento getXyGraphMem() {
+		return xyGraphMem;
+	}
+
+	public void setXyGraphMem(XYGraphMemento xyGraphMem) {
+		XYGraphMemento old = this.xyGraphMem;
+		this.xyGraphMem = xyGraphMem;
+		changeSupport.firePropertyChange(IXYGraph.PROPERTY_XY_GRAPH_MEM, old, this.xyGraphMem);
+	}
 
 	private static final int GAP = 2;
 	// public final static Color WHITE_COLOR = ColorConstants.white;
@@ -71,6 +143,7 @@ public class XYGraph extends Figure implements IXYGraph {
 			new RGB(219, 128, 4), // orange
 	};
 
+	private int traceNum = 0;
 	protected boolean transparent = false;
 	protected boolean showLegend = true;
 
@@ -81,8 +154,14 @@ public class XYGraph extends Figure implements IXYGraph {
 	 * ToolbarArmedXYGraph's GraphConfigPage can crash.
 	 */
 	private String title = "";
+
 	private Color titleColor;
+
 	protected Label titleLabel;
+
+	// ADD BECAUSE OF SWT invalid Thread acess on getTitleColor()
+	private FontData titleFontData;
+	private RGB titleColorRgb;
 
 	protected List<Axis> xAxisList;
 	protected List<Axis> yAxisList;
@@ -101,10 +180,10 @@ public class XYGraph extends Figure implements IXYGraph {
 
 	protected OperationsManager operationsManager;
 
-	private ZoomType zoomType;
+	private ZoomType zoomType = ZoomType.NONE;
 
 	/**
-	 * Constructor.
+	 * Constructor
 	 */
 	public XYGraph() {
 		this(new DefaultAxesFactory());
@@ -123,6 +202,7 @@ public class XYGraph extends Figure implements IXYGraph {
 		titleLabel = new Label();
 		String sysFontName = Display.getCurrent().getSystemFont().getFontData()[0].getName();
 		setTitleFont(XYGraphMediaFactory.getInstance().getFont(new FontData(sysFontName, 12, SWT.BOLD)));
+		setFont(Display.getCurrent().getSystemFont());
 		// titleLabel.setVisible(false);
 		xAxisList = new ArrayList<Axis>();
 		yAxisList = new ArrayList<Axis>();
@@ -237,8 +317,8 @@ public class XYGraph extends Figure implements IXYGraph {
 
 		for (int i = yAxisList.size() - 1; i >= 0; i--) {
 			Axis yAxis = yAxisList.get(i);
-			int hintHeight = clientArea.height + (hasTopXAxis ? yAxis.getMargin() : 0)
-					+ (hasBottomXAxis ? yAxis.getMargin() : 0);
+			int hintHeight = clientArea.height + (hasTopXAxis ? 1 : 0) * yAxis.getMargin()
+					+ (hasBottomXAxis ? 1 : 0) * yAxis.getMargin();
 			if (hintHeight > getClientArea().height)
 				hintHeight = clientArea.height;
 			Dimension yAxisSize = yAxis.getPreferredSize(clientArea.width, hintHeight);
@@ -271,9 +351,10 @@ public class XYGraph extends Figure implements IXYGraph {
 
 		if (plotArea != null && plotArea.isVisible()) {
 
-			Rectangle plotAreaBound = new Rectangle(primaryXAxis.getBounds().x + primaryXAxis.getMargin(),
-					primaryYAxis.getBounds().y + primaryYAxis.getMargin(), primaryXAxis.getTickLength(),
-					primaryYAxis.getTickLength());
+			Rectangle plotAreaBound = new Rectangle(primaryXAxis.getBounds().x + primaryXAxis.getMargin() + 1,
+					primaryYAxis.getBounds().y + primaryYAxis.getMargin(),
+					primaryXAxis.getBounds().width - 2 * primaryXAxis.getMargin(),
+					primaryYAxis.getBounds().height - 2 * primaryYAxis.getMargin());
 			plotArea.setBounds(plotAreaBound);
 
 		}
@@ -286,12 +367,15 @@ public class XYGraph extends Figure implements IXYGraph {
 	 *            the zoomType to set
 	 */
 	public void setZoomType(ZoomType zoomType) {
-		this.zoomType = zoomType;
+		if (this.zoomType == zoomType) {
+			return;
+		}
 		plotArea.setZoomType(zoomType);
 		for (Axis axis : xAxisList)
 			axis.setZoomType(zoomType);
 		for (Axis axis : yAxisList)
 			axis.setZoomType(zoomType);
+		changeSupport.firePropertyChange(PROPERTY_ZOOMTYPE, this.zoomType, this.zoomType = zoomType);
 	}
 
 	/**
@@ -395,7 +479,8 @@ public class XYGraph extends Figure implements IXYGraph {
 	public void addTrace(Trace trace, Axis xAxis, Axis yAxis) {
 		if (trace.getTraceColor() == null) { // Cycle through default colors
 			trace.setTraceColor(XYGraphMediaFactory.getInstance()
-					.getColor(DEFAULT_TRACES_COLOR[plotArea.getTraceList().size() % DEFAULT_TRACES_COLOR.length]));
+					.getColor(DEFAULT_TRACES_COLOR[traceNum % DEFAULT_TRACES_COLOR.length]));
+			++traceNum;
 		}
 		if (legendMap.containsKey(trace.getYAxis()))
 			legendMap.get(trace.getYAxis()).addTrace(trace);
@@ -475,6 +560,7 @@ public class XYGraph extends Figure implements IXYGraph {
 	 */
 	public void setTitleFont(Font titleFont) {
 		titleLabel.setFont(titleFont);
+		titleFontData = titleFont.getFontData()[0];
 	}
 
 	/**
@@ -484,6 +570,10 @@ public class XYGraph extends Figure implements IXYGraph {
 		return titleLabel.getFont();
 	}
 
+	public FontData getTitleFontData() {
+		return titleFontData;
+	}
+
 	/**
 	 * @param titleColor
 	 *            the titleColor to set
@@ -491,6 +581,7 @@ public class XYGraph extends Figure implements IXYGraph {
 	public void setTitleColor(Color titleColor) {
 		this.titleColor = titleColor;
 		titleLabel.setForegroundColor(titleColor);
+		this.titleColorRgb = titleColor.getRGB();
 	}
 
 	/**
@@ -539,6 +630,10 @@ public class XYGraph extends Figure implements IXYGraph {
 		if (titleColor == null)
 			return getForegroundColor();
 		return titleColor;
+	}
+
+	public RGB getTitleColorRgb() {
+		return titleColorRgb;
 	}
 
 	/**
@@ -593,13 +688,9 @@ public class XYGraph extends Figure implements IXYGraph {
 	public void performAutoScale() {
 		final ZoomCommand command = new ZoomCommand("Auto Scale", xAxisList, yAxisList);
 		for (Axis axis : xAxisList) {
-			if (!axis.isVisible())
-				continue;
 			axis.performAutoScale(true);
 		}
 		for (Axis axis : yAxisList) {
-			if (!axis.isVisible())
-				continue;
 			axis.performAutoScale(true);
 		}
 		command.saveState();

@@ -1,31 +1,23 @@
-/*
- * Copyright 2012 Diamond Light Source Ltd.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+/*******************************************************************************
+ * Copyright (c) 2012, 2017 Diamond Light Source Ltd.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ ******************************************************************************/
 package org.eclipse.nebula.visualization.xygraph.linearscale;
 
 import java.util.List;
 
 /**
- * 
+ * This interface if used to enable different method for generating tick marks
  *
  */
 public interface ITicksProvider {
 
 	/**
 	 * Gets the tick positions.
-	 * 
+	 *
 	 * @return the tick positions
 	 */
 	public List<Integer> getPositions();
@@ -61,6 +53,16 @@ public interface ITicksProvider {
 	public boolean isVisible(int index);
 
 	/**
+	 * @return the tick visibilities
+	 */
+	public List<Boolean> getVisibilities();
+
+	/**
+	 * @return the tick labels
+	 */
+	public List<String> getLabels();
+
+	/**
 	 * @return number of major ticks
 	 */
 	public int getMajorCount();
@@ -78,7 +80,7 @@ public interface ITicksProvider {
 
 	/**
 	 * Update ticks
-	 * 
+	 *
 	 * @param min
 	 * @param max
 	 * @param length
@@ -87,13 +89,12 @@ public interface ITicksProvider {
 	public Range update(double min, double max, int length);
 
 	/**
-	 * 
+	 *
 	 * @return maximum width in pixels of tick labels
 	 */
 	public int getMaxWidth();
 
 	/**
-	 * 
 	 * @return maximum height in pixels of tick labels
 	 */
 	public int getMaxHeight();
@@ -114,4 +115,35 @@ public interface ITicksProvider {
 	 * @return margin in pixel between edge of client area and tail of axis line
 	 */
 	public int getTailMargin();
+
+	/**
+	 * Shows the maximum value of the range as a label
+	 *
+	 * @return true (default) if shown
+	 */
+	public boolean isShowMaxLabel();
+
+	/**
+	 * sets the visibility of the maximum label
+	 * 
+	 * @param b
+	 *            show maximal value as a label
+	 */
+	public void setShowMaxLabel(boolean showMaxLabel);
+
+	/**
+	 * Shows the minimum value of the range as a label
+	 *
+	 * @return true (default) if shown
+	 */
+	public boolean isShowMinLabel();
+
+	/**
+	 * Sets the visibility of the minimum label
+	 *
+	 * @param b
+	 *            show minimum value as a label
+	 */
+	public void setShowMinLabel(boolean showMinLabel);
+
 }
