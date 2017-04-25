@@ -1,108 +1,157 @@
-/*
- * Copyright 2012 Diamond Light Source Ltd.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+/*******************************************************************************
+ * Copyright (c) 2012, 2017 Diamond Light Source Ltd.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ ******************************************************************************/
 package org.eclipse.nebula.visualization.xygraph.linearscale;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
+import org.eclipse.draw2d.FigureUtilities;
 import org.eclipse.draw2d.geometry.Dimension;
 
+/**
+ * Default scale tick mark algorithm
+ *
+ */
 public class LinearScaleTicks implements ITicksProvider {
 
+	/**
+	 * The name of this tick provider
+	 */
+	public static final String NAME = "DEFAULT";
+
+	private static final String MINUS = "-";
+
+	private static final int TICK_LABEL_GAP = 2;
+
+	/**
+	 * Get base^exponent
+	 */
+	private BigDecimal pow(double base, int exponent) {
+		BigDecimal result;
+		if (exponent >= 0) {
+			result = BigDecimal.valueOf(base).pow(exponent);
+		} else {
+			result = BigDecimal.ONE.divide(BigDecimal.valueOf(base).pow(-exponent));
+		}
+		return result;
+	}
+
+	/** default: show max label */
+	private boolean showMaxLabel = true;
+	/** default: show min label */
+	private boolean showMinLabel = true;
+
 	/** the array of tick label vales */
-	private ArrayList<Double> values;
+	private ArrayList<Double> tickLabelValues;
 
 	/** the array of tick label */
-	private ArrayList<String> labels;
+	private ArrayList<String> tickLabels;
 
-	/** the array of tick label positions in pixels */
-	private ArrayList<Integer> positions;
+	/** the array of tick label position in pixels */
+	private ArrayList<Integer> tickLabelPositions;
 
 	/** the array of visibility state of tick label */
-	private ArrayList<Boolean> visibilities;
+	private ArrayList<Boolean> tickLabelVisibilities;
 
-	/** the array of label positions in pixels */
-	private ArrayList<Integer> lPositions;
-
-	/** the maximum width of tick labels */
-	private int maxWidth;
+	/** the maximum length of tick labels */
+	private int tickLabelMaxLength;
 
 	/** the maximum height of tick labels */
-	private int maxHeight;
+	private int tickLabelMaxHeight;
 
-	/** number of pixels between major ticks */
-	private int majorStepInPixel;
-
-	/** number of pixels between minor ticks */
-	private int minorStepInPixel;
-
-	/** number of minor ticks between two major ticks */
-	private int minorTicks;
+	private int gridStepInPixel;
 
 	/** the array of minor tick positions in pixels */
 	private ArrayList<Integer> minorPositions;
 
 	private IScaleProvider scale;
 
+	/**
+	 * constructor
+	 *
+	 * @param scale
+	 */
 	public LinearScaleTicks(IScaleProvider scale) {
 		this.scale = scale;
-		values = new ArrayList<Double>();
-		labels = new ArrayList<String>();
-		positions = new ArrayList<Integer>();
-		lPositions = new ArrayList<Integer>();
-		visibilities = new ArrayList<Boolean>();
+		tickLabelValues = new ArrayList<Double>();
+		tickLabels = new ArrayList<String>();
+		tickLabelPositions = new ArrayList<Integer>();
+		tickLabelVisibilities = new ArrayList<Boolean>();
 		minorPositions = new ArrayList<Integer>();
+	}
+
+	/**
+	 * @return the gridStepInPixel
+	 */
+	public int getGridStepInPixels() {
+		return gridStepInPixel;
+	}
+
+	/**
+	 * @return the tickLabelMaxHeight
+	 */
+	public int getTickLabelMaxHeight() {
+		return tickLabelMaxHeight;
+	}
+
+	/**
+	 * @return the tickLabelMaxLength
+	 */
+	public int getTickLabelMaxLength() {
+		return tickLabelMaxLength;
 	}
 
 	@Override
 	public List<Integer> getPositions() {
-		return positions;
+		return tickLabelPositions;
+	}
+
+	@Override
+	public List<Boolean> getVisibilities() {
+		return tickLabelVisibilities;
 	}
 
 	@Override
 	public int getPosition(int index) {
-		return positions.get(index);
+		return tickLabelPositions.get(index);
 	}
 
 	@Override
 	public double getValue(int index) {
-		return values.get(index);
+		return tickLabelValues.get(index);
 	}
 
 	@Override
 	public String getLabel(int index) {
-		return labels.get(index);
+		return tickLabels.get(index);
+	}
+
+	@Override
+	public List<String> getLabels() {
+		return tickLabels;
 	}
 
 	@Override
 	public int getLabelPosition(int index) {
-		return lPositions.get(index);
+		return tickLabelPositions.get(index);
 	}
 
 	@Override
 	public boolean isVisible(int index) {
-		return visibilities.get(index);
+		return tickLabelVisibilities.get(index);
 	}
 
 	@Override
 	public int getMajorCount() {
-		return labels.size();
+		return tickLabels.size();
 	}
 
 	@Override
@@ -117,40 +166,200 @@ public class LinearScaleTicks implements ITicksProvider {
 
 	@Override
 	public int getMaxWidth() {
-		return maxWidth;
+		return tickLabelMaxLength;
 	}
 
 	@Override
 	public int getMaxHeight() {
-		return maxHeight;
+		return tickLabelMaxHeight;
 	}
 
 	@Override
-	public Range update(final double min, final double max, final int length) {
-		values.clear();
-		labels.clear();
-		positions.clear();
-		lPositions.clear();
-		visibilities.clear();
-		minorPositions.clear();
+	public boolean isShowMaxLabel() {
+		return showMaxLabel;
+	}
 
-		if (scale.isLogScaleEnabled()) {
-			updateTickLabelForLogScale(min, max, length);
+	@Override
+	public void setShowMaxLabel(boolean showMaxLabel) {
+		this.showMaxLabel = showMaxLabel;
+	}
+
+	@Override
+	public boolean isShowMinLabel() {
+		return showMinLabel;
+	}
+
+	@Override
+	public void setShowMinLabel(boolean showMinLabel) {
+		this.showMinLabel = showMinLabel;
+	}
+
+	/**
+	 * Gets the grid step.
+	 *
+	 * @param lengthInPixels
+	 *            scale length in pixels
+	 * @param min
+	 *            minimum value
+	 * @param max
+	 *            maximum value
+	 * @return rounded value.
+	 */
+	private double getGridStep(int lengthInPixels, double min, double max) {
+		if ((int) scale.getMajorGridStep() != 0) {
+			return scale.getMajorGridStep();
+		}
+
+		if (lengthInPixels <= 0) {
+			lengthInPixels = 1;
+		}
+		boolean minBigger = false;
+		if (min >= max) {
+			if (max == min)
+				max++;
+			else {
+				minBigger = true;
+				double swap = min;
+				min = max;
+				max = swap;
+			}
+		}
+
+		double length = Math.abs(max - min);
+		double majorTickMarkStepHint = scale.getMajorTickMarkStepHint();
+		if (majorTickMarkStepHint > lengthInPixels)
+			majorTickMarkStepHint = lengthInPixels;
+		double gridStepHint = length / lengthInPixels * majorTickMarkStepHint;
+
+		if (scale.isDateEnabled()) {
+			double temp = getTimeGridStep(min, max, gridStepHint);
+			if (minBigger)
+				temp = -temp;
+			return temp;
+		}
+
+		double mantissa = gridStepHint;
+		int exp = 0;
+		if (mantissa < 1) {
+			if (mantissa != 0)
+				while (mantissa < 1) {
+					mantissa *= 10.0;
+					exp--;
+				}
 		} else {
-			updateTickLabelForLinearScale(min, max, length);
+			while (mantissa >= 10) {
+				mantissa /= 10.0;
+				exp++;
+			}
 		}
 
-		updateTickVisibility();
+		double gridStep;
+		if (mantissa > 7.5) {
+			// 10*10^exp
+			gridStep = 10 * Math.pow(10, exp);
+		} else if (mantissa > 3.5) {
+			// 5*10^exp
+			gridStep = 5 * Math.pow(10, exp);
+		} else if (mantissa > 1.5) {
+			// 2.0*10^exp
+			gridStep = 2 * Math.pow(10, exp);
+		} else {
+			gridStep = Math.pow(10, exp); // 1*10^exponent
+		}
+		if (minBigger)
+			gridStep = -gridStep;
+		return gridStep;
+	}
 
-		updateLabelPositionsAndMaxDimensions(length);
+	/**
+	 * Given min, max and the gridStepHint, returns the time grid step as a
+	 * double.
+	 *
+	 * @param min
+	 *            minimum value
+	 * @param max
+	 *            maximum value
+	 * @param gridStepHint
+	 * @return time rounded value
+	 */
+	private double getTimeGridStep(double min, double max, double gridStepHint) {
+		// by default, make the least step to be minutes
+		long timeStep;
+		if (max - min < 1000) // <1 sec, step = 10 ms
+			timeStep = 10l;
+		else if (max - min < 60000) // < 1 min, step = 1 sec
+			timeStep = 1000l;
+		else if (max - min < 600000) // < 10 min, step = 10 sec
+			timeStep = 10000l;
+		else if (max - min < 6400000) // < 2 hour, step = 1 min
+			timeStep = 60000l;
+		else if (max - min < 43200000) // < 12 hour, step = 10 min
+			timeStep = 600000l;
+		else if (max - min < 86400000) // < 24 hour, step = 30 min
+			timeStep = 1800000l;
+		else if (max - min < 604800000) // < 7 days, step = 1 hour
+			timeStep = 3600000l;
+		else
+			timeStep = 86400000l;
 
-		updateMinorTickParameters();
+		if (scale.getTimeUnit() == Calendar.SECOND) {
+			timeStep = 1000l;
+		} else if (scale.getTimeUnit() == Calendar.MINUTE) {
+			timeStep = 60000l;
+		} else if (scale.getTimeUnit() == Calendar.HOUR_OF_DAY) {
+			timeStep = 3600000l;
+		} else if (scale.getTimeUnit() == Calendar.DATE) {
+			timeStep = 86400000l;
+		} else if (scale.getTimeUnit() == Calendar.MONTH) {
+			timeStep = 30l * 86400000l;
+		} else if (scale.getTimeUnit() == Calendar.YEAR) {
+			timeStep = 365l * 86400000l;
+		}
+		double temp = gridStepHint + (timeStep - gridStepHint % timeStep);
+		return temp;
+	}
 
+	/**
+	 * If it has enough space to draw the tick label
+	 */
+	private boolean hasSpaceToDraw(int previousPosition, int tickLabelPosition, String previousTickLabel,
+			String tickLabel) {
+		Dimension tickLabelSize = FigureUtilities.getTextExtents(tickLabel, scale.getFont());
+		Dimension previousTickLabelSize = FigureUtilities.getTextExtents(previousTickLabel, scale.getFont());
+		int interval = tickLabelPosition - previousPosition;
+		int textLength = (int) (scale.isHorizontal() ? (tickLabelSize.width / 2.0 + previousTickLabelSize.width / 2.0)
+				: tickLabelSize.height);
+		boolean noLapOnPrevoius = true;
+
+		boolean noLapOnEnd = true;
+		// if it is not the end tick label
+		if (tickLabelPosition != tickLabelPositions.get(tickLabelPositions.size() - 1)) {
+			noLapOnPrevoius = interval > (textLength + TICK_LABEL_GAP);
+			Dimension endTickLabelSize = FigureUtilities.getTextExtents(tickLabels.get(tickLabels.size() - 1),
+					scale.getFont());
+			interval = tickLabelPositions.get(tickLabelPositions.size() - 1) - tickLabelPosition;
+			textLength = (int) (scale.isHorizontal() ? (tickLabelSize.width / 2.0 + endTickLabelSize.width / 2.0)
+					: tickLabelSize.height);
+			noLapOnEnd = interval > textLength + TICK_LABEL_GAP;
+		}
+		return noLapOnPrevoius && noLapOnEnd;
+	}
+
+	/**
+	 * Checks if the tick label is major tick. For example: 0.001, 0.01, 0.1, 1,
+	 * 10, 100...
+	 */
+	private boolean isMajorTick(double tickValue) {
 		if (!scale.isLogScaleEnabled()) {
-			updateMinorTicks();
+			return true;
 		}
 
-		return null;
+		double log10 = Math.log10(tickValue);
+		if (log10 == Math.rint(log10)) {
+			return true;
+		}
+
+		return false;
 	}
 
 	@Override
@@ -173,69 +382,152 @@ public class LinearScaleTicks implements ITicksProvider {
 	}
 
 	/**
-	 * Updates tick label for log scale.
+	 * Updates tick label for normal scale.
 	 * 
+	 * @param min
+	 * @param max
 	 * @param length
-	 *            the length of scale
+	 *            scale tick length (without margin)
 	 */
-	private void updateTickLabelForLogScale(double min, double max, int length) {
-		if (min <= 0 || max <= 0)
-			throw new IllegalArgumentException("the range for log scale must be in positive range");
+	private void updateTickLabelForLinearScale(double min, double max, int length) {
+		double gridStep = getGridStep(length, min, max);
+		gridStepInPixel = (int) (length * gridStep / (max - min));
+		updateTickLabelForLinearScale(min, max, length, gridStep);
+	}
+
+	/**
+	 * Updates tick label for normal scale.
+	 * 
+	 * @param min
+	 * @param max
+	 * @param length
+	 *            scale tick length (without margin)
+	 * @param tickStep
+	 *            the tick step
+	 */
+	private void updateTickLabelForLinearScale(double min, double max, int length, double tickStep) {
 		boolean minBigger = max < min;
-		// if (min >= max) {
-		// throw new IllegalArgumentException("min must be less than max.");
-		// }
 
-		int digitMin = (int) Math.ceil(Math.log10(min));
-		int digitMax = (int) Math.ceil(Math.log10(max));
+		double firstPosition;
 
-		final BigDecimal MIN = new BigDecimal(new Double(min).toString());
-		BigDecimal tickStep = pow(10, digitMin - 1);
-		BigDecimal firstPosition;
-
-		if (MIN.remainder(tickStep).doubleValue() <= 0) {
-			firstPosition = MIN.subtract(MIN.remainder(tickStep));
+		// make firstPosition as the right most of min based on tickStep
+		if (min % tickStep <= 0) {
+			firstPosition = min - min % tickStep;
 		} else {
-			if (minBigger)
-				firstPosition = MIN.subtract(MIN.remainder(tickStep));
-			else
-				firstPosition = MIN.subtract(MIN.remainder(tickStep)).add(tickStep);
+			firstPosition = min - min % tickStep + tickStep;
+		}
+
+		// the unit time starts from 1:00
+		if (scale.isDateEnabled()) {
+			double zeroOclock = firstPosition - 3600000;
+			if (min < zeroOclock) {
+				firstPosition = zeroOclock;
+			}
 		}
 
 		// add min
-
-		if (MIN.compareTo(firstPosition) == (minBigger ? 1 : -1)) {
-			values.add(min);
-			labels.add(scale.format(MIN.doubleValue()));
-			positions.add(scale.getMargin());
+		boolean minDateAdded = false;
+		if (min > firstPosition == minBigger) {
+			tickLabelValues.add(min);
+			String lblStr;
+			if (isShowMinLabel()) {
+				if (scale.isDateEnabled()) {
+					Date date = new Date((long) min);
+					lblStr = scale.format(date, true);
+					minDateAdded = true;
+				} else {
+					lblStr = scale.format(min);
+				}
+			} else
+				lblStr = "";
+			tickLabels.add(lblStr);
+			tickLabelPositions.add(scale.getMargin());
 		}
 
-		for (int i = digitMin; minBigger ? i >= digitMax : i <= digitMax; i += minBigger ? -1 : 1) {
-			if (Math.abs(digitMax - digitMin) > 20) {// if the range is too big,
-														// skip minor ticks.
+		int i = 1;
+		for (double b = firstPosition; max >= min ? b < max : b > max; b = firstPosition + i++ * tickStep) {
+			if (scale.isDateEnabled()) {
+				Date date = new Date((long) b);
+				tickLabels.add(scale.format(date, b == firstPosition && !minDateAdded));
+			} else {
+				tickLabels.add(scale.format(b));
+			}
+			tickLabelValues.add(b);
+
+			int tickLabelPosition = (int) ((b - min) / (max - min) * length) + scale.getMargin();
+			// - LINE_WIDTH;
+			tickLabelPositions.add(tickLabelPosition);
+		}
+
+		// always add max
+		tickLabelValues.add(max);
+		String lblStr;
+		if (showMaxLabel) {
+			if (scale.isDateEnabled()) {
+				Date date = new Date((long) max);
+				lblStr = scale.format(date, true);
+			} else {
+				lblStr = scale.format(max);
+			}
+		} else
+			lblStr = "";
+		tickLabels.add(lblStr);
+		tickLabelPositions.add(scale.getMargin() + length);
+		// }
+
+	}
+
+	/**
+	 * Updates tick label for log scale.
+	 * @param min
+	 * @param max
+	 * @param length
+	 *            the length of scale
+	 */
+	private void updateTickLabelForLogScale(double min, double max,  int length) {
+		if (min <= 0 || max <= 0)
+			throw new IllegalArgumentException("the range for log scale must be in positive range");
+		boolean minBigger = max < min;
+
+		double logMin = Math.log10(min);
+		int minLogDigit = (int) Math.ceil(logMin);
+		int maxLogDigit = (int) Math.ceil(Math.log10(max));
+
+		final BigDecimal minDec = BigDecimal.valueOf(min);
+		BigDecimal tickStep = pow(10, minLogDigit - 1);
+		BigDecimal firstPosition;
+
+		if (minDec.remainder(tickStep).doubleValue() <= 0) {
+			firstPosition = minDec.subtract(minDec.remainder(tickStep));
+		} else {
+			if (minBigger)
+				firstPosition = minDec.subtract(minDec.remainder(tickStep));
+			else
+				firstPosition = minDec.subtract(minDec.remainder(tickStep)).add(tickStep);
+		}
+
+		// add min
+		boolean minDateAdded = false;
+		if (minDec.compareTo(firstPosition) == (minBigger ? 1 : -1)) {
+			minDateAdded = addMinMaxTickInfo(min, length, true);
+		}
+
+		for (int i = minLogDigit; minBigger ? i >= maxLogDigit : i <= maxLogDigit; i += minBigger ? -1 : 1) {
+			// if the range is too big skip minor ticks
+			if (Math.abs(maxLogDigit - minLogDigit) > 20) {
 				BigDecimal v = pow(10, i);
 				if (v.doubleValue() > max)
 					break;
-				labels.add(scale.format(v.doubleValue()));
-				values.add(v.doubleValue());
-
-				int tickLabelPosition = (int) ((Math.log10(v.doubleValue()) - Math.log10(min))
-						/ (Math.log10(max) - Math.log10(min)) * length) + scale.getMargin();
-				positions.add(tickLabelPosition);
+				addTickInfo(v, max, logMin, length, i == minLogDigit, minDateAdded);
 			} else {
+				// must use BigDecimal because it involves equal comparison
 				for (BigDecimal j = firstPosition; minBigger ? j.doubleValue() >= pow(10, i - 1).doubleValue()
 						: j.doubleValue() <= pow(10, i).doubleValue(); j = minBigger ? j.subtract(tickStep)
 								: j.add(tickStep)) {
 					if (minBigger ? j.doubleValue() < max : j.doubleValue() > max) {
 						break;
 					}
-
-					labels.add(scale.format(j.doubleValue()));
-					values.add(j.doubleValue());
-
-					int tickLabelPosition = (int) ((Math.log10(j.doubleValue()) - Math.log10(min))
-							/ (Math.log10(max) - Math.log10(min)) * length) + scale.getMargin();
-					positions.add(tickLabelPosition);
+					addTickInfo(j, max, logMin, length, j == firstPosition, minDateAdded);
 				}
 				tickStep = minBigger ? tickStep.divide(pow(10, 1)) : tickStep.multiply(pow(10, 1));
 				firstPosition = minBigger ? pow(10, i - 1) : tickStep.add(pow(10, i));
@@ -243,18 +535,111 @@ public class LinearScaleTicks implements ITicksProvider {
 		}
 
 		// add max
-		if (minBigger ? max < values.get(values.size() - 1) : max > values.get(values.size() - 1)) {
-			values.add(max);
-			labels.add(scale.format(max));
-			positions.add(scale.getMargin() + length);
+		if (minBigger ? max < tickLabelValues.get(tickLabelValues.size() - 1)
+				: max > tickLabelValues.get(tickLabelValues.size() - 1)) {
+			addMinMaxTickInfo(max, length, false);
 		}
+	}
+
+	/**
+	 * Add the tick labels, positions and values to the corresponding List used
+	 * to store them.
+	 *
+	 * @param d
+	 *            BigDecimal value
+	 * @param max
+	 *            maximum value
+	 * @param logMin
+	 *            value used to calculate tick label position
+	 * @param length
+	 *            value used to calculate tick label position
+	 * @param isFirstPosition
+	 *            needed for date label
+	 * @param minDateAdded
+	 *            needed for date label
+	 */
+	private void addTickInfo(BigDecimal d, double max, double logMin, int length, boolean isFirstPosition,
+			boolean minDateAdded) {
+		if (scale.isDateEnabled()) {
+			Date date = new Date((long) d.doubleValue());
+			tickLabels.add(scale.format(date, isFirstPosition && !minDateAdded));
+		} else {
+			tickLabels.add(scale.format(d.doubleValue()));
+		}
+		int tickLabelPosition = (int) ((Math.log10(d.doubleValue()) - logMin) / (Math.log10(max) - logMin) * length)
+				+ scale.getMargin();
+		tickLabelPositions.add(tickLabelPosition);
+		tickLabelValues.add(d.doubleValue());
+	}
+
+	/**
+	 * Add the tick labels, positions and values for the min and max case to the
+	 * corresponding List used to store them.
+	 *
+	 * @param value
+	 * @param length
+	 *            used for max position
+	 * @param isMin
+	 *            if True, we add the min related info, otherwise the max
+	 *            related info
+	 * @return minDateAdded false by default, true if min and date are
+	 *         enabled
+	 */
+	private boolean addMinMaxTickInfo(double value, int length, boolean isMin) {
+		boolean minDateAdded = false;
+		if (isMin) {
+			tickLabelValues.add(value);
+			BigDecimal minDec = BigDecimal.valueOf(value);
+			if (scale.isDateEnabled()) {
+				Date date = new Date((long) minDec.doubleValue());
+				tickLabels.add(scale.format(date, true));
+				minDateAdded = true;
+			} else {
+				tickLabels.add(scale.format(minDec.doubleValue()));
+			}
+			tickLabelPositions.add(scale.getMargin());
+		} else {
+			tickLabelValues.add(value);
+			if (scale.isDateEnabled()) {
+				Date date = new Date((long) value);
+				tickLabels.add(scale.format(date, true));
+			} else {
+				tickLabels.add(scale.format(value));
+			}
+			tickLabelPositions.add(scale.getMargin() + length);
+		}
+		return minDateAdded;
+	}
+
+	/**
+	 * Gets max length of tick label.
+	 */
+	private void updateTickLabelMaxLengthAndHeight() {
+		int maxLength = 0;
+		int maxHeight = 0;
+		for (int i = 0; i < tickLabels.size(); i++) {
+			if (tickLabelVisibilities.size() > i && tickLabelVisibilities.get(i)) {
+				Dimension p = FigureUtilities.getTextExtents(tickLabels.get(i), scale.getFont());
+				if (tickLabels.get(0).startsWith(MINUS) && !tickLabels.get(i).startsWith(MINUS)) {
+					p.width += FigureUtilities.getTextExtents(MINUS, scale.getFont()).width;
+				}
+				if (p.width > maxLength) {
+					maxLength = p.width;
+				}
+				if (p.height > maxHeight) {
+					maxHeight = p.height;
+				}
+			}
+		}
+		tickLabelMaxLength = maxLength;
+		tickLabelMaxHeight = maxHeight;
 	}
 
 	@Override
 	public int getHeadMargin() {
 		final Range r = scale.getScaleRange();
-		final Dimension l = scale.calculateDimension(r.getLower());
-		final Dimension h = scale.calculateDimension(r.getUpper());
+		final Dimension l = scale.getDimension(r.getLower());
+		final Dimension h = scale.getDimension(r.getUpper());
 		if (scale.isHorizontal()) {
 			return (int) Math.ceil(Math.max(l.width, h.width) / 2.0);
 		}
@@ -267,425 +652,64 @@ public class LinearScaleTicks implements ITicksProvider {
 	}
 
 	/**
-	 * Updates tick label for normal scale.
-	 * 
-	 * @param length
-	 *            scale tick length (without margin)
-	 */
-	private void updateTickLabelForLinearScale(double min, double max, int length) {
-		BigDecimal gridStepBigDecimal = getGridStep(length, min, max);
-		majorStepInPixel = (int) (length * gridStepBigDecimal.doubleValue() / (max - min));
-		updateTickLabelForLinearScale(min, max, length, gridStepBigDecimal);
-	}
-
-	/**
-	 * Updates tick label for normal scale.
-	 * 
-	 * @param length
-	 *            scale tick length (without margin)
-	 * @param tickStep
-	 *            the tick step
-	 */
-	private void updateTickLabelForLinearScale(double min, double max, int length, BigDecimal tickStep) {
-		boolean minBigger = max < min;
-
-		final BigDecimal MIN = new BigDecimal(new Double(min).toString());
-		BigDecimal firstPosition;
-
-		// make firstPosition as the right most of min based on tickStep
-		/* if (min % tickStep <= 0) */
-		if (MIN.remainder(tickStep).doubleValue() <= 0) {
-			/* firstPosition = min - min % tickStep */
-			firstPosition = MIN.subtract(MIN.remainder(tickStep));
-		} else {
-			/* firstPosition = min - min % tickStep + tickStep */
-			firstPosition = MIN.subtract(MIN.remainder(tickStep)).add(tickStep);
-		}
-
-		// the unit time starts from 1:00
-		if (scale.isDateEnabled()) {
-			BigDecimal zeroOclock = firstPosition.subtract(new BigDecimal(new Double(3600000).toString()));
-			if (MIN.compareTo(zeroOclock) == -1) {
-				firstPosition = zeroOclock;
-			}
-		}
-
-		// add min
-		int r = minBigger ? 1 : -1;
-		if (MIN.compareTo(firstPosition) == r) {
-			values.add(min);
-			labels.add(scale.format(MIN.doubleValue()));
-			positions.add(scale.getMargin());
-		}
-
-		for (BigDecimal b = firstPosition; max >= min ? b.doubleValue() <= max
-				: b.doubleValue() >= max; b = b.add(tickStep)) {
-			labels.add(scale.format(b.doubleValue()));
-			values.add(b.doubleValue());
-
-			int tickLabelPosition = (int) ((b.doubleValue() - min) / (max - min) * length) + scale.getMargin();
-			// - LINE_WIDTH;
-			positions.add(tickLabelPosition);
-		}
-
-		// add max
-		if ((minBigger ? max < values.get(values.size() - 1) : max > values.get(values.size() - 1))) {
-			values.add(max);
-			labels.add("");
-			positions.add(scale.getMargin() + length);
-		}
-
-	}
-
-	/**
 	 * Updates the visibility of tick labels.
 	 */
 	private void updateTickVisibility() {
 
-		// initialize the array of tick label visibility state
-		visibilities.clear();
-		for (int i = 0; i < positions.size(); i++) {
-			visibilities.add(Boolean.TRUE);
-		}
+		tickLabelVisibilities.clear();
 
-		if (positions.size() == 0) {
+		if (tickLabelPositions.isEmpty())
 			return;
+
+		for (int i = 0; i < tickLabelPositions.size(); i++) {
+			tickLabelVisibilities.add(Boolean.TRUE);
 		}
 
 		// set the tick label visibility
 		int previousPosition = 0;
 		String previousLabel = null;
-		for (int i = 0; i < positions.size(); i++) {
-
-			// check if there is enough space to draw tick label
+		for (int i = 0; i < tickLabelPositions.size(); i++) {
+			// check if it has space to draw
 			boolean hasSpaceToDraw = true;
+			String currentLabel = tickLabels.get(i);
+			int currentPosition = tickLabelPositions.get(i);
 			if (i != 0) {
-				try {
-					hasSpaceToDraw = hasSpaceToDraw(previousPosition, positions.get(i), previousLabel, labels.get(i));
-				} catch (java.lang.IndexOutOfBoundsException iobe) {
-					hasSpaceToDraw = false;
-				}
+				hasSpaceToDraw = hasSpaceToDraw(previousPosition, currentPosition, previousLabel, currentLabel);
 			}
 
-			// check if the same tick label is repeated
-			String currentLabel = labels.get(i);
+			// check if repeated
 			boolean isRepeatSameTickAndNotEnd = currentLabel.equals(previousLabel)
-					&& (i != 0 && i != positions.size() - 1);
+					&& (i != 0 && i != tickLabelPositions.size() - 1);
 
-			// check if the tick label value is major
+			// check if it is major tick label
 			boolean isMajorTickOrEnd = true;
 			if (scale.isLogScaleEnabled()) {
-				isMajorTickOrEnd = isMajorTick(values.get(i)) || i == 0 || i == positions.size() - 1;
+				isMajorTickOrEnd = isMajorTick(tickLabelValues.get(i)) || i == 0 || i == tickLabelPositions.size() - 1;
 			}
 
 			if (!hasSpaceToDraw || isRepeatSameTickAndNotEnd || !isMajorTickOrEnd) {
-				try {
-					visibilities.set(i, Boolean.FALSE);
-				} catch (java.lang.IndexOutOfBoundsException iobe) {
-					// Ignored or causes SWT error.
-				}
+				tickLabelVisibilities.set(i, Boolean.FALSE);
 			} else {
-				previousPosition = positions.get(i);
+				previousPosition = currentPosition;
 				previousLabel = currentLabel;
 			}
 		}
 	}
 
-	/**
-	 * Checks if the tick label is major (...,0.01,0.1,1,10,100,...).
-	 * 
-	 * @param tickValue
-	 *            the tick label value
-	 * @return true if the tick label is major
-	 */
-	private boolean isMajorTick(double tickValue) {
-		if (!scale.isLogScaleEnabled()) {
-			return true;
-		}
+	@Override
+	public Range update(final double min, final double max, final int length) {
+		tickLabels.clear();
+		tickLabelValues.clear();
+		tickLabelPositions.clear();
 
-		if (Math.log10(tickValue) % 1 == 0) {
-			return true;
-		}
-
-		return false;
-	}
-
-	/**
-	 * Returns the state indicating if there is a space to draw tick label.
-	 * 
-	 * @param previousPosition
-	 *            the previously drawn tick label position.
-	 * @param tickLabelPosition
-	 *            the tick label position.
-	 * @param previousTickLabel
-	 *            the previous tick label.
-	 * @param tickLabel
-	 *            the tick label text
-	 * @return true if there is a space to draw tick label
-	 */
-	private boolean hasSpaceToDraw(int previousPosition, int tickLabelPosition, String previousTickLabel,
-			String tickLabel) {
-
-		if (!scale.isHorizontal())
-			return true;
-
-		Dimension tickLabelSize = scale.calculateDimension(tickLabel);
-		Dimension previousTickLabelSize = scale.calculateDimension(previousTickLabel);
-		int interval = tickLabelPosition - previousPosition;
-		int textLength = (int) (scale.isHorizontal() ? (tickLabelSize.width / 2.0 + previousTickLabelSize.width / 2.0)
-				: tickLabelSize.height);
-		boolean noLapOnPrevoius = interval > textLength;
-
-		boolean noLapOnEnd = true;
-		if (tickLabelPosition != positions.get(positions.size() - 1)) {
-			Dimension endTickLabelSize = scale.calculateDimension(labels.get(labels.size() - 1));
-			interval = positions.get(positions.size() - 1) - tickLabelPosition;
-			textLength = (int) (scale.isHorizontal() ? (tickLabelSize.width / 2.0 + endTickLabelSize.width / 2.0)
-					: tickLabelSize.height);
-			noLapOnEnd = interval > textLength;
-		}
-		return noLapOnPrevoius && noLapOnEnd;
-	}
-
-	/**
-	 * Update positions and max dimensions of tick labels
-	 */
-	private void updateLabelPositionsAndMaxDimensions(int length) {
-		maxWidth = 0;
-		maxHeight = 0;
-		for (int i = 0; i < labels.size(); i++) {
-			if (visibilities.size() > i && visibilities.get(i) == true) {
-				final String text = labels.get(i);
-				final Dimension d = scale.calculateDimension(text);
-				if (labels.get(0).startsWith("-") && !text.startsWith("-")) {
-					d.width += scale.calculateDimension("-").width;
-				}
-				if (d.width > maxWidth) {
-					maxWidth = d.width;
-				}
-				if (d.height > maxHeight) {
-					maxHeight = d.height;
-				}
-			}
-		}
-
-		if (scale.isHorizontal()) { // re-expand length (so labels can flow into
-									// margins)
-			length += maxWidth;
+		if (scale.isLogScaleEnabled()) {
+			updateTickLabelForLogScale(min, max, length);
 		} else {
-			length += maxHeight;
+			updateTickLabelForLinearScale(min, max, length);
 		}
 
-		for (int i = 0; i < labels.size(); i++) {
-			int p = positions.get(i);
-			if (visibilities.size() > i && visibilities.get(i) == true) {
-				final Dimension d = scale.calculateDimension(labels.get(i));
-				if (scale.isHorizontal()) {
-					p = (int) Math.ceil(p - d.width * 0.5);
-					if (p < 0) {
-						p = 0;
-					} else if (p + d.width >= length) {
-						p = length - 1 - d.width;
-					}
-				} else {
-					p = (int) Math.ceil(length - p - d.height * 0.5);
-					if (p < 0) {
-						p = 0;
-					} else if (p + d.height >= length) {
-						p = length - 1 - d.height;
-					}
-				}
-			}
-			lPositions.add(p);
-		}
-	}
-
-	private void updateMinorTickParameters() {
-		if (scale.isDateEnabled()) {
-			minorTicks = 6;
-			minorStepInPixel = (int) (majorStepInPixel / 6.0);
-			return;
-		}
-
-		if (majorStepInPixel / 5 >= scale.getMinorTickMarkStepHint()) {
-			minorTicks = 5;
-			minorStepInPixel = (int) (majorStepInPixel / 5.0);
-			return;
-		}
-
-		if (majorStepInPixel / 4 >= scale.getMinorTickMarkStepHint()) {
-			minorTicks = 4;
-			minorStepInPixel = (int) (majorStepInPixel / 4.0);
-			return;
-		}
-
-		minorTicks = 2;
-		minorStepInPixel = (int) (majorStepInPixel / 2.0);
-	}
-
-	/**
-	 * Calculates the value of the first argument raised to the power of the
-	 * second argument.
-	 * 
-	 * @param base
-	 *            the base
-	 * @param expornent
-	 *            the exponent
-	 * @return the value <tt>a<sup>b</sup></tt> in <tt>BigDecimal</tt>
-	 */
-	private BigDecimal pow(double base, int expornent) {
-		BigDecimal value;
-		if (expornent > 0) {
-			value = new BigDecimal(new Double(base).toString()).pow(expornent);
-		} else {
-			value = BigDecimal.ONE.divide(new BigDecimal(new Double(base).toString()).pow(-expornent));
-		}
-		return value;
-	}
-
-	/**
-	 * Gets the grid step.
-	 * 
-	 * @param lengthInPixels
-	 *            scale length in pixels
-	 * @param min
-	 *            minimum value
-	 * @param max
-	 *            maximum value
-	 * @return rounded value.
-	 */
-	private BigDecimal getGridStep(int lengthInPixels, double min, double max) {
-		if ((int) scale.getMajorGridStep() != 0) {
-			return new BigDecimal(scale.getMajorGridStep());
-		}
-
-		if (lengthInPixels <= 0) {
-			lengthInPixels = 1;
-		}
-		boolean minBigger = false;
-		if (min >= max) {
-			if (max == min)
-				max++;
-			else {
-				minBigger = true;
-				double swap = min;
-				min = max;
-				max = swap;
-			}
-			// throw new IllegalArgumentException("min must be less than max.");
-		}
-
-		double length = Math.abs(max - min);
-		double majorTickMarkStepHint = scale.getMajorTickMarkStepHint();
-		if (majorTickMarkStepHint > lengthInPixels)
-			majorTickMarkStepHint = lengthInPixels;
-		// if(min > max)
-		// majorTickMarkStepHint = -majorTickMarkStepHint;
-		double gridStepHint = length / lengthInPixels * majorTickMarkStepHint;
-
-		if (scale.isDateEnabled()) {
-			// by default, make the least step to be minutes
-
-			long timeStep;
-			if (max - min < 10000) // < 10 sec, step = 1 sec
-				timeStep = 1000l;
-			else if (max - min < 60000) // < 1 min, step = 10 sec
-				timeStep = 10000l;
-			else if (max - min < 43200000) // < 12 hour, step = 1 min
-				timeStep = 60000l;
-			else if (max - min < 604800000) // < 7 days, step = 1 hour
-				timeStep = 3600000l;
-			else
-				timeStep = 86400000l;
-
-			if (scale.getTimeUnit() == Calendar.SECOND) {
-				timeStep = 1000l;
-			} else if (scale.getTimeUnit() == Calendar.MINUTE) {
-				timeStep = 60000l;
-			} else if (scale.getTimeUnit() == Calendar.HOUR_OF_DAY) {
-				timeStep = 3600000l;
-			} else if (scale.getTimeUnit() == Calendar.DATE) {
-				timeStep = 86400000l;
-			} else if (scale.getTimeUnit() == Calendar.MONTH) {
-				timeStep = 30l * 86400000l;
-			} else if (scale.getTimeUnit() == Calendar.YEAR) {
-				timeStep = 365l * 86400000l;
-			}
-			double temp = gridStepHint + (timeStep - gridStepHint % timeStep);
-			return new BigDecimal(temp);
-		}
-
-		double mantissa = gridStepHint;
-		int exponent = 0;
-		if (mantissa < 1) {
-			if (mantissa != 0)
-				while (mantissa < 1) {
-					mantissa *= 10.0;
-					exponent--;
-				}
-		} else {
-			while (mantissa >= 10) {
-				mantissa /= 10.0;
-				exponent++;
-			}
-		}
-
-		BigDecimal gridStep;
-		if (mantissa > 7.5) {
-			gridStep = BigDecimal.TEN.multiply(pow(10, exponent)); // 10.0 * 10
-																	// **
-																	// exponent
-		} else if (mantissa > 3.5) {
-			gridStep = new BigDecimal(new Double(5).toString()).multiply(pow( // 5.0
-																				// *
-																				// 10
-																				// **
-																				// exponent
-					10, exponent));
-		} else if (mantissa > 1.5) {
-			gridStep = new BigDecimal(new Double(2).toString()).multiply(pow( // 2.0
-																				// *
-																				// 10
-																				// **
-																				// exponent
-					10, exponent));
-		} else {
-			gridStep = pow(10, exponent); // 1.0 * 10 ** exponent
-		}
-		if (minBigger)
-			gridStep = gridStep.negate();
-		return gridStep;
-	}
-
-	private void updateMinorTicks() {
-		final int imax = getMajorCount();
-
-		double lp = positions.get(0);
-		double cp, dp, tp;
-		for (int i = 1; i < imax; i++) {
-			cp = positions.get(i);
-			dp = cp - lp;
-			// add the first minor ticks which is start from min value
-			if (i == 1 && dp < majorStepInPixel) {
-				tp = cp;
-				while ((tp - lp) > minorStepInPixel + 3) {
-					tp -= minorStepInPixel;
-					minorPositions.add((int) tp);
-				}
-			} // add the last minor ticks which is end to max value
-			else if (i == imax - 1 && dp < majorStepInPixel) {
-				tp = lp;
-				while ((getPosition(i) - tp) > minorStepInPixel + 3) {
-					tp += minorStepInPixel;
-					minorPositions.add((int) tp);
-				}
-			} else { // add regular minor ticks
-				for (int j = 0; j < minorTicks; j++) {
-					tp = lp + (dp * j) / minorTicks;
-					minorPositions.add((int) tp);
-				}
-			}
-			lp = cp;
-		}
+		updateTickVisibility();
+		updateTickLabelMaxLengthAndHeight();
+		return null;
 	}
 }

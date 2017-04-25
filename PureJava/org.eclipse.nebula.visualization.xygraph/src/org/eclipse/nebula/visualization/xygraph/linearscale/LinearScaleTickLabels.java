@@ -1,48 +1,139 @@
+/*******************************************************************************
+ * Copyright (c) 2010, 2017 Oak Ridge National Laboratory and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ ******************************************************************************/
 package org.eclipse.nebula.visualization.xygraph.linearscale;
 
+import java.util.ArrayList;
+
 import org.eclipse.draw2d.Figure;
+import org.eclipse.draw2d.FigureUtilities;
 import org.eclipse.draw2d.Graphics;
 
 /**
  * Linear Scale tick labels.
  * 
  * @author Xihui Chen
+ * @author Baha El-Kassaby, Peter Chang: Diamond Light Source contribution
  */
 public class LinearScaleTickLabels extends Figure {
 
-	private ITicksProvider ticks;
+	protected static final String MINUS = "-";
 
-	private IScaleProvider scale;
+	protected ITicksProvider ticks;
+
+	protected IScaleProvider scale;
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param linearScale
 	 *            the scale
 	 */
 	protected LinearScaleTickLabels(IScaleProvider linearScale) {
-		scale = linearScale;
-		// use the new tick mark generator by default
-		ticks = new LinearScaleTicks2(scale);
 
-		setTicksIndexBased(scale.isTicksIndexBased());
-		setFont(scale.getFont());
-		setForegroundColor(scale.getForegroundColor());
+		this.scale = linearScale;
+		createLinearScaleTicks();
+		setFont(this.scale.getFont());
+		setForegroundColor(this.scale.getForegroundColor());
 	}
 
+	/**
+	 * Create the tick provider for the default axis implementation. To be
+	 * overridden if another tick provider is needed.
+	 *
+	 */
+	protected void createLinearScaleTicks() {
+		ticks = new LinearScaleTicks(scale);
+	}
+
+	/**
+	 *
+	 * @return the ticks provider used
+	 */
 	public ITicksProvider getTicksProvider() {
 		return ticks;
 	}
 
 	/**
-	 * Updates the tick labels.
-	 * 
-	 * @param length
-	 *            scale tick length (without margin)
+	 * @return the gridStepInPixel
 	 */
-	protected Range update(int length) {
-		final Range range = scale.getScaleRange();
-		return ticks.update(range.getLower(), range.getUpper(), length);
+	public int getGridStepInPixel() {
+		if (ticks instanceof LinearScaleTicks) {
+			return ((LinearScaleTicks) ticks).getGridStepInPixels();
+		}
+		return -1;
+	}
+
+	/**
+	 * Gets the tick label positions.
+	 * 
+	 * @return the tick label positions
+	 */
+	public ArrayList<Integer> getTickLabelPositions() {
+		if (ticks != null) {
+			return new ArrayList<Integer> (ticks.getPositions());
+		}
+		return null;
+	}
+
+	/**
+	 * @return the tickVisibilities
+	 */
+	public ArrayList<Boolean> getTickVisibilities() {
+		if (ticks != null)
+			return new ArrayList<Boolean> (ticks.getVisibilities());
+		return null;
+	}
+
+	/**
+	 * Draw the X tick. To be overridden if needed.
+	 *
+	 * @param graphics
+	 *            the graphics context
+	 */
+	protected void drawXTick(Graphics graphics) {
+		// draw tick labels
+		graphics.setFont(scale.getFont());
+		for (int i = 0; i < ticks.getPositions().size(); i++) {
+			if (ticks.isVisible(i) == true) {
+				String text = ticks.getLabel(i);
+				int fontWidth = FigureUtilities.getTextExtents(text, getFont()).width;
+				int x = (int) Math.ceil(ticks.getLabelPosition(i) - fontWidth / 2.0);// +
+																						// offset);
+				graphics.drawText(text, x, 0);
+			}
+		}
+	}
+
+	/**
+	 * Draw the Y tick. To be overridden if needed.
+	 *
+	 * @param graphics
+	 *            the graphics context
+	 */
+	protected void drawYTick(Graphics graphics) {
+		// draw tick labels
+		graphics.setFont(scale.getFont());
+		int fontHeight = ticks.getMaxHeight();
+		for (int i = 0; i < ticks.getPositions().size(); i++) {
+			if (ticks.getLabels().isEmpty()) {
+				break;
+			}
+
+			if (ticks.isVisible(i)) {
+				String label = ticks.getLabel(i);
+				int x = 0;
+				if (ticks.getLabel(0).startsWith(MINUS) && !label.startsWith(MINUS)) {
+					x += FigureUtilities.getTextExtents(MINUS, getFont()).width;
+				}
+				int y = (int) Math.ceil(scale.getLength() - ticks.getPosition(i) - fontHeight / 2.0);
+				graphics.drawText(label, x, y);
+			}
+		}
 	}
 
 	@Override
@@ -56,46 +147,40 @@ public class LinearScaleTickLabels extends Figure {
 		}
 
 		super.paintClientArea(graphics);
-	};
-
-	/**
-	 * Draw the X tick.
-	 * 
-	 * @param graphics
-	 *            the graphics context
-	 */
-	private void drawXTick(Graphics graphics) {
-		// draw tick labels
-		final int imax = ticks.getMajorCount();
-		for (int i = 0; i < imax; i++) {
-			if (ticks.isVisible(i)) {
-				graphics.drawText(ticks.getLabel(i), ticks.getLabelPosition(i), 0);
-			}
-		}
 	}
 
-	private static final String MINUS = "-";
+	/**
+	 *
+	 * @return True is min label is shown
+	 */
+	public boolean isShowMinLabel() {
+		return ticks.isShowMinLabel();
+	}
 
 	/**
-	 * Draw the Y tick.
-	 * 
-	 * @param graphics
-	 *            the graphics context
+	 * sets whether min label is shown or not
+	 *
+	 * @param showMinLabel
 	 */
-	private void drawYTick(Graphics graphics) {
-		// draw tick labels
-		final int imax = ticks.getMajorCount();
-		if (imax < 1)
-			return;
-		final boolean hasNegative = ticks.getLabel(0).startsWith(MINUS);
-		final int minus = scale.calculateDimension(MINUS).width;
-		for (int i = 0; i < imax; i++) {
-			if (ticks.isVisible(i)) {
-				String text = ticks.getLabel(i);
-				int x = (hasNegative && !text.startsWith(MINUS)) ? minus : 0;
-				graphics.drawText(text, x, ticks.getLabelPosition(i));
-			}
-		}
+	public void setShowMinLabel(boolean showMinLabel) {
+		ticks.setShowMinLabel(showMinLabel);
+	}
+
+	/**
+	 *
+	 * @return True if max label is shown
+	 */
+	public boolean isShowMaxLabel() {
+		return ticks.isShowMaxLabel();
+	}
+
+	/**
+	 * set whether max label is shown or not
+	 *
+	 * @param showMaxLabel
+	 */
+	public void setShowMaxLabel(boolean showMaxLabel) {
+		ticks.setShowMaxLabel(showMaxLabel);
 	}
 
 	/**
@@ -112,21 +197,32 @@ public class LinearScaleTickLabels extends Figure {
 		return ticks.getMaxHeight();
 	}
 
+	/**
+	 *
+	 * @return the scale
+	 */
 	public IScaleProvider getScale() {
 		return scale;
 	}
 
+	/**
+	 * sets the type of scale
+	 *
+	 * @param scale
+	 */
 	public void setScale(IScaleProvider scale) {
 		this.scale = scale;
 	}
 
 	/**
-	 * @param isTicksIndexBased
-	 *            if true, make ticks based on axis dataset indexes
+	 * Updates the tick labels.
+	 *
+	 * @param length
+	 *            scale tick length (without margin)
 	 */
-	public void setTicksIndexBased(boolean isTicksIndexBased) {
-		if (ticks instanceof LinearScaleTicks2) {
-			((LinearScaleTicks2) ticks).setTicksIndexBased(isTicksIndexBased);
-		}
+	public Range update(int length) {
+		final Range range = scale.getScaleRange();
+		ticks.update(range.getLower(), range.getUpper(), length);
+		return range;
 	}
 }

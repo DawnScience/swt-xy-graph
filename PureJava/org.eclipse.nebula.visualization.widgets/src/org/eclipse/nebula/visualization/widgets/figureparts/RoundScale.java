@@ -12,7 +12,6 @@ import org.eclipse.draw2d.FigureUtilities;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.nebula.visualization.xygraph.linearscale.AbstractScale;
-import org.eclipse.nebula.visualization.xygraph.linearscale.ITicksProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -331,10 +330,5 @@ public class RoundScale extends AbstractScale {
 	public int getInnerRadius() {		
 		updateTick();
 		return radius;
-	}
-
-	@Override
-	public ITicksProvider getTicksProvider() {
-		return null;
 	}
 }

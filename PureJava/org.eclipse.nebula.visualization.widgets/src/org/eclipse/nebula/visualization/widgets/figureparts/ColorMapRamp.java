@@ -50,7 +50,6 @@ public class ColorMapRamp extends Figure {
 		scale.setTickLabelSide(LabelSide.Secondary);
 		scale.setMinorTicksVisible(false);
 		scale.setRange(min, max);
-		scale.setTicksAtEnds(false);
 		scale.setMajorTickMarkStepHint(50);
 		scale.setFont(getFont());
 		colorMapFigure = new ColorMapFigure();
@@ -158,9 +157,10 @@ public class ColorMapRamp extends Figure {
 		this.imageData = imageData;
 	}
 
-
+	/**
+	 * Sets the Log 10 on or off.
+	 */
 	public void setLog10(boolean log) {
 		this.scale.setLogScale(log);
-	}	
-	
+	}
 }
