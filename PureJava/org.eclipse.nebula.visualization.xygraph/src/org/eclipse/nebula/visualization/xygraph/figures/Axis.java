@@ -319,15 +319,14 @@ public class Axis extends LinearScale {
 	public Range getTraceDataRange() {
 		double low = Double.POSITIVE_INFINITY;
 		double high = Double.NEGATIVE_INFINITY;
-		final boolean positiveOnly = isLogScaleEnabled();
 		for (Trace trace : traceList) {
 			if (trace.getDataProvider() == null || !trace.isVisible())
 				continue;
 			final Range range;
 			if (isHorizontal())
-				range = trace.getDataProvider().getXDataMinMax(positiveOnly);
+				range = trace.getDataProvider().getXDataMinMax();
 			else
-				range = trace.getDataProvider().getYDataMinMax(positiveOnly);
+				range = trace.getDataProvider().getYDataMinMax();
 			if (range == null)
 				continue;
 			if (Double.isInfinite(range.getLower()) || Double.isInfinite(range.getUpper())

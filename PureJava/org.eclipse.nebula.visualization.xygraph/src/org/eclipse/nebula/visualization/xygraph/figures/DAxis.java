@@ -23,7 +23,6 @@ import org.eclipse.nebula.visualization.xygraph.linearscale.LinearScaleTickLabel
 import org.eclipse.nebula.visualization.xygraph.linearscale.LinearScaleTickLabels2;
 import org.eclipse.nebula.visualization.xygraph.linearscale.LinearScaleTickMarks;
 import org.eclipse.nebula.visualization.xygraph.linearscale.Range;
-import org.eclipse.swt.widgets.Display;
 
 /**
  * The Diamond Light Source implementation of the axis figure.
@@ -309,11 +308,7 @@ public class DAxis extends Axis {
 				|| Double.isInfinite(upper - lower)) {
 			throw new IllegalArgumentException("Illegal range: lower=" + lower + ", upper=" + upper);
 		}
-		Range old_range = getRange();
-		if (old_range.getLower() == lower && old_range.getUpper() == upper) {
-			return;
-		}
-		setTicksAtEnds(false);
+
 		forceRange = lower == upper;
 		if (forceRange) {
 			final double delta = (lower == 0 ? 1 : Math.abs(lower)) * ZERO_RANGE_FRACTION;
@@ -322,6 +317,7 @@ public class DAxis extends Axis {
 			if (Double.isInfinite(upper))
 				throw new IllegalArgumentException("Illegal range: lower=" + lower + ", upper=" + upper);
 		}
+
 		if (logScaleEnabled) {
 			if (upper <= 0)
 				upper = DEFAULT_LOG_SCALE_MAX;
@@ -350,19 +346,9 @@ public class DAxis extends Axis {
 	}
 
 	@Override
-	public void setLogScale(boolean isLog) throws IllegalStateException {
-		boolean cur = isLogScaleEnabled();
-		super.setLogScale(isLog);
-		if (cur != isLog && xyGraph != null) {
-			Display.getDefault().asyncExec(new Runnable() {
-				public void run() {
-					xyGraph.performAutoScale();
-					xyGraph.getPlotArea().layout();
-					xyGraph.revalidate();
-					xyGraph.repaint();
-				}
-			});
-		}
+	public void setLogScale(boolean enabled) throws IllegalStateException {
+		super.setLogScale(enabled);
+		setTicksAtEnds(true);
 	}
 
 	/**

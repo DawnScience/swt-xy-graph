@@ -369,11 +369,8 @@ public abstract class AbstractScale extends Figure {
 				min = DEFAULT_LOG_SCALE_MIN;
 				max = DEFAULT_LOG_SCALE_MAX;
 			}
-			if (max <= 0) {
-				max = DEFAULT_LOG_SCALE_MAX;
-			}
 			if (min <= 0) {
-				min = DEFAULT_LOG_SCALE_MIN * max;
+				min = DEFAULT_LOG_SCALE_MIN;
 			}
 			if (max <= min) {
 				max = min + DEFAULT_LOG_SCALE_MAX;
