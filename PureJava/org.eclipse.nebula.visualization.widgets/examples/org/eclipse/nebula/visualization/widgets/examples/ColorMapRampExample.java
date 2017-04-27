@@ -38,7 +38,6 @@ public class ColorMapRampExample {
 
 	private static final String INFINITY_TOOLTIP = "Infinity/-Infinity/NaN can be set and will be passed to ColorMapRamp, but the figure will ignore it.";
 	private ColorMapRamp colorMapRamp;
-	private Button log10Check;
 	private Combo colorMapCombo;
 	private Button customImageDataCheck;
 	private Text minText;
@@ -76,14 +75,6 @@ public class ColorMapRampExample {
 		customImageDataCheck = new Button(shell, SWT.CHECK);
 		customImageDataCheck.setText("Custom Image Data");
 		customImageDataCheck.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(org.eclipse.swt.events.SelectionEvent e) {
-				updateRamp();
-			};
-		});
-
-		log10Check = new Button(shell, SWT.CHECK);
-		log10Check.setText("Log10 Scale");
-		log10Check.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(org.eclipse.swt.events.SelectionEvent e) {
 				updateRamp();
 			};
@@ -150,8 +141,6 @@ public class ColorMapRampExample {
 		} else {
 			colorMapRamp.setImageData(null);
 		}
-
-		colorMapRamp.setLog10(log10Check.getSelection());
 
 		try {
 			double min = Double.parseDouble(minText.getText());

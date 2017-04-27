@@ -11,6 +11,7 @@ import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.nebula.visualization.xygraph.linearscale.Range;
 import org.eclipse.nebula.visualization.xygraph.util.SWTConstants;
+import org.eclipse.swt.graphics.Color;
 
 /**
  * The grid in the plot area.
@@ -37,7 +38,7 @@ public class Grid extends Figure implements IAxisListener {
 			graphics.setLineStyle(axis.isDashGridLine() ? SWTConstants.LINE_DASH : SWTConstants.LINE_SOLID);
 			graphics.setForegroundColor(axis.getMajorGridColor());
 			graphics.setLineWidth(1);
-			for (int pos : axis.getTicksProvider().getPositions()) {
+			for (int pos : axis.getScaleTickLabels().getTickLabelPositions()) {
 				if (axis.isHorizontal())
 					graphics.drawLine(axis.getBounds().x + pos, bounds.y + bounds.height, axis.getBounds().x + pos,
 							bounds.y);
@@ -57,4 +58,21 @@ public class Grid extends Figure implements IAxisListener {
 	public void axisRangeChanged(Axis axis, Range old_range, Range new_range) {
 		// do nothing
 	}
+
+	public void axisForegroundColorChanged(Axis axis, Color oldColor, Color newColor) {
+
+	}
+
+	public void axisTitleChanged(Axis axis, String oldTitle, String newTitle) {
+
+	}
+
+	public void axisAutoScaleChanged(Axis axis, boolean oldAutoScale, boolean newAutoScale) {
+
+	}
+
+	public void axisLogScaleChanged(Axis axis, boolean old, boolean logScale) {
+
+	}
+
 }
