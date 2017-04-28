@@ -1,10 +1,3 @@
-/*******************************************************************************
- * Copyright (c) 2010, 2017 Oak Ridge National Laboratory and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- ******************************************************************************/
 package org.eclipse.nebula.visualization.xygraph.linearscale;
 
 import org.eclipse.draw2d.FigureUtilities;
@@ -30,7 +23,6 @@ import org.eclipse.swt.graphics.Font;
  * 
  *
  * @author Xihui Chen
- * @author Baha El-Kassaby, Peter Chang: Diamond Light Source contribution
  * 
  */
 public class LinearScale extends AbstractScale implements IScaleProvider {
@@ -45,27 +37,33 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 		VERTICAL
 	}
 
-	protected static final int SPACE_BTW_MARK_LABEL = 2;
+	private static final int SPACE_BTW_MARK_LABEL = 2;
 
 	/** scale direction, no meaning for round scale */
 	private Orientation orientation = Orientation.HORIZONTAL;
 
+	/**
+	 * 
+	 */
 	/** the scale tick labels */
-	protected LinearScaleTickLabels tickLabels;
+	private LinearScaleTickLabels tickLabels;
 
 	/** the scale tick marks */
-	protected LinearScaleTickMarks tickMarks;
+	private LinearScaleTickMarks tickMarks;
 
 	/** the length of the whole scale */
-	protected int length;
+	private int length;
 
-	protected int margin;
+	private int margin;
+
+	/** if true, then ticks are based on axis dataset indexes */
+	private boolean ticksIndexBased;
 
 	/**
 	 * Constructor.
 	 */
 	public LinearScale() {
-		tickLabels = createLinearScaleTickLabels();
+		tickLabels = new LinearScaleTickLabels(this);
 		tickMarks = new LinearScaleTickMarks(this);
 		add(tickMarks);
 		add(tickLabels);
@@ -75,25 +73,36 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 	}
 
 	/**
-	 * Creates the linearScaleTickLabel. To be overridden if necessary if
-	 * another Axis implementation is used.
-	 *
+	 * Calculate span of a textual form of object in scale's orientation
+	 * 
+	 * @param obj
+	 *            object
+	 * @return span in pixel
 	 */
-	protected LinearScaleTickLabels createLinearScaleTickLabels() {
-		return new LinearScaleTickLabels(this);
+	public int calculateSpan(Object obj) {
+		final Dimension extent = calculateDimension(obj);
+		if (isHorizontal()) {
+			return extent.width;
+		}
+		return extent.height;
 	}
 
-	private void calcMargin() {
-		if (isHorizontal()) {
-			margin = (int) Math
-					.ceil(Math.max(FigureUtilities.getTextExtents(format(getRange().getLower(), true), getFont()).width,
-							FigureUtilities.getTextExtents(format(getRange().getUpper(), true), getFont()).width)
-							/ 2.0);
-		} else
-			margin = (int) Math.ceil(
-					Math.max(FigureUtilities.getTextExtents(format(getRange().getLower(), true), getFont()).height,
-							FigureUtilities.getTextExtents(format(getRange().getUpper(), true), getFont()).height)
-							/ 2.0);
+	/**
+	 * Calculate dimension of a textual form of object
+	 * 
+	 * @param obj
+	 *            object
+	 * @return dimension
+	 */
+	@Override
+	public Dimension calculateDimension(Object obj) {
+		if (obj == null)
+			return new Dimension();
+
+		if (obj instanceof String)
+			return FigureUtilities.getTextExtents((String) obj, getFont());
+
+		return FigureUtilities.getTextExtents(format(obj), getFont());
 	}
 
 	/**
@@ -112,7 +121,8 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 	 * @return the margin
 	 */
 	public int getMargin() {
-		updateTick();
+		if (isDirty())
+			margin = getTicksProvider().getHeadMargin();
 		return margin;
 	}
 
@@ -132,18 +142,17 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 		if (isHorizontal()) {
 			// length = wHint;
 			fakeTickLabels.update(wHint - 2 * getMargin());
-			size.height = (int) fakeTickLabels.getTickLabelMaxHeight() + SPACE_BTW_MARK_LABEL
+			size.height = fakeTickLabels.getTickLabelMaxHeight() + SPACE_BTW_MARK_LABEL
 					+ LinearScaleTickMarks.MAJOR_TICK_LENGTH;
 		} else {
 			// length = hHint;
 			fakeTickLabels.update(hHint - 2 * getMargin());
-			size.width = (int) fakeTickLabels.getTickLabelMaxLength() + SPACE_BTW_MARK_LABEL
+			size.width = fakeTickLabels.getTickLabelMaxLength() + SPACE_BTW_MARK_LABEL
 					+ LinearScaleTickMarks.MAJOR_TICK_LENGTH;
 
 		}
 
 		return size;
-
 	}
 
 	@Override
@@ -203,10 +212,12 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 	 * @return position in pixels
 	 */
 	public double getValuePrecisePosition(double value, boolean relative) {
-		if (dirty)
-			updateTick();
+		updateTick();
 		// coerce to range
 		// value = value < min ? min : (value > max ? max : value);
+		Range r = getLocalRange();
+		double min = r.getLower();
+		double max = r.getUpper();
 		double pixelsToStart = 0;
 		if (logScaleEnabled) {
 			if (value <= 0)
@@ -229,20 +240,6 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 			else
 				return length - pixelsToStart + bounds.y;
 		}
-	}
-
-	/**
-	 * Get the corresponding value on the position of the scale.
-	 * 
-	 * @param the
-	 *            position.
-	 * @param true
-	 *            if the position is relative to the left/bottom bound of the
-	 *            scale; False if it is the absolute position.
-	 * @return the value corresponding to the position.
-	 */
-	public double getPositionValue(int position, boolean relative) {
-		return getPositionValue((double) position, relative);
 	}
 
 	/**
@@ -284,57 +281,59 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 		return value;
 	}
 
-	@Override
+	/**
+	 * Get scaling for axis in terms of pixels/unit
+	 * 
+	 * @return
+	 */
+	public double getScaling() {
+		if (isLogScaleEnabled())
+			return (Math.log10(max) - Math.log10(min)) / (length - 2 * margin);
+		return (max - min) / (length - 2 * margin);
+	}
+
 	public boolean isHorizontal() {
 		return orientation == Orientation.HORIZONTAL;
-	}
-
-	/**
-	 * shows the maximum value of the range as a label
-	 * 
-	 * @return true (default) if shown
-	 */
-	public boolean isShowMaxLabel() {
-		return tickLabels.isShowMaxLabel();
-	}
-
-	/**
-	 * shows the minimum value of the range as a label
-	 * 
-	 * @return true (default) if shown
-	 */
-	public boolean isShowMinLabel() {
-		return tickLabels.isShowMinLabel();
 	}
 
 	@Override
 	protected void layout() {
 		super.layout();
+		layoutTicks();
+	}
+
+	protected void layoutTicks() {
 		updateTick();
 		Rectangle area = getClientArea();
-		if (isHorizontal() && getTickLabelSide() == LabelSide.Primary) {
-			tickLabels.setBounds(
-					new Rectangle(area.x, area.y + LinearScaleTickMarks.MAJOR_TICK_LENGTH + SPACE_BTW_MARK_LABEL,
-							area.width, area.height - LinearScaleTickMarks.MAJOR_TICK_LENGTH));
-			tickMarks.setBounds(area);
-		} else if (isHorizontal() && getTickLabelSide() == LabelSide.Secondary) {
-			tickLabels.setBounds(new Rectangle(
-					area.x, area.y + area.height - LinearScaleTickMarks.MAJOR_TICK_LENGTH
-							- tickLabels.getTickLabelMaxHeight() - SPACE_BTW_MARK_LABEL,
-					area.width, tickLabels.getTickLabelMaxHeight()));
-			tickMarks.setBounds(new Rectangle(area.x, area.y + area.height - LinearScaleTickMarks.MAJOR_TICK_LENGTH,
-					area.width, LinearScaleTickMarks.MAJOR_TICK_LENGTH));
-		} else if (getTickLabelSide() == LabelSide.Primary) {
-			tickLabels.setBounds(new Rectangle(
-							area.x + area.width - LinearScaleTickMarks.MAJOR_TICK_LENGTH
-									- tickLabels.getTickLabelMaxLength() - SPACE_BTW_MARK_LABEL,
-							area.y, tickLabels.getTickLabelMaxLength(), area.height));
-			tickMarks.setBounds(new Rectangle(area.x + area.width - LinearScaleTickMarks.MAJOR_TICK_LENGTH, area.y,
-					LinearScaleTickMarks.MAJOR_TICK_LENGTH, area.height));
+		if (isHorizontal()) {
+			if (getTickLabelSide() == LabelSide.Primary) {
+				tickLabels.setBounds(
+						new Rectangle(area.x, area.y + LinearScaleTickMarks.MAJOR_TICK_LENGTH + SPACE_BTW_MARK_LABEL,
+								area.width, area.height - LinearScaleTickMarks.MAJOR_TICK_LENGTH));
+				tickMarks.setBounds(area);
+			} else {
+				tickLabels.setBounds(new Rectangle(area.x,
+						area.y + area.height - LinearScaleTickMarks.MAJOR_TICK_LENGTH
+								- tickLabels.getTickLabelMaxHeight() - SPACE_BTW_MARK_LABEL,
+						area.width, tickLabels.getTickLabelMaxHeight()));
+				tickMarks.setBounds(new Rectangle(area.x, area.y + area.height - LinearScaleTickMarks.MAJOR_TICK_LENGTH,
+						area.width, LinearScaleTickMarks.MAJOR_TICK_LENGTH));
+			}
 		} else {
-			tickLabels.setBounds(new Rectangle(area.x + LinearScaleTickMarks.MAJOR_TICK_LENGTH + SPACE_BTW_MARK_LABEL,
-					area.y, tickLabels.getTickLabelMaxLength(), area.height));
-			tickMarks.setBounds(new Rectangle(area.x, area.y, LinearScaleTickMarks.MAJOR_TICK_LENGTH, area.height));
+			if (getTickLabelSide() == LabelSide.Primary) {
+				tickLabels.setBounds(new Rectangle(
+						area.x + area.width - LinearScaleTickMarks.MAJOR_TICK_LENGTH
+								- tickLabels.getTickLabelMaxLength() - SPACE_BTW_MARK_LABEL,
+						area.y, tickLabels.getTickLabelMaxLength(), area.height));
+				tickMarks.setBounds(new Rectangle(
+						area.x + area.width - LinearScaleTickMarks.MAJOR_TICK_LENGTH - LinearScaleTickMarks.LINE_WIDTH,
+						area.y, LinearScaleTickMarks.MAJOR_TICK_LENGTH + LinearScaleTickMarks.LINE_WIDTH, area.height));
+			} else {
+				tickLabels
+						.setBounds(new Rectangle(area.x + LinearScaleTickMarks.MAJOR_TICK_LENGTH + SPACE_BTW_MARK_LABEL,
+								area.y, tickLabels.getTickLabelMaxLength(), area.height));
+				tickMarks.setBounds(new Rectangle(area.x, area.y, LinearScaleTickMarks.MAJOR_TICK_LENGTH, area.height));
+			}
 		}
 	}
 
@@ -348,12 +347,8 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 				length = rect.height - getInsets().getHeight();
 		}
 		super.setBounds(rect);
-
 	}
 
-	/*
-	 * @see IAxisTick#setFont(Font)
-	 */
 	@Override
 	public void setFont(Font font) {
 		if (font != null && font.isDisposed()) {
@@ -375,8 +370,6 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 	}
 
 	/**
-	 * sets the orientation
-	 * 
 	 * @param orientation
 	 *            the orientation to set
 	 */
@@ -384,32 +377,9 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 		this.orientation = orientation;
 		setDirty(true);
 		revalidate();
-
 	}
 
-	/**
-	 * sets the visibility of the maximum label
-	 * 
-	 * @param b
-	 *            show maximal value as a label
-	 */
-	public void setShowMaxLabel(boolean b) {
-		tickLabels.setShowMaxLabel(b);
-
-	}
-
-	/**
-	 * sets the visibility of the minimum label
-	 * 
-	 * @param b
-	 *            show minimum value as a label
-	 */
-	public void setShowMinLabel(boolean b) {
-		tickLabels.setShowMinLabel(b);
-
-	}
-
-	protected Range localRange = null;
+	private Range localRange = null;
 
 	/**
 	 * @return range used for axis (not range given by data)
@@ -424,39 +394,23 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 	@Override
 	public void updateTick() {
 		if (isDirty()) {
-			calcMargin();
-			setDirty(false);
 			length = isHorizontal() ? getClientArea().width : getClientArea().height;
-			if (length > 2 * margin)
-				tickLabels.update(length - 2 * margin);
-
+			if (length > 2 * getMargin()) {
+				Range r = tickLabels.update(length - 2 * getMargin());
+				if (r != null && !r.equals(range) && !forceRange) {
+					localRange = r;
+				} else {
+					localRange = null;
+				}
+				// getMargin();
+			}
+			setDirty(false);
 		}
-	}
-
-	@Override
-	protected boolean useLocalCoordinates() {
-		return true;
 	}
 
 	@Override
 	public Range getScaleRange() {
 		return getRange();
-	}
-
-	/**
-	 * Calculate dimension of a textual form of object
-	 *
-	 * @param obj
-	 *            object
-	 * @return dimension
-	 */
-	@Override
-	public Dimension getDimension(Object obj) {
-		if (obj == null)
-			return new Dimension();
-		if (obj instanceof String)
-			return FigureUtilities.getTextExtents((String) obj, getFont());
-		return FigureUtilities.getTextExtents(format(obj), getFont());
 	}
 
 	@Override
@@ -472,13 +426,23 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 		return value;
 	}
 
-	@Override
-	public boolean areLabelsCustomised() {
-		return false;
+	/**
+	 * @param isTicksIndexBased
+	 *            if true, make ticks based on axis dataset indexes
+	 */
+	public void setTicksIndexBased(boolean isTicksIndexBased) {
+		if (ticksIndexBased != isTicksIndexBased)
+			tickLabels.setTicksIndexBased(isTicksIndexBased);
+		ticksIndexBased = isTicksIndexBased;
 	}
 
 	@Override
-	public boolean hasTicksAtEnds() {
-		return true;
+	public boolean isTicksIndexBased() {
+		return ticksIndexBased;
+	}
+
+	@Override
+	public boolean areLabelCustomised() {
+		return false;
 	}
 }

@@ -19,6 +19,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.Rectangle;
 
 public interface IXYGraph extends IFigure {
 
@@ -28,21 +29,8 @@ public interface IXYGraph extends IFigure {
 
 	public static final String PROPERTY_ZOOMTYPE = "zoomType"; //$NON-NLS-1$
 
-	/**
-	 * default X axis name
-	 */
 	public static final String X_AXIS = "X-Axis";
-
-	/**
-	 * default Y axis name
-	 */
 	public static final String Y_AXIS = "Y-Axis";
-
-	public void fireConfigChanged();
-
-	public XYGraphMemento getXyGraphMem();
-
-	public void setXyGraphMem(XYGraphMemento xyGraphMem);
 
 	/**
 	 * @param zoomType
@@ -137,8 +125,6 @@ public interface IXYGraph extends IFigure {
 	 */
 	Font getTitleFont();
 
-	FontData getTitleFontData();
-
 	/**
 	 * @param titleColor
 	 *            the titleColor to set
@@ -170,11 +156,15 @@ public interface IXYGraph extends IFigure {
 	Image getImage();
 
 	/**
+	 * @param trim
+	 * @return Image of the XYFigure. Receiver must dispose.
+	 */
+	Image getImage(Rectangle size);
+
+	/**
 	 * @return the titleColor
 	 */
 	Color getTitleColor();
-
-	RGB getTitleColorRgb();
 
 	/**
 	 * @return the title

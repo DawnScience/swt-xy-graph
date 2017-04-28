@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2017 Oak Ridge National Laboratory.
+ * Copyright (c) 2010 Oak Ridge National Laboratory.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,11 +43,11 @@ public class LinearScaledMarker extends Figure {
 
 	private LinearScale scale;
 
-	private LabelSide markerLabelsPosition = LabelSide.Secondary;
+	private LabelSide makerLablesPosition = LabelSide.Secondary;
 
 	private boolean markerLineVisible = false;
 
-	private boolean markerLabelVisible = true;
+	private boolean markerLableVisible = true;
 
 	private int tickLabelMaxLength;
 
@@ -59,11 +59,6 @@ public class LinearScaledMarker extends Figure {
 	private final static int TICK_LINE_WIDTH = 2;
 	private final static int GAP_BTW_MARK_LABEL = 3;
 
-	/**
-	 * Constructor
-	 *
-	 * @param scale
-	 */
 	public LinearScaledMarker(LinearScale scale) {
 		this.scale = scale;
 		setFont(XYGraphMediaFactory.getInstance().getFont(XYGraphMediaFactory.FONT_TAHOMA));
@@ -142,11 +137,6 @@ public class LinearScaledMarker extends Figure {
 		dirty = true;
 	}
 
-	/**
-	 * Removes the marker element with the given label
-	 *
-	 * @param label
-	 */
 	public void removeMarkerElement(String label) {
 		markersMap.remove(label);
 		dirty = true;
@@ -164,13 +154,13 @@ public class LinearScaledMarker extends Figure {
 	private void drawMarkerTick(Graphics graphics) {
 		graphics.setLineWidth(TICK_LINE_WIDTH);
 		if (scale.isHorizontal()) {
-			if (markerLabelsPosition == LabelSide.Primary) {
+			if (makerLablesPosition == LabelSide.Primary) {
 				int i = 0;
 				for (int markerPos : markerPositions) {
 					graphics.setForegroundColor(markerColorsList.get(i));
 					graphics.drawLine(markerPos, 0, markerPos, TICK_LENGTH);
 					// draw labels
-					if (isMarkerLabelVisible()) {
+					if (isMarkerLableVisible()) {
 						graphics.drawText(labels[i], markerPos - markerLabelDimensions[i].width / 2,
 								TICK_LENGTH + GAP_BTW_MARK_LABEL);
 					}
@@ -182,7 +172,7 @@ public class LinearScaledMarker extends Figure {
 					graphics.setForegroundColor(markerColorsList.get(i));
 					graphics.drawLine(markerPos, bounds.height, markerPos, bounds.height - TICK_LENGTH);
 					// draw labels
-					if (isMarkerLabelVisible()) {
+					if (isMarkerLableVisible()) {
 						graphics.drawText(labels[i], markerPos - markerLabelDimensions[i].width / 2,
 								bounds.height - TICK_LENGTH - GAP_BTW_MARK_LABEL - markerLabelDimensions[i].height);
 					}
@@ -190,13 +180,13 @@ public class LinearScaledMarker extends Figure {
 				}
 			}
 		} else {
-			if (markerLabelsPosition == LabelSide.Primary) {
+			if (makerLablesPosition == LabelSide.Primary) {
 
 				for (int i = 0; i < markerPositions.length; i++) {
 					graphics.setForegroundColor(markerColorsList.get(i));
 					graphics.drawLine(bounds.width, markerPositions[i], bounds.width - TICK_LENGTH, markerPositions[i]);
 					// draw labels
-					if (isMarkerLabelVisible()) {
+					if (isMarkerLableVisible()) {
 						graphics.drawText(labels[i],
 								bounds.width - TICK_LENGTH - GAP_BTW_MARK_LABEL - markerLabelDimensions[i].width,
 								markerPositions[i] - markerLabelDimensions[i].height / 2);
@@ -209,7 +199,7 @@ public class LinearScaledMarker extends Figure {
 					graphics.drawLine(0, markerPos, TICK_LENGTH, markerPos);
 
 					// draw labels
-					if (isMarkerLabelVisible()) {
+					if (isMarkerLableVisible()) {
 						graphics.drawText(labels[i], TICK_LENGTH + GAP_BTW_MARK_LABEL,
 								markerPos - markerLabelDimensions[i].height / 2);
 					}
@@ -232,7 +222,7 @@ public class LinearScaledMarker extends Figure {
 	 */
 	public void updateTick() {
 		if (dirty == true) {
-			updateMarkerElements();
+			updateMarkerElments();
 			updateTickLabelMaxLength();
 		}
 		dirty = false;
@@ -268,17 +258,9 @@ public class LinearScaledMarker extends Figure {
 	}
 
 	/**
-	 * Use correctly spelled {@link #updateMarkerElements()} instead.
+	 * @return the markerValues
 	 */
-	@Deprecated
 	public void updateMarkerElments() {
-		updateMarkerElements();
-	}
-
-	/**
-	 * updates marker elements of ticks
-	 */
-	public void updateMarkerElements() {
 		labels = new String[markersMap.size()];
 		markerColorsList.clear();
 		markerValues = new double[markersMap.size()];
@@ -313,26 +295,18 @@ public class LinearScaledMarker extends Figure {
 
 	/**
 	 * @param labelSide
-	 *            the makerLabelsPosition to set
+	 *            the makerLablesPosition to set
 	 */
 	public void setLabelSide(LabelSide labelSide) {
-		this.markerLabelsPosition = labelSide;
+		this.makerLablesPosition = labelSide;
 		dirty = true;
 	}
 
 	/**
-	 * @return the makerLabelsPosition
+	 * @return the makerLablesPosition
 	 */
-	public LabelSide getMakerLabelsPosition() {
-		return markerLabelsPosition;
-	}
-
-	/**
-	 * @deprecated use correctly spelled {@link #getMakerLabelsPosition()}
-	 */
-	@Deprecated
 	public LabelSide getMakerLablesPosition() {
-		return getMakerLabelsPosition();
+		return makerLablesPosition;
 	}
 
 	/**
@@ -352,35 +326,19 @@ public class LinearScaledMarker extends Figure {
 	}
 
 	/**
-	 * @param markerLabelVisible
-	 *            the markerLabelVisible to set
+	 * @param markerLableVisible
+	 *            the markerLableVisible to set
 	 */
-	public void setMarkerLabelVisible(boolean markerLabelVisible) {
-		this.markerLabelVisible = markerLabelVisible;
+	public void setMarkerLableVisible(boolean markerLableVisible) {
+		this.markerLableVisible = markerLableVisible;
 		dirty = true;
 	}
 
 	/**
-	 * @deprecated use correctly spelled {@link #setMarkerLabelVisible(boolean)}
+	 * @return the markerLableVisible
 	 */
-	@Deprecated
-	public void setMarkerLableVisible(boolean markerLabelVisible) {
-		setMarkerLabelVisible(markerLabelVisible);
-	}
-
-	/**
-	 * @return the markerLabelVisible
-	 */
-	public boolean isMarkerLabelVisible() {
-		return markerLabelVisible;
-	}
-
-	/**
-	 * @deprecated use correctly spelled {@link #isMarkerLabelVisible()
-	 */
-	@Deprecated
 	public boolean isMarkerLableVisible() {
-		return isMarkerLabelVisible();
+		return markerLableVisible;
 	}
 
 	@Override
