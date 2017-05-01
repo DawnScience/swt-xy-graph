@@ -22,7 +22,9 @@ import org.eclipse.nebula.visualization.xygraph.linearscale.ITicksProvider;
 import org.eclipse.nebula.visualization.xygraph.linearscale.LinearScaleTickLabels;
 import org.eclipse.nebula.visualization.xygraph.linearscale.LinearScaleTickLabels2;
 import org.eclipse.nebula.visualization.xygraph.linearscale.LinearScaleTickMarks;
+import org.eclipse.nebula.visualization.xygraph.linearscale.LinearScaleTickMarks2;
 import org.eclipse.nebula.visualization.xygraph.linearscale.Range;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * The Diamond Light Source implementation of the axis figure.
@@ -66,6 +68,11 @@ public class DAxis extends Axis {
 	@Override
 	protected LinearScaleTickLabels createLinearScaleTickLabels() {
 		return new LinearScaleTickLabels2(this);
+	}
+
+	@Override
+	protected LinearScaleTickMarks createLinearScaleTickMarks() {
+		return new LinearScaleTickMarks2(this);
 	}
 
 	/**
@@ -149,6 +156,14 @@ public class DAxis extends Axis {
 		if (ticksIndexBased != isTicksIndexBased)
 			((LinearScaleTickLabels2)tickLabels).setTicksIndexBased(isTicksIndexBased);
 		ticksIndexBased = isTicksIndexBased;
+	}
+
+	/**
+	 *
+	 * @return True if ticks are index based
+	 */
+	public boolean isTicksIndexBased() {
+		return ticksIndexBased;
 	}
 
 	@Override
@@ -347,8 +362,85 @@ public class DAxis extends Axis {
 
 	@Override
 	public void setLogScale(boolean enabled) throws IllegalStateException {
+		boolean cur = isLogScaleEnabled();
 		super.setLogScale(enabled);
+		if (cur != enabled && xyGraph != null) {
+			Display.getDefault().asyncExec(new Runnable() {
+				public void run() {
+					xyGraph.performAutoScale();
+					xyGraph.getPlotArea().layout();
+					xyGraph.revalidate();
+					xyGraph.repaint();
+				}
+			});
+		}
 		setTicksAtEnds(true);
+	}
+
+	@Override
+	public boolean performAutoScale(boolean force) {
+		// Anything to do? Autoscale not enabled nor forced?
+		if (traceList.size() <= 0 || !(force || autoScale)) {
+			return false;
+		}
+
+		// Get range of data in all traces
+		Range range = getTraceDataRange();
+		if (range == null) {
+			return false;
+		}
+
+		double dataMin = range.getLower();
+		double dataMax = range.getUpper();
+
+		// Get current axis range, determine how 'different' they are
+		double axisMax = getRange().getUpper();
+		double axisMin = getRange().getLower();
+
+		if (rangeIsUnchanged(dataMin, dataMax, axisMin, axisMax) || Double.isInfinite(dataMin)
+				|| Double.isInfinite(dataMax) || Double.isNaN(dataMin) || Double.isNaN(dataMax)) {
+			return false;
+		}
+
+		// The threshold is 'shared' between upper and lower range, times by 0.5
+		final double thr = (axisMax - axisMin) * 0.5 * autoScaleThreshold;
+
+		boolean lowerChanged = (dataMin - axisMin) < 0 || (dataMin - axisMin) >= thr;
+		boolean upperChanged = (axisMax - dataMax) < 0 || (axisMax - dataMax) >= thr;
+		// If both the changes are lower than threshold, return
+		if (!lowerChanged && !upperChanged) {
+			return false;
+		}
+
+		// Calculate updated range
+		double newMax = upperChanged ? dataMax : axisMax;
+		double newMin = lowerChanged ? dataMin : axisMin;
+		range = !isInverted ? new Range(newMin, newMax) : new Range(newMax, newMin);
+
+		// by-pass overridden method as it sets ticks to false
+		super.setRange(range.getLower(), range.getUpper());
+		fireAxisRangeChanged(getRange(), range);
+		setTicksAtEnds(!axisAutoscaleTight);
+		repaint();
+		return true;
+	}
+
+	/**
+	 * Determines if upper or lower data has changed from current axis limits
+	 *
+	 * @param dataMin
+	 *            - min of data in buffer
+	 * @param dataMax
+	 *            - max of data in buffer
+	 * @param axisMin
+	 *            - current axis min
+	 * @param axisMax
+	 *            - current axis max
+	 * @return TRUE if data and axis max and min values are equal
+	 */
+	private boolean rangeIsUnchanged(double dataMin, double dataMax, double axisMin, double axisMax) {
+		return Double.doubleToLongBits(dataMin) == Double.doubleToLongBits(axisMin)
+				&& Double.doubleToLongBits(dataMax) == Double.doubleToLongBits(axisMax);
 	}
 
 	/**

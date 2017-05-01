@@ -71,13 +71,13 @@ public class Axis extends LinearScale {
 	// title FontData : Add because of SWT illegal thread access
 	private FontData scaleFontData;
 
-	private boolean autoScale = false;
+	protected boolean autoScale = false;
 
 	private boolean showMajorGrid = false;
 
 	private boolean showMinorGrid = false;
 
-	private boolean isInverted = false;
+	protected boolean isInverted = false;
 
 	private Color majorGridColor;
 
@@ -85,7 +85,7 @@ public class Axis extends LinearScale {
 
 	private boolean dashGridLine = true;
 
-	private double autoScaleThreshold = 0.01;
+	protected double autoScaleThreshold = 0.01;
 
 	protected final List<IAxisListener> listeners = new ArrayList<IAxisListener>();
 
@@ -994,7 +994,10 @@ public class Axis extends LinearScale {
 		private void performStartEndZoom() {
 			final double t1 = getPositionValue(isHorizontal() ? start.x : start.y, false);
 			final double t2 = getPositionValue(isHorizontal() ? end.x : end.y, false);
-			setRange(t1, t2, true);
+			if (getRange().isMinBigger()) {
+				setRange(t1 > t2 ? t1 : t2, t1 > t2 ? t2 : t1);
+			} else
+				setRange(t1 > t2 ? t2 : t1, t1 > t2 ? t1 : t2);
 		}
 
 		/** Perform the in or out zoom according to zoomType */
