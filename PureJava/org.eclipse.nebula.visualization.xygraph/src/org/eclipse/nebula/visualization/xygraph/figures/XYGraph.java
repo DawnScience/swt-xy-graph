@@ -317,8 +317,8 @@ public class XYGraph extends Figure implements IXYGraph {
 
 		for (int i = yAxisList.size() - 1; i >= 0; i--) {
 			Axis yAxis = yAxisList.get(i);
-			int hintHeight = clientArea.height + (hasTopXAxis ? 1 : 0) * yAxis.getMargin()
-					+ (hasBottomXAxis ? 1 : 0) * yAxis.getMargin();
+			int hintHeight = clientArea.height + (hasTopXAxis ? yAxis.getMargin() : 0)
+					+ (hasBottomXAxis ? yAxis.getMargin() : 0);
 			if (hintHeight > getClientArea().height)
 				hintHeight = clientArea.height;
 			Dimension yAxisSize = yAxis.getPreferredSize(clientArea.width, hintHeight);
@@ -351,10 +351,9 @@ public class XYGraph extends Figure implements IXYGraph {
 
 		if (plotArea != null && plotArea.isVisible()) {
 
-			Rectangle plotAreaBound = new Rectangle(primaryXAxis.getBounds().x + primaryXAxis.getMargin() + 1,
-					primaryYAxis.getBounds().y + primaryYAxis.getMargin(),
-					primaryXAxis.getBounds().width - 2 * primaryXAxis.getMargin(),
-					primaryYAxis.getBounds().height - 2 * primaryYAxis.getMargin());
+			Rectangle plotAreaBound = new Rectangle(primaryXAxis.getBounds().x + primaryXAxis.getMargin(),
+					primaryYAxis.getBounds().y + primaryYAxis.getMargin(), primaryXAxis.getTickLength(),
+					primaryYAxis.getTickLength());
 			plotArea.setBounds(plotAreaBound);
 
 		}
@@ -688,9 +687,13 @@ public class XYGraph extends Figure implements IXYGraph {
 	public void performAutoScale() {
 		final ZoomCommand command = new ZoomCommand("Auto Scale", xAxisList, yAxisList);
 		for (Axis axis : xAxisList) {
+			if (!axis.isVisible())
+				continue;
 			axis.performAutoScale(true);
 		}
 		for (Axis axis : yAxisList) {
+			if (!axis.isVisible())
+				continue;
 			axis.performAutoScale(true);
 		}
 		command.saveState();
