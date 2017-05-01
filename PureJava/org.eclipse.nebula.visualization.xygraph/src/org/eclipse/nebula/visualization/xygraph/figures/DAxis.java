@@ -48,12 +48,6 @@ public class DAxis extends Axis {
 	private boolean axisAutoscaleTight = false;
 
 	/**
-	 * used if difference between min and max is too small
-	 */
-	private static final double ZERO_RANGE_FRACTION = 0.125;
-
-
-	/**
 	 * Constructor
 	 *
 	 * @param title
@@ -319,34 +313,13 @@ public class DAxis extends Axis {
 
 	@Override
 	public void setRange(double lower, double upper) {
-		if (Double.isNaN(lower) || Double.isNaN(upper) || Double.isInfinite(lower) || Double.isInfinite(upper)
-				|| Double.isInfinite(upper - lower)) {
-			throw new IllegalArgumentException("Illegal range: lower=" + lower + ", upper=" + upper);
+		Range old_range = getRange();
+		if (old_range.getLower() == lower && old_range.getUpper() == upper) {
+			return;
 		}
-
-		forceRange = lower == upper;
-		if (forceRange) {
-			final double delta = (lower == 0 ? 1 : Math.abs(lower)) * ZERO_RANGE_FRACTION;
-			upper += delta;
-			lower -= delta;
-			if (Double.isInfinite(upper))
-				throw new IllegalArgumentException("Illegal range: lower=" + lower + ", upper=" + upper);
-		}
-
-		if (logScaleEnabled) {
-			if (upper <= 0)
-				upper = DEFAULT_LOG_SCALE_MAX;
-			if (lower <= 0)
-				lower = DEFAULT_LOG_SCALE_MIN * upper;
-		}
-
-		min = lower;
-		max = upper;
-		range = new Range(min, max);
-		cachedFormats.clear();
-		setDirty(true);
-		revalidate();
-		repaint();
+		setTicksAtEnds(false);
+		super.setRange(lower, upper);
+		fireAxisRangeChanged(old_range, getRange());
 	}
 
 	@Override
