@@ -66,7 +66,7 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 	 */
 	public LinearScale() {
 		tickLabels = createLinearScaleTickLabels();
-		tickMarks = new LinearScaleTickMarks(this);
+		tickMarks = createLinearScaleTickMarks();
 		add(tickMarks);
 		add(tickLabels);
 		// setFont(XYGraphMediaFactory.getInstance().getFont(
@@ -81,6 +81,15 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 	 */
 	protected LinearScaleTickLabels createLinearScaleTickLabels() {
 		return new LinearScaleTickLabels(this);
+	}
+
+	/**
+	 * Creates the LinearScaleTickMarks. To be overridden if necessary if
+	 * another Axis implementation is used.
+	 *
+	 */
+	protected LinearScaleTickMarks createLinearScaleTickMarks() {
+		return new LinearScaleTickMarks(this);
 	}
 
 	private void calcMargin() {
@@ -132,12 +141,12 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 		if (isHorizontal()) {
 			// length = wHint;
 			fakeTickLabels.update(wHint - 2 * getMargin());
-			size.height = (int) fakeTickLabels.getTickLabelMaxHeight() + SPACE_BTW_MARK_LABEL
+			size.height = fakeTickLabels.getTickLabelMaxHeight() + SPACE_BTW_MARK_LABEL
 					+ LinearScaleTickMarks.MAJOR_TICK_LENGTH;
 		} else {
 			// length = hHint;
 			fakeTickLabels.update(hHint - 2 * getMargin());
-			size.width = (int) fakeTickLabels.getTickLabelMaxLength() + SPACE_BTW_MARK_LABEL
+			size.width = fakeTickLabels.getTickLabelMaxLength() + SPACE_BTW_MARK_LABEL
 					+ LinearScaleTickMarks.MAJOR_TICK_LENGTH;
 
 		}
@@ -207,6 +216,9 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 			updateTick();
 		// coerce to range
 		// value = value < min ? min : (value > max ? max : value);
+		Range r = getLocalRange();
+		double min = r.getLower();
+		double max = r.getUpper();
 		double pixelsToStart = 0;
 		if (logScaleEnabled) {
 			if (value <= 0)

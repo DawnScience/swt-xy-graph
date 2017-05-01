@@ -26,6 +26,7 @@ public class LinearScaleTickLabels2 extends LinearScaleTickLabels {
 	 */
 	public LinearScaleTickLabels2(DAxis linearScale) {
 		super(linearScale);
+		setTicksIndexBased(linearScale.isTicksIndexBased());
 	}
 
 	@Override

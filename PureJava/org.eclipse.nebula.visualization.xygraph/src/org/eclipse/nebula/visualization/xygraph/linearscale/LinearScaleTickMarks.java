@@ -24,7 +24,7 @@ import org.eclipse.nebula.visualization.xygraph.util.SWTConstants;
 public class LinearScaleTickMarks extends Figure {
 
 	/** the scale */
-	private LinearScale scale;
+	protected LinearScale scale;
 
 	/** the line width */
 	public static final int LINE_WIDTH = 1;
@@ -124,7 +124,7 @@ public class LinearScaleTickMarks extends Figure {
 	 * @param gc
 	 *            the graphics context
 	 */
-	private void drawXTickMarks(Graphics gc, List<Integer> tickLabelPositions, LabelSide tickLabelSide, int width,
+	protected void drawXTickMarks(Graphics gc, List<Integer> tickLabelPositions, LabelSide tickLabelSide, int width,
 			int height) {
 
 		updateMinorTickParas();
@@ -225,7 +225,7 @@ public class LinearScaleTickMarks extends Figure {
 	 * @param gc
 	 *            the graphics context
 	 */
-	private void drawYTickMarks(Graphics gc, List<Integer> tickLabelPositions, LabelSide tickLabelSide, int width,
+	protected void drawYTickMarks(Graphics gc, List<Integer> tickLabelPositions, LabelSide tickLabelSide, int width,
 			int height) {
 		updateMinorTickParas();
 		// draw tick marks

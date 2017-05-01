@@ -33,7 +33,7 @@ public class LinearScaleTickLabels extends Figure {
 	 * @param linearScale
 	 *            the scale
 	 */
-	protected LinearScaleTickLabels(IScaleProvider linearScale) {
+	public LinearScaleTickLabels(IScaleProvider linearScale) {
 
 		this.scale = linearScale;
 		createLinearScaleTicks();
@@ -222,7 +222,6 @@ public class LinearScaleTickLabels extends Figure {
 	 */
 	public Range update(int length) {
 		final Range range = scale.getScaleRange();
-		ticks.update(range.getLower(), range.getUpper(), length);
-		return range;
+		return ticks.update(range.getLower(), range.getUpper(), length);
 	}
 }
