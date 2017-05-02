@@ -24,7 +24,7 @@ import org.eclipse.nebula.visualization.xygraph.util.SWTConstants;
 public class LinearScaleTickMarks extends Figure {
 
 	/** the scale */
-	protected LinearScale scale;
+	private LinearScale scale;
 
 	/** the line width */
 	public static final int LINE_WIDTH = 1;
@@ -314,4 +314,11 @@ public class LinearScaleTickMarks extends Figure {
 			gc.drawLine(x, y, x + verticalMinorTickLength, y);
 	}
 
+	/**
+	 *
+	 * @return the scale
+	 */
+	public LinearScale getScaleProvider() {
+		return scale;
+	}
 }

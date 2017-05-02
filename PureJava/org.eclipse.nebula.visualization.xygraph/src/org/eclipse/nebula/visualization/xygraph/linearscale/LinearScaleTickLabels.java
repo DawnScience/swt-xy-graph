@@ -23,9 +23,9 @@ public class LinearScaleTickLabels extends Figure {
 
 	protected static final String MINUS = "-";
 
-	protected ITicksProvider ticks;
+	private ITicksProvider ticks;
 
-	protected IScaleProvider scale;
+	private IScaleProvider scale;
 
 	/**
 	 * Constructor.
@@ -56,6 +56,15 @@ public class LinearScaleTickLabels extends Figure {
 	 */
 	public ITicksProvider getTicksProvider() {
 		return ticks;
+	}
+
+	/**
+	 * Sets the ticks provider
+	 *
+	 * @param ticks
+	 */
+	protected void setTicksProvider(ITicksProvider ticks) {
+		this.ticks = ticks;
 	}
 
 	/**

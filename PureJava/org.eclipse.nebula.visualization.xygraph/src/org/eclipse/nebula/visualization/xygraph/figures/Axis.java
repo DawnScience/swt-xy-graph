@@ -59,9 +59,9 @@ public class Axis extends LinearScale {
 		this.scaleFontData = getFont().getFontData()[0];
 	}
 
-	protected final List<Trace> traceList = new ArrayList<Trace>();
+	private final List<Trace> traceList = new ArrayList<Trace>();
 
-	protected IXYGraph xyGraph;
+	private IXYGraph xyGraph;
 	private Grid grid;
 
 	private Font titleFont;
@@ -71,13 +71,13 @@ public class Axis extends LinearScale {
 	// title FontData : Add because of SWT illegal thread access
 	private FontData scaleFontData;
 
-	protected boolean autoScale = false;
+	private boolean autoScale = false;
 
 	private boolean showMajorGrid = false;
 
 	private boolean showMinorGrid = false;
 
-	protected boolean isInverted = false;
+	private boolean isInverted = false;
 
 	private Color majorGridColor;
 
@@ -85,7 +85,7 @@ public class Axis extends LinearScale {
 
 	private boolean dashGridLine = true;
 
-	protected double autoScaleThreshold = 0.01;
+	private double autoScaleThreshold = 0.01;
 
 	protected final List<IAxisListener> listeners = new ArrayList<IAxisListener>();
 
@@ -633,6 +633,13 @@ public class Axis extends LinearScale {
 	}
 
 	/**
+	 * @return xyGraph
+	 */
+	public IXYGraph getXyGraph() {
+		return xyGraph;
+	}
+
+	/**
 	 * Use {@link #setXyGraph(IXYGraph)} instead
 	 * 
 	 * @param xyGraph
@@ -641,6 +648,13 @@ public class Axis extends LinearScale {
 	@Deprecated
 	public void setXyGraph(final XYGraph xyGraph) {
 		this.xyGraph = xyGraph;
+	}
+
+	/**
+	 * @return traceList
+	 */
+	protected List<Trace> getTraceList() {
+		return traceList;
 	}
 
 	@Override
@@ -708,6 +722,13 @@ public class Axis extends LinearScale {
 	 */
 	public double getAutoScaleThreshold() {
 		return autoScaleThreshold;
+	}
+
+	/**
+	 * @return autoScale
+	 */
+	public boolean getAutoScale() {
+		return autoScale;
 	}
 
 	/**
