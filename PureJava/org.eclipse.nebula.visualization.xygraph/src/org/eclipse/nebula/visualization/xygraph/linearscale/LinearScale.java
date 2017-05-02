@@ -485,7 +485,7 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 	}
 
 	@Override
-	public boolean areLabelsCustomised() {
+	public boolean isLabelCustomised() {
 		return false;
 	}
 

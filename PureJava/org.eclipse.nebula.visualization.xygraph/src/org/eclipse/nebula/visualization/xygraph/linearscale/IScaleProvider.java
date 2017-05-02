@@ -149,7 +149,7 @@ public interface IScaleProvider {
 	/**
 	 * @return true if axis labels are customised
 	 */
-	public boolean areLabelsCustomised();
+	public boolean isLabelCustomised();
 
 	/**
 	 * Gets the ticks provider

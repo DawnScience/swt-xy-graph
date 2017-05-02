@@ -47,16 +47,18 @@ public class TickFactory {
 
 	private TickFormatting formatOfTicks;
 	private final static BigDecimal EPSILON = new BigDecimal("1.0E-20");
-	private static final int DIGITS_UPPER_LIMIT = 6; // limit for number of
-														// digits to display
-														// left of decimal point
-	private static final int DIGITS_LOWER_LIMIT = -6; // limit for number of
-														// zeros to display
-														// right of decimal
-														// point
-	private static final double ROUND_FRACTION = 2e-6; // fraction of
-														// denominator to round
-														// to
+	/**
+	 * limit for number of digits to display left of decimal point
+	 */
+	private static final int DIGITS_UPPER_LIMIT = 6;
+	/**
+	 * limit for number of zeros to display right of decimal point
+	 */
+	private static final int DIGITS_LOWER_LIMIT = -6;
+	/**
+	 * fraction of denominator to round to
+	 */
+	private static final double ROUND_FRACTION = 2e-6;
 	private static final BigDecimal BREL_ERROR = new BigDecimal("1e-15");
 	private static final double REL_ERROR = BREL_ERROR.doubleValue();
 
@@ -64,7 +66,7 @@ public class TickFactory {
 	private double graphMax;
 	private String tickFormat;
 	private IScaleProvider scale;
-	private int intervals; // number of intervals
+	private int numberOfIntervals;
 	private boolean isReversed;
 
 	/**
@@ -151,88 +153,84 @@ public class TickFactory {
 
 	/**
 	 * Round numerator down to multiples of denominators
-	 * 
-	 * @param n
-	 *            numerator
-	 * @param d
-	 *            denominator
-	 * @return
+	 *
+	 * @param numerator
+	 * @param denominator
+	 * @return rounded down value
 	 */
-	protected static double roundDown(BigDecimal n, BigDecimal d) {
-		final int ns = n.signum();
+	protected static double roundDown(BigDecimal numerator, BigDecimal denominator) {
+		final int ns = numerator.signum();
 		if (ns == 0)
 			return 0;
-		final int ds = d.signum();
+		final int ds = denominator.signum();
 		if (ds == 0) {
 			throw new IllegalArgumentException("Zero denominator is not allowed");
 		}
 
-		n = n.abs();
-		d = d.abs();
-		final BigDecimal[] x = n.divideAndRemainder(d);
+		numerator = numerator.abs();
+		denominator = denominator.abs();
+		final BigDecimal[] x = numerator.divideAndRemainder(denominator);
 		double rx = x[1].doubleValue();
-		if (rx > (1 - ROUND_FRACTION) * d.doubleValue()) {
+		if (rx > (1 - ROUND_FRACTION) * denominator.doubleValue()) {
 			// trim up if close to denominator
 			x[1] = BigDecimal.ZERO;
 			x[0] = x[0].add(BigDecimal.ONE);
-		} else if (rx < ROUND_FRACTION * d.doubleValue()) {
+		} else if (rx < ROUND_FRACTION * denominator.doubleValue()) {
 			x[1] = BigDecimal.ZERO;
 		}
 		final int xs = x[1].signum();
 		if (xs == 0) {
-			return ns != ds ? -x[0].multiply(d).doubleValue() : x[0].multiply(d).doubleValue();
+			return ns != ds ? -x[0].multiply(denominator).doubleValue() : x[0].multiply(denominator).doubleValue();
 		} else if (xs < 0) {
 			throw new IllegalStateException("Cannot happen!");
 		}
 
 		if (ns != ds)
-			return x[0].signum() == 0 ? -d.doubleValue() : -x[0].add(BigDecimal.ONE).multiply(d).doubleValue();
+			return x[0].signum() == 0 ? -denominator.doubleValue() : -x[0].add(BigDecimal.ONE).multiply(denominator).doubleValue();
 
-		return x[0].multiply(d).doubleValue();
+		return x[0].multiply(denominator).doubleValue();
 	}
 
 	/**
 	 * Round numerator up to multiples of denominators
-	 * 
-	 * @param n
-	 *            numerator
-	 * @param d
-	 *            denominator
-	 * @return
+	 *
+	 * @param numerator
+	 * @param denominator
+	 * @return rounded up value
 	 */
-	protected static double roundUp(BigDecimal n, BigDecimal d) {
-		final int ns = n.signum();
+	protected static double roundUp(BigDecimal numerator, BigDecimal denominator) {
+		final int ns = numerator.signum();
 		if (ns == 0)
 			return 0;
-		final int ds = d.signum();
+		final int ds = denominator.signum();
 		if (ds == 0) {
 			throw new IllegalArgumentException("Zero denominator is not allowed");
 		}
 
-		n = n.abs();
-		d = d.abs();
-		final BigDecimal[] x = n.divideAndRemainder(d);
+		numerator = numerator.abs();
+		denominator = denominator.abs();
+		final BigDecimal[] x = numerator.divideAndRemainder(denominator);
 		double rx = x[1].doubleValue();
 		if (rx != 0) {
-			if (rx < ROUND_FRACTION * d.doubleValue()) {
+			if (rx < ROUND_FRACTION * denominator.doubleValue()) {
 				// trim down if close to zero
 				x[1] = BigDecimal.ZERO;
-			} else if (rx > (1 - ROUND_FRACTION) * d.doubleValue()) {
+			} else if (rx > (1 - ROUND_FRACTION) * denominator.doubleValue()) {
 				x[1] = BigDecimal.ZERO;
 				x[0] = x[0].add(BigDecimal.ONE);
 			}
 		}
 		final int xs = x[1].signum();
 		if (xs == 0) {
-			return ns != ds ? -x[0].multiply(d).doubleValue() : x[0].multiply(d).doubleValue();
+			return ns != ds ? -x[0].multiply(denominator).doubleValue() : x[0].multiply(denominator).doubleValue();
 		} else if (xs < 0) {
 			throw new IllegalStateException("Cannot happen!");
 		}
 
 		if (ns != ds)
-			return x[0].signum() == 0 ? 0 : -x[0].multiply(d).doubleValue();
+			return x[0].signum() == 0 ? 0 : -x[0].multiply(denominator).doubleValue();
 
-		return x[0].add(BigDecimal.ONE).multiply(d).doubleValue();
+		return x[0].add(BigDecimal.ONE).multiply(denominator).doubleValue();
 	}
 
 	/**
@@ -357,11 +355,11 @@ public class TickFactory {
 				}
 			}
 			if (bUnit.compareTo(BREL_ERROR.multiply(magnitude)) <= 0) {
-				intervals = -1; // signal that we hit the limit of precision
+				numberOfIntervals = -1; // signal that we hit the limit of precision
 			} else {
-				intervals = (int) Math.round((graphMax - graphMin) / bUnit.doubleValue());
+				numberOfIntervals = (int) Math.round((graphMax - graphMin) / bUnit.doubleValue());
 			}
-		} while (intervals > maxTicks && --nTicks > 0);
+		} while (numberOfIntervals > maxTicks && --nTicks > 0);
 		if (isReversed) {
 			double t = graphMin;
 			graphMin = graphMax;
@@ -375,8 +373,6 @@ public class TickFactory {
 		 */
 		int d = bUnit.scale() < 0 ? bUnit.precision() + bUnit.scale() - 1 : bUnit.scale();
 		int p = (int) Math.max(Math.floor(Math.log10(Math.abs(graphMin))), Math.floor(Math.log10(Math.abs(graphMax))));
-		// System.err.println(bUnit + " = P: " + bUnit.precision() + ", S: " +
-		// bUnit.scale() + " => " + d + ", " + p);
 		if (p <= DIGITS_LOWER_LIMIT || p >= DIGITS_UPPER_LIMIT) {
 			createFormatString(Math.max(d + p, 0), true);
 		} else {
@@ -396,7 +392,7 @@ public class TickFactory {
 	 * Generate a list of ticks that span range given by min and max. The
 	 * maximum number of ticks is exceed by one in the case where the range
 	 * straddles zero.
-	 * 
+	 *
 	 * @param min
 	 * @param max
 	 * @param maxTicks
@@ -413,7 +409,7 @@ public class TickFactory {
 		if (tickUnit == 0)
 			return ticks;
 
-		for (int i = 0; i <= intervals; i++) {
+		for (int i = 0; i <= numberOfIntervals; i++) {
 			double p = graphMin + i * tickUnit;
 			if (Math.abs(p / tickUnit) < REL_ERROR)
 				p = 0; // ensure positive zero
@@ -471,7 +467,6 @@ public class TickFactory {
 				t.setPosition((t.getValue() - lo) / range);
 			}
 		}
-
 		return ticks;
 	}
 
@@ -479,7 +474,7 @@ public class TickFactory {
 
 	/**
 	 * Generate a list of ticks that span range given by min and max.
-	 * 
+	 *
 	 * @param min
 	 * @param max
 	 * @param maxTicks
@@ -498,14 +493,14 @@ public class TickFactory {
 		List<Tick> ticks = new ArrayList<Tick>();
 		double gRange = nicenum(BigDecimal.valueOf(max - min), false).doubleValue();
 		double tickUnit = 1;
-		intervals = 0;
+		numberOfIntervals = 0;
 		int it = maxTicks - 1;
-		while (intervals < 1) {
+		while (numberOfIntervals < 1) {
 			tickUnit = Math.max(1, nicenum(BigDecimal.valueOf(gRange / it++), true).doubleValue());
 			tickUnit = Math.floor(tickUnit); // make integer
 			graphMin = Math.ceil(Math.ceil(min / tickUnit) * tickUnit);
 			graphMax = Math.floor(Math.floor(max / tickUnit) * tickUnit);
-			intervals = (int) Math.floor((graphMax - graphMin) / tickUnit);
+			numberOfIntervals = (int) Math.floor((graphMax - graphMin) / tickUnit);
 			if (tickUnit == 1) {
 				break;
 			}
@@ -523,7 +518,7 @@ public class TickFactory {
 			break;
 		}
 
-		for (int i = 0; i <= intervals; i++) {
+		for (int i = 0; i <= numberOfIntervals; i++) {
 			double p = graphMin + i * tickUnit;
 			Tick newTick = new Tick();
 			newTick.setValue(p);
@@ -541,7 +536,7 @@ public class TickFactory {
 		}
 
 		if (formatOfTicks == TickFormatting.autoMode) { // override labels
-			if (scale != null && scale.areLabelsCustomised()) {
+			if (scale != null && scale.isLabelCustomised()) {
 				double vmin = Double.POSITIVE_INFINITY;
 				double vmax = Double.NEGATIVE_INFINITY;
 				boolean allInts = true;
@@ -611,9 +606,9 @@ public class TickFactory {
 		if (allowMinMaxOver) {
 			graphMin = loDecade;
 			graphMax = n * unit + loDecade;
-			intervals = n;
+			numberOfIntervals = n;
 		} else {
-			intervals = (int) Math.floor(graphMax - graphMin) / unit;
+			numberOfIntervals = (int) Math.floor(graphMax - graphMin) / unit;
 		}
 
 		if (isReversed) {
@@ -661,7 +656,7 @@ public class TickFactory {
 		int tickUnit = determineNumLogTicks(min, max, maxTicks, allowMinMaxOver);
 
 		double p = graphMin;
-		for (int i = 0; i <= intervals; i++) {
+		for (int i = 0; i <= numberOfIntervals; i++) {
 			double x = Math.pow(10, p);
 			boolean r = inRangeLog(x, min, max);
 			if (!tight || r) {
@@ -674,7 +669,7 @@ public class TickFactory {
 		}
 
 		int imax = ticks.size();
-		if (imax < intervals) {
+		if (imax < numberOfIntervals) {
 			double x = Math.pow(10, p);
 			boolean r = inRangeLog(x, min, max);
 			if (!tight || r) {
@@ -741,5 +736,4 @@ public class TickFactory {
 		}
 		return ticks;
 	}
-
 }

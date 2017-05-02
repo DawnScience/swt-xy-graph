@@ -994,6 +994,10 @@ public class Axis extends LinearScale {
 		private void performStartEndZoom() {
 			final double t1 = getPositionValue(isHorizontal() ? start.x : start.y, false);
 			final double t2 = getPositionValue(isHorizontal() ? end.x : end.y, false);
+			// Properly set the range given the values of t1 and t2: if the
+			// maximum value of the range is smaller than the minimum,
+			// accordingly set the min and max given the values of t1 and t2 and
+			// vice versa.
 			if (getRange().isMinBigger()) {
 				setRange(t1 > t2 ? t1 : t2, t1 > t2 ? t2 : t1);
 			} else
@@ -1027,5 +1031,4 @@ public class Axis extends LinearScale {
 			}
 		}
 	}
-
 }
