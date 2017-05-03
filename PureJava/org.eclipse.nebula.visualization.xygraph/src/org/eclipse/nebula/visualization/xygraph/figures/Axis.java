@@ -1019,10 +1019,12 @@ public class Axis extends LinearScale {
 			// maximum value of the range is smaller than the minimum,
 			// accordingly set the min and max given the values of t1 and t2 and
 			// vice versa.
-			if (getRange().isMinBigger()) {
-				setRange(t1 > t2 ? t1 : t2, t1 > t2 ? t2 : t1);
-			} else
-				setRange(t1 > t2 ? t2 : t1, t1 > t2 ? t1 : t2);
+			boolean isMinBigger = getRange().isMinBigger();
+			if (isMinBigger == (t1 > t2)) {
+				setRange(t1, t2);
+			} else {
+				setRange(t2, t1);
+			}
 		}
 
 		/** Perform the in or out zoom according to zoomType */

@@ -228,6 +228,8 @@ public class LinearScaleTickLabels extends Figure {
 	 *
 	 * @param length
 	 *            scale tick length (without margin)
+	 * @return returns a new axis Range if scale has changed and has ticks at
+	 *         ends and its size is > 1, null otherwise.
 	 */
 	public Range update(int length) {
 		final Range range = scale.getScaleRange();

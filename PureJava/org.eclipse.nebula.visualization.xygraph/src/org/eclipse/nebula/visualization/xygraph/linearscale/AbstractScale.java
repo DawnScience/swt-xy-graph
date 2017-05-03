@@ -591,13 +591,21 @@ public abstract class AbstractScale extends Figure {
 	 *            the autoFormat to set
 	 */
 	public void setAutoFormat(boolean autoFormat) {
-		this.autoFormat = autoFormat;
+		internalSetAutoFormat(autoFormat);
 		if (autoFormat) {
 			formatPattern = null;
 			setRange(getRange());
 			format(0);
 		}
+	}
 
+	/**
+	 * Sets ONLY the autoFormat value
+	 *
+	 * @param autoFormat
+	 */
+	protected void internalSetAutoFormat(boolean autoFormat) {
+		this.autoFormat = autoFormat;
 	}
 
 	/**
