@@ -204,61 +204,63 @@ public class DAxis extends Axis {
 		if (extraDP < 0) {
 			throw new IllegalArgumentException("Number of extra decimal places must be non-negative");
 		}
+		String formatPattern = getFormatPattern();
+		boolean autoFormat = isAutoFormat();
 		if (cachedFormats.get(extraDP) == null) {
-			String formatPattern = getFormatPattern();
 			if (isDateEnabled()) {
-				if (isAutoFormat() || formatPattern == null || formatPattern.equals("")
+				if (autoFormat || formatPattern == null || formatPattern.equals("")
 						|| formatPattern.equals(default_decimal_format)
 						|| formatPattern.equals(DEFAULT_ENGINEERING_FORMAT)) {
 					// (?) overridden anyway
-					setFormatPattern(DEFAULT_DATE_FORMAT);
+					formatPattern = DEFAULT_DATE_FORMAT;
 					int timeUnit = getTimeUnit();
 					double length = Math.abs(max - min);
 					// less than a second
 					if (length <= 1000 || timeUnit == Calendar.MILLISECOND) {
-						setFormatPattern("HH:mm:ss.SSS");
+						formatPattern = "HH:mm:ss.SSS";
 					}
 					// less than a hour
 					else if (length <= 3600000d || timeUnit == Calendar.SECOND) {
-						setFormatPattern("HH:mm:ss");
+						formatPattern = "HH:mm:ss";
 					}
 					// less than a day
 					else if (length <= 86400000d || timeUnit == Calendar.MINUTE) {
-						setFormatPattern("HH:mm");
+						formatPattern = "HH:mm";
 					}
 					// less than a week
 					else if (length <= 604800000d || timeUnit == Calendar.HOUR_OF_DAY) {
-						setFormatPattern("dd HH:mm");
+						formatPattern = "dd HH:mm";
 					}
 					// less than a month
 					else if (length <= 2592000000d || timeUnit == Calendar.DATE) {
-						setFormatPattern("MMMMM d");
+						formatPattern = "MMMMM d";
 					}
 					// less than a year
 					else if (length <= 31536000000d || timeUnit == Calendar.MONTH) {
-						setFormatPattern("yyyy MMMMM");
+						formatPattern = "yyyy MMMMM";
 					} else {// if (timeUnit == Calendar.YEAR) {
-						setFormatPattern("yyyy");
+						formatPattern = "yyyy";
 					}
-					formatPattern = getFormatPattern();
 					if (formatPattern == null || formatPattern.equals("")) {
-						internalSetAutoFormat(true);
+						autoFormat = true;
 					}
 				}
+				setFormatPattern(formatPattern);
 				cachedFormats.put(extraDP, new SimpleDateFormat(formatPattern));
 			} else {
 				if (formatPattern == null || formatPattern.isEmpty() || formatPattern.equals(default_decimal_format)
 						|| formatPattern.equals(DEFAULT_DATE_FORMAT)) {
-					setFormatPattern(getAutoFormat(min, max));
+					formatPattern = getAutoFormat(min, max);
+					setFormatPattern(formatPattern);
 					if (formatPattern == null || formatPattern.equals("")) {
-						internalSetAutoFormat(true);
+						autoFormat = true;
 					}
 				}
 
-				String ePattern = getFormatPattern();
+				String ePattern = formatPattern;
 				if (extraDP > 0) {
 					int e = formatPattern.lastIndexOf('E');
-					StringBuilder temp = new StringBuilder(e == -1 ? formatPattern : ePattern.substring(0, e));
+					StringBuilder temp = new StringBuilder(e == -1 ? formatPattern : formatPattern.substring(0, e));
 					for (int i = 0; i < extraDP; i++) {
 						temp.append('#');
 					}
@@ -269,8 +271,8 @@ public class DAxis extends Axis {
 				}
 				cachedFormats.put(extraDP, new DecimalFormat(ePattern));
 			}
+			internalSetAutoFormat(autoFormat);
 		}
-
 		if (isDateEnabled() && obj instanceof Number) {
 			return cachedFormats.get(extraDP).format(new Date(((Number) obj).longValue()));
 		}
