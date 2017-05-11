@@ -313,6 +313,11 @@ public class PlotArea extends Figure {
 	private Collection<MouseMotionListener> auxilliaryMotionListeners;
 
 	/**
+	 * Field used to remember the previous zoom type used
+	 */
+	private ZoomType previousZoomType = ZoomType.NONE;
+
+	/**
 	 * Listener to mouse events, performs panning and some zooms Is very similar
 	 * to the Axis.AxisMouseListener, but unclear how easy/useful it would be to
 	 * base them on the same code.
@@ -329,8 +334,14 @@ public class PlotArea extends Figure {
 			fireMousePressed(me);
 
 			// Only react to 'main' mouse button, only react to 'real' zoom
-			if (me.button != 1 || zoomType == ZoomType.NONE)
+			if ((me.button != 1 || zoomType == ZoomType.NONE) && me.button != 2)
 				return;
+			// Remember last used zoomtype
+			previousZoomType = zoomType;
+			// if the mousewheel is pressed
+			if (me.button == 2) {
+				zoomType = ZoomType.PANNING;
+			}
 
 			armed = true;
 			dynamicZoomMode = false;
@@ -531,7 +542,12 @@ public class PlotArea extends Figure {
 				default:
 					break;
 				}
-
+			// mousewheel is pressed and last zoom type was not panning, we set
+			// the zoomtype to the previous state.
+			if (me.button == 2 && previousZoomType != ZoomType.PANNING) {
+				zoomType = previousZoomType;
+				setCursor(previousZoomType.getCursor());
+			}
 			if (zoomType != ZoomType.NONE && command != null) {
 				command.saveState();
 				xyGraph.getOperationsManager().addCommand(command);
@@ -697,6 +713,13 @@ public class PlotArea extends Figure {
 			return;
 		for (MouseMotionListener l : auxilliaryMotionListeners)
 			l.mouseDragged(me);
+	}
+
+	/**
+	 * @return the active zoom type
+	 */
+	public ZoomType getZoomType() {
+		return zoomType;
 	}
 
 }
