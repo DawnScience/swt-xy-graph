@@ -38,6 +38,17 @@ import org.eclipse.swt.widgets.Display;
  */
 public class PlotArea extends Figure {
 	public static final String BACKGROUND_COLOR = "background_color"; //$NON-NLS-1$
+
+	/**
+	 * Value of left click mouse button event which is equal to 1
+	 */
+	public static final int BUTTON1 = 1;
+
+	/**
+	 * Value of middle click / mousewheel button event which is equal to 2
+	 */
+	public static final int BUTTON2 = 2;
+
 	final protected IXYGraph xyGraph;
 	final private List<Trace> traceList = new ArrayList<Trace>();
 	final private List<Grid> gridList = new ArrayList<Grid>();
@@ -334,12 +345,12 @@ public class PlotArea extends Figure {
 			fireMousePressed(me);
 
 			// Only react to 'main' mouse button, only react to 'real' zoom
-			if ((me.button != 1 || zoomType == ZoomType.NONE) && me.button != 2)
+			if ((me.button != BUTTON1 || zoomType == ZoomType.NONE) && me.button != BUTTON2)
 				return;
 			// Remember last used zoomtype
 			previousZoomType = zoomType;
 			// if the mousewheel is pressed
-			if (me.button == 2) {
+			if (me.button == BUTTON2) {
 				zoomType = ZoomType.PANNING;
 			}
 
@@ -544,7 +555,7 @@ public class PlotArea extends Figure {
 				}
 			// mousewheel is pressed and last zoom type was not panning, we set
 			// the zoomtype to the previous state.
-			if (me.button == 2 && previousZoomType != ZoomType.PANNING) {
+			if (me.button == BUTTON2 && previousZoomType != ZoomType.PANNING) {
 				zoomType = previousZoomType;
 				setCursor(previousZoomType.getCursor());
 			}
