@@ -771,12 +771,12 @@ public class Axis extends LinearScale {
 		@Override
 		public void mousePressed(final MouseEvent me) {
 			// Only react to 'main' mouse button, only react to 'real' zoom
-			if ((me.button != 1 || !isValidZoomType(zoomType)) && me.button != 2)
+			if ((me.button != PlotArea.BUTTON1 || !isValidZoomType(zoomType)) && me.button != PlotArea.BUTTON2)
 				return;
 			// Remember last used zoomtype
 			previousZoomType = zoomType;
 			// if mousewheel is pressed
-			if (me.button == 2) {
+			if (me.button == PlotArea.BUTTON2) {
 				zoomType = ZoomType.PANNING;
 			}
 			armed = true;
@@ -913,7 +913,7 @@ public class Axis extends LinearScale {
 			}
 			// mousewheel is pressed and last zoom type was not panning, we set
 			// the zoomtype to the previous state.
-			if (me.button == 2 && previousZoomType != ZoomType.PANNING) {
+			if (me.button == PlotArea.BUTTON2 && previousZoomType != ZoomType.PANNING) {
 				setZoomType(previousZoomType);
 			}
 			command.saveState();
