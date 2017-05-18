@@ -41,6 +41,7 @@ import org.eclipse.swt.widgets.TabItem;
  * The dialog for configuring XYGraph properties.
  * 
  * @author Xihui Chen
+ * @author Baha El-Kassaby - Add ability to have custom config dialogs
  *
  */
 public class XYGraphConfigDialog extends Dialog {
@@ -58,14 +59,14 @@ public class XYGraphConfigDialog extends Dialog {
 	private static final int MAX_CONFIG_PAGE_COUNT = 50;
 
 	private GraphConfigPage graphConfigPage;
-	protected List<AnnotationConfigPage> annotationConfigPageList;
-	protected List<AxisConfigPage> axisConfigPageList;
-	protected Combo traceCombo;
-	protected Combo axisCombo;
-	protected Combo annotationsCombo;
-	protected List<ITraceConfigPage> traceConfigPageList;
-	protected IXYGraph xyGraph;
-	protected XYGraphConfigCommand command;
+	private List<AnnotationConfigPage> annotationConfigPageList;
+	private List<AxisConfigPage> axisConfigPageList;
+	private List<ITraceConfigPage> traceConfigPageList;
+	private Combo traceCombo;
+	private Combo axisCombo;
+	private Combo annotationsCombo;
+	private IXYGraph xyGraph;
+	private XYGraphConfigCommand command;
 	private boolean changed = false;
 
 	public XYGraphConfigDialog(Shell parentShell, IXYGraph xyGraph) {
@@ -100,11 +101,6 @@ public class XYGraphConfigDialog extends Dialog {
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		return createDialogArea(parent, true);
-	}
-
-	protected Control createDialogArea(Composite parent, boolean enableAxisRanges) {
-
 		final Composite parent_composite = (Composite) super.createDialogArea(parent);
 		parent_composite.setLayout(new FillLayout());
 		final TabFolder tabFolder = new TabFolder(parent_composite, SWT.NONE);
@@ -133,7 +129,7 @@ public class XYGraphConfigDialog extends Dialog {
 		axisSelectGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		axisSelectGroup.setText("Select Axis");
 		axisSelectGroup.setLayout(new GridLayout(1, false));
-		axisCombo = new Combo(axisSelectGroup, SWT.DROP_DOWN | SWT.READ_ONLY);
+		axisCombo = new Combo(axisSelectGroup, SWT.DROP_DOWN);
 		axisCombo.setLayoutData(new GridData(SWT.FILL, 0, true, false));
 		int count = 0;
 		for (Axis axis : xyGraph.getAxisList()) {
@@ -156,7 +152,7 @@ public class XYGraphConfigDialog extends Dialog {
 			Group axisConfigGroup = new Group(axisConfigComposite, SWT.NONE);
 			axisConfigGroup.setText("Change Settings");
 			axisConfigGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-			AxisConfigPage axisConfigPage = new AxisConfigPage(xyGraph, axis, enableAxisRanges);
+			AxisConfigPage axisConfigPage = new AxisConfigPage(xyGraph, axis);
 			axisConfigPageList.add(axisConfigPage);
 			axisConfigPage.createPage(axisConfigGroup);
 		}
@@ -186,7 +182,7 @@ public class XYGraphConfigDialog extends Dialog {
 			traceSelectGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 			traceSelectGroup.setText("Select Trace");
 			traceSelectGroup.setLayout(new GridLayout(1, false));
-			this.traceCombo = new Combo(traceSelectGroup, SWT.DROP_DOWN | SWT.READ_ONLY);
+			traceCombo = new Combo(traceSelectGroup, SWT.DROP_DOWN);
 			traceCombo.setLayoutData(new GridData(SWT.FILL, 0, true, false));
 			count = 0;
 			for (Trace trace : xyGraph.getPlotArea().getTraceList()) {
@@ -242,7 +238,7 @@ public class XYGraphConfigDialog extends Dialog {
 			annoSelectGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 			annoSelectGroup.setText("Select Annotation");
 			annoSelectGroup.setLayout(new GridLayout(1, false));
-			this.annotationsCombo = new Combo(annoSelectGroup, SWT.DROP_DOWN);
+			annotationsCombo = new Combo(annoSelectGroup, SWT.DROP_DOWN);
 			annotationsCombo.setLayoutData(new GridData(SWT.FILL, 0, true, false));
 			count = 0;
 			for (Annotation annotation : xyGraph.getPlotArea().getAnnotationList()) {
@@ -354,4 +350,37 @@ public class XYGraphConfigDialog extends Dialog {
 		}
 		super.cancelPressed();
 	}
+
+	public Combo getTraceCombo() {
+		return traceCombo;
+	}
+
+	public Combo getAxisCombo() {
+		return axisCombo;
+	}
+
+	public Combo getAnnotationsCombo() {
+		return annotationsCombo;
+	}
+
+	public List<AnnotationConfigPage> getAnnotationConfigPageList() {
+		return annotationConfigPageList;
+	}
+
+	public List<AxisConfigPage> getAxisConfigPageList() {
+		return axisConfigPageList;
+	}
+
+	public List<ITraceConfigPage> getTraceConfigPageList() {
+		return traceConfigPageList;
+	}
+
+	public IXYGraph getXyGraph() {
+		return xyGraph;
+	}
+
+	public XYGraphConfigCommand getCommand() {
+		return command;
+	}
+
 }
