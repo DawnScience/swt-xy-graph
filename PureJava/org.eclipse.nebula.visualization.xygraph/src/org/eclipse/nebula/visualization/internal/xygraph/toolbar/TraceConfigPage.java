@@ -37,11 +37,12 @@ import org.eclipse.swt.widgets.Text;
  * properties.
  * 
  * @author Xihui Chen
+ * @author Baha El-Kassaby - make TraceConfigPage implement ITraceConfigPage
  *
  */
 public class TraceConfigPage implements ITraceConfigPage {
 	private XYGraph xyGraph;
-	protected Trace trace;
+	private Trace trace;
 	private Text nameText;
 	private Combo xAxisCombo;
 	private Combo yAxisCombo;
@@ -288,11 +289,11 @@ public class TraceConfigPage implements ITraceConfigPage {
 	/**
 	 * Override this method if a custom set of buttons need to be added to the
 	 * trace page.
-	 * 
+	 *
 	 * @param composite
 	 */
 	public void addCustomButton(Composite composite) {
-		
+		// do nothing
 	}
 
 	@Override
@@ -361,6 +362,13 @@ public class TraceConfigPage implements ITraceConfigPage {
 		baseLineCombo.setEnabled(traceTypeCombo.getSelectionIndex() == TraceType.BAR.ordinal()
 				|| traceTypeCombo.getSelectionIndex() == TraceType.AREA.ordinal()
 				|| traceTypeCombo.getSelectionIndex() == TraceType.LINE_AREA.ordinal());
+	}
+
+	/**
+	 * @return the trace
+	 */
+	public Trace getTrace() {
+		return trace;
 	}
 
 }
