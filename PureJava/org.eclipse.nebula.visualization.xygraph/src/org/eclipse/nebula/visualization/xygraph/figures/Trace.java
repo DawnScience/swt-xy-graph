@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Oak Ridge National Laboratory and others.
+ * Copyright (c) 2010, 2017 Oak Ridge National Laboratory and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,7 +61,7 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 
 	/**
 	 * The way how the trace will be drawn.
-	 * 
+	 *
 	 * @author Xihui Chen
 	 */
 	public enum TraceType {
@@ -1289,7 +1289,7 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 		this.traceColor = traceColor;
 		if (!errorBarColorSetFlag)
 			errorBarColor = traceColor;
-		if (xyGraph != null)
+		if (xyGraph != null && old != traceColor)
 			xyGraph.repaint();
 		fireTraceColorChanged(old, this.traceColor);
 	}
@@ -1317,12 +1317,9 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	public void setTraceType(TraceType traceType) {
 		TraceType old = this.traceType;
 		this.traceType = traceType;
-		if (xyGraph != null)
+		if (xyGraph != null && old != traceType)
 			xyGraph.repaint();
-
-		if (old != traceType) {
-			fireTraceTypeChanged(old, this.traceType);
-		}
+		fireTraceTypeChanged(old, this.traceType);
 	}
 
 	private void fireTraceTypeChanged(TraceType old, TraceType newTraceType) {
@@ -1339,8 +1336,9 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	 *            the baseLine to set
 	 */
 	public void setBaseLine(BaseLine baseLine) {
+		BaseLine old = this.baseLine;
 		this.baseLine = baseLine;
-		if (xyGraph != null)
+		if (xyGraph != null && old != baseLine)
 			xyGraph.repaint();
 	}
 
@@ -1349,22 +1347,16 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	 *            the pointStyle to set
 	 */
 	public void setPointStyle(PointStyle pointStyle) {
-
 		PointStyle old = this.pointStyle;
 		this.pointStyle = pointStyle;
-		if (xyGraph != null)
+		if (xyGraph != null && old != pointStyle)
 			xyGraph.repaint();
-
-		if (old != pointStyle) {
-			firePointStyleChanged(old, this.pointStyle);
-		}
+		firePointStyleChanged(old, this.pointStyle);
 	}
 
 	private void firePointStyleChanged(PointStyle old, PointStyle newStyle) {
-
 		if (old == newStyle)
 			return;
-
 		for (ITraceListener listener : listeners)
 			listener.pointStyleChanged(this, old, newStyle);
 	}
@@ -1373,16 +1365,14 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	 * @param lineWidth
 	 *            the lineWidth to set
 	 */
-	public void setLineWidth(int lw) {
-
+	public void setLineWidth(int lineWidth) {
 		int orig = this.lineWidth;
-		this.lineWidth = lw;
-		if (xyGraph != null)
-			xyGraph.repaint();
-
-		if (orig != lw) {
+		this.lineWidth = lineWidth;
+		if (orig != lineWidth) {
+			if (xyGraph != null)
+				xyGraph.repaint();
 			for (ITraceListener listener : listeners)
-				listener.traceWidthChanged(this, orig, lw);
+				listener.traceWidthChanged(this, orig, lineWidth);
 		}
 	}
 
@@ -1391,8 +1381,9 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	 *            the pointSize to set
 	 */
 	public void setPointSize(int pointSize) {
+		int old = this.pointSize;
 		this.pointSize = pointSize;
-		if (xyGraph != null)
+		if (xyGraph != null && old != pointSize)
 			xyGraph.repaint();
 	}
 
@@ -1401,8 +1392,9 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	 *            the areaAlpha to set
 	 */
 	public void setAreaAlpha(int areaAlpha) {
+		int old = this.areaAlpha;
 		this.areaAlpha = areaAlpha;
-		if (xyGraph != null)
+		if (xyGraph != null && old != areaAlpha)
 			xyGraph.repaint();
 	}
 
@@ -1411,8 +1403,9 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	 *            the antiAliasing to set
 	 */
 	public void setAntiAliasing(boolean antiAliasing) {
+		boolean old = this.antiAliasing;
 		this.antiAliasing = antiAliasing;
-		if (xyGraph != null)
+		if (xyGraph != null && old != antiAliasing)
 			xyGraph.repaint();
 	}
 
@@ -1433,7 +1426,7 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 		String oldName = this.name;
 		this.name = name;
 		revalidate();
-		if (xyGraph != null)
+		if (xyGraph != null && oldName != name)
 			xyGraph.repaint();
 
 		if (fire)
