@@ -146,7 +146,7 @@ public class CircularBufferDataProvider extends AbstractDataProvider {
 		if (traceData.size() == traceData.getBufferSize() && plotMode == PlotMode.N_STOP)
 			return;
 		traceData.add(sample);
-		if (!hasErrors && sample.getYPlusError() > 0d) {
+		if (!hasErrors && sample.getYPlusError() > 0d && sample.getYMinusError() > 0d) {
 			hasErrors = true;
 		}
 		fireDataChange();
