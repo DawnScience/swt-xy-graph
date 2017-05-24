@@ -220,7 +220,11 @@ public class XYGraph extends Figure implements IXYGraph {
 		operationsManager = new OperationsManager();
 	}
 
-	protected PlotArea createPlotArea(IXYGraph xyGraph) {
+	/**
+	 * @param xyGraph
+	 * @return a plotArea
+	 */
+	public PlotArea createPlotArea(IXYGraph xyGraph) {
 		return new PlotArea(xyGraph);
 	}
 
