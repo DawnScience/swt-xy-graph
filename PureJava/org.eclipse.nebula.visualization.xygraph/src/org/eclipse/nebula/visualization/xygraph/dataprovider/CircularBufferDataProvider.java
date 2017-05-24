@@ -71,7 +71,7 @@ public class CircularBufferDataProvider extends AbstractDataProvider {
 		}
 	}
 
-	protected CircularBuffer<ISample> traceData;
+	private CircularBuffer<ISample> traceData;
 
 	private double currentXData;
 
@@ -93,7 +93,8 @@ public class CircularBufferDataProvider extends AbstractDataProvider {
 
 	private boolean currentYDataArrayChanged = false;
 
-	protected boolean xAxisDateEnabled = false;
+	private boolean xAxisDateEnabled = false;
+
 	private int updateDelay = 0;
 	private boolean duringDelay = false;
 
@@ -109,6 +110,10 @@ public class CircularBufferDataProvider extends AbstractDataProvider {
 	private PlotMode plotMode = PlotMode.LAST_N;
 
 	private Runnable fireUpdate;
+
+	private int clippingWindow = -1;
+
+	private boolean hasErrors = false;
 
 	public CircularBufferDataProvider(boolean chronological) {
 		super(chronological);
@@ -134,7 +139,7 @@ public class CircularBufferDataProvider extends AbstractDataProvider {
 	}
 
 	/**
-	 * Set current YData.
+	 * Set current YData. It will automatically make timestamp disabled.
 	 * 
 	 * @param currentYData
 	 *            the currentYData to set
@@ -142,6 +147,7 @@ public class CircularBufferDataProvider extends AbstractDataProvider {
 	public synchronized void setCurrentYData(double newValue) {
 		this.currentYData = newValue;
 		currentYDataChanged = true;
+		xAxisDateEnabled = false;
 		if (!xAxisDateEnabled || (xAxisDateEnabled && currentYDataTimestampChanged))
 			tryToAddDataPoint();
 	}
@@ -155,8 +161,6 @@ public class CircularBufferDataProvider extends AbstractDataProvider {
 		}
 		fireDataChange();
 	}
-
-	private boolean hasErrors = false;
 
 	@Override
 	public boolean hasErrors() {
@@ -415,29 +419,19 @@ public class CircularBufferDataProvider extends AbstractDataProvider {
 			return;
 		dataRangedirty = false;
 		if (getSize() > 0) { // does not handle NaNs
+			int lowerBound = 0;
+			if (getSize() > clippingWindow && clippingWindow > 0) {
+				lowerBound = (getSize() - 1) - clippingWindow;
+			}
 			double xMin = Double.POSITIVE_INFINITY;
 			double xMax = positiveOnly ? 0 : Double.NEGATIVE_INFINITY;
 
-			double value = traceData.getHead().getXValue();
-			if ((!positiveOnly || value > 0) && xMin > value) {
-				xMin = value;
-			}
-			if (xMax < value) {
-				xMax = value;
-			}
 			double yMin = Double.POSITIVE_INFINITY;
 			double yMax = positiveOnly ? 0 : Double.NEGATIVE_INFINITY;
 
-			value = traceData.getHead().getYValue();
-			if ((!positiveOnly || value > 0) && yMin > value) {
-				yMin = value;
-			}
-			if (yMax < value) {
-				yMax = value;
-			}
-
-			for (ISample dp : traceData) {
-				value = dp.getXValue() - dp.getXMinusError();
+			for (int i = lowerBound; i < getSize(); i++) {
+				ISample dp = getSample(i);
+				double value = dp.getXValue() - dp.getXMinusError();
 				if ((!positiveOnly || value > 0) && xMin > value) {
 					xMin = value;
 				}
@@ -455,7 +449,16 @@ public class CircularBufferDataProvider extends AbstractDataProvider {
 					yMax = value;
 				}
 			}
-
+			if (positiveOnly) {
+				// check that x and y max are greater than their respective
+				// minima.
+				if (xMax < xMin) {
+					xMax = xMin;
+				}
+				if (yMax < yMin) {
+					yMax = yMin;
+				}
+			}
 			xDataMinMax = new Range(xMin, xMax);
 			yDataMinMax = new Range(yMin, yMax);
 		} else {
@@ -528,4 +531,13 @@ public class CircularBufferDataProvider extends AbstractDataProvider {
 		return concatenate_data;
 	}
 
+	public void setClippingWindow(int clippingWindow) {
+		assert clippingWindow >= 0;
+		assert clippingWindow <= getSize();
+		this.clippingWindow = clippingWindow;
+	}
+
+	public int getClippingWindow() {
+		return clippingWindow;
+	}
 }

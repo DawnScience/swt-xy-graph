@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Oak Ridge National Laboratory.
+ * Copyright (c) 2010, 2017 Oak Ridge National Laboratory and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -90,7 +90,7 @@ public interface IDataProvider {
 
 	/**
 	 * Get the minimum and maximum xdata.
-	 * 
+	 *
 	 * @param positiveOnly
 	 *            if true, return values greater than zero
 	 * @return a range includes the min and max as lower and upper. return null
@@ -100,7 +100,7 @@ public interface IDataProvider {
 
 	/**
 	 * Get the minimum and maximum ydata.
-	 * 
+	 *
 	 * @param positiveOnly
 	 *            if true, return values greater than zero
 	 * @return a range includes the min and max as lower and upper. return null
