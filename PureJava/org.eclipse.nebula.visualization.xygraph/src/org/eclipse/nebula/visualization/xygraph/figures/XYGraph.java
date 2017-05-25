@@ -143,7 +143,6 @@ public class XYGraph extends Figure implements IXYGraph {
 			new RGB(219, 128, 4), // orange
 	};
 
-	private int traceNum = 0;
 	protected boolean transparent = false;
 	protected boolean showLegend = true;
 
@@ -471,19 +470,9 @@ public class XYGraph extends Figure implements IXYGraph {
 	 * @param trace
 	 */
 	public void addTrace(Trace trace) {
-		addTrace(trace, null, null);
-	}
-
-	/**
-	 * Add a trace
-	 * 
-	 * @param trace
-	 */
-	public void addTrace(Trace trace, Axis xAxis, Axis yAxis) {
 		if (trace.getTraceColor() == null) { // Cycle through default colors
 			trace.setTraceColor(XYGraphMediaFactory.getInstance()
-					.getColor(DEFAULT_TRACES_COLOR[traceNum % DEFAULT_TRACES_COLOR.length]));
-			++traceNum;
+					.getColor(DEFAULT_TRACES_COLOR[plotArea.getTraceList().size() % DEFAULT_TRACES_COLOR.length]));
 		}
 		if (legendMap.containsKey(trace.getYAxis()))
 			legendMap.get(trace.getYAxis()).addTrace(trace);
@@ -491,20 +480,6 @@ public class XYGraph extends Figure implements IXYGraph {
 			legendMap.put(trace.getYAxis(), new Legend((IXYGraph) this));
 			legendMap.get(trace.getYAxis()).addTrace(trace);
 			add(legendMap.get(trace.getYAxis()));
-		}
-
-		if (xAxis == null || yAxis == null) {
-			try {
-				for (Axis axis : getAxisList()) {
-					axis.addTrace(trace);
-				}
-			} catch (Throwable ne) {
-				// Ignored, this is a bug fix for Dawn 1.0
-				// to make the plots rescale after a plot is deleted.
-			}
-		} else {
-			xAxis.addTrace(trace);
-			yAxis.addTrace(trace);
 		}
 
 		plotArea.addTrace(trace);
