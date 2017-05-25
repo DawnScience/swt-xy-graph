@@ -40,6 +40,12 @@ public class XYGraphConfigCommand implements IUndoableCommand {
 
 	}
 
+	/**
+	 * This method should not be overridden. An override-able method should not
+	 * be in a constructor. See
+	 * {@link https://stackoverflow.com/questions/3404301/whats-wrong-with-overridable-method-calls-in-constructors}
+	 */
+	@Deprecated
 	protected void createDefaultSettings() {
 		for (int i = 0; i < xyGraph.getPlotArea().getAnnotationList().size(); i++) {
 			previousXYGraphMem.addAnnotationMemento(new AnnotationMemento());
