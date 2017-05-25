@@ -89,6 +89,10 @@ public class ToolbarArmedXYGraph extends Figure {
 		add(xyGraph);
 	}
 
+	public XYGraphToolbar getToolbar() {
+		return toolbar;
+	}
+
 	@Override
 	protected void layout() {
 		Rectangle clientArea = getClientArea().getCopy();
