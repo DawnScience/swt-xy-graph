@@ -11,8 +11,8 @@ import org.eclipse.swt.widgets.Composite;
 
 /**
  * Interface used to implements a custom Trace config page
- * 
- * @author Baha El-Kassaby
+ *
+ * @author Baha El-Kassaby - first commit
  *
  */
 public interface ITraceConfigPage {
@@ -23,14 +23,14 @@ public interface ITraceConfigPage {
 	public void applyChanges();
 
 	/**
-	 * 
+	 *
 	 * @return the composite
 	 */
 	public Composite getComposite();
 
 	/**
 	 * Create the page
-	 * 
+	 *
 	 * @param composite
 	 */
 	public void createPage(Composite composite);
