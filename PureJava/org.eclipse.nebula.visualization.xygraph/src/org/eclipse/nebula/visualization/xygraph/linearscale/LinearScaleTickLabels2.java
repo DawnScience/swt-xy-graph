@@ -37,10 +37,11 @@ public class LinearScaleTickLabels2 extends LinearScaleTickLabels {
 	@Override
 	protected void drawXTick(Graphics graphics) {
 		// draw tick labels
+		ITicksProvider ticks = getTicksProvider();
 		final int imax = getTicksProvider().getMajorCount();
 		for (int i = 0; i < imax; i++) {
-			if (getTicksProvider().isVisible(i)) {
-				graphics.drawText(getTicksProvider().getLabel(i), getTicksProvider().getLabelPosition(i), 0);
+			if (ticks.isVisible(i)) {
+				graphics.drawText(ticks.getLabel(i), ticks.getLabelPosition(i), 0);
 			}
 		}
 	}
@@ -48,16 +49,17 @@ public class LinearScaleTickLabels2 extends LinearScaleTickLabels {
 	@Override
 	protected void drawYTick(Graphics graphics) {
 		// draw tick labels
-		final int imax = getTicksProvider().getMajorCount();
+		ITicksProvider ticks = getTicksProvider();
+		final int imax = ticks.getMajorCount();
 		if (imax < 1)
 			return;
-		final boolean hasNegative = getTicksProvider().getLabel(0).startsWith(MINUS);
+		final boolean hasNegative = ticks.getLabel(0).startsWith(MINUS);
 		final int minus = getScale().getDimension(MINUS).width;
 		for (int i = 0; i < imax; i++) {
-			if (getTicksProvider().isVisible(i)) {
-				String text = getTicksProvider().getLabel(i);
+			if (ticks.isVisible(i)) {
+				String text = ticks.getLabel(i);
 				int x = (hasNegative && !text.startsWith(MINUS)) ? minus : 0;
-				graphics.drawText(text, x, getTicksProvider().getLabelPosition(i));
+				graphics.drawText(text, x, ticks.getLabelPosition(i));
 			}
 		}
 	}
