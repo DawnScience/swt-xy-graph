@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Matthew Gerring - initial commit and implementation
+ *     Baha El-Kassaby - initial commit
+ *     Matthew Gerring - implementation
  ******************************************************************************/
 package org.eclipse.nebula.visualization.xygraph.figures;
 
@@ -14,6 +15,7 @@ package org.eclipse.nebula.visualization.xygraph.figures;
  * Interface used to get the information text of a label
  *
  * @author Matthew Gerring
+ * @author Baha El-Kassaby
  *
  */
 public interface IAnnotationLabelProvider {
