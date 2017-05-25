@@ -243,7 +243,7 @@ public class XYGraphConfigDialog extends Dialog {
 			annoSelectGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 			annoSelectGroup.setText("Select Annotation");
 			annoSelectGroup.setLayout(new GridLayout(1, false));
-			annotationsCombo = new Combo(annoSelectGroup, SWT.DROP_DOWN);
+			annotationsCombo = new Combo(annoSelectGroup, SWT.DROP_DOWN | SWT.READ_ONLY);
 			annotationsCombo.setLayoutData(new GridData(SWT.FILL, 0, true, false));
 			count = 0;
 			for (Annotation annotation : xyGraph.getPlotArea().getAnnotationList()) {
