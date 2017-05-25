@@ -1,3 +1,10 @@
+/*******************************************************************************
+ * Copyright (c) 2010 Oak Ridge National Laboratory.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ ******************************************************************************/
 package org.eclipse.nebula.visualization.internal.xygraph.undo;
 
 import org.eclipse.nebula.visualization.xygraph.figures.Annotation;
@@ -104,14 +111,13 @@ public class XYGraphMementoUtil {
 			xyGraph.setTitle(memento.getTitle());
 
 		xyGraph.setTitleFont(memento.getTitleFont());
-		System.out.println("XYGraphMementoUtil.restoreXYGraphPropsFromMemento() " + memento.getTitleColor());
+
 		xyGraph.setTitleColor(memento.getTitleColor());
 
 		if (memento.getPlotAreaBackColor() != null)
 			xyGraph.getPlotArea().setBackgroundColor(memento.getPlotAreaBackColor());
 
-		// xyGraph.setShowTitle(memento.isShowTitle());
-		xyGraph.setShowTitle(true);
+		xyGraph.setShowTitle(memento.isShowTitle());
 		xyGraph.setShowLegend(memento.isShowLegend());
 		xyGraph.getPlotArea().setShowBorder(memento.isShowPlotAreaBorder());
 		xyGraph.setTransparent(memento.isTransparent());
@@ -161,7 +167,7 @@ public class XYGraphMementoUtil {
 	private static void saveAxisPropsToMemento(Axis axis, AxisMemento memento) {
 		memento.setTitle(axis.getTitle());
 		memento.setTitleFont(axis.getTitleFont());
-		// memento.setForegroundColor(axis.getForegroundColor());
+		memento.setForegroundColor(axis.getForegroundColor());
 		memento.setPrimarySide(axis.isOnPrimarySide());
 		memento.setLogScale(axis.isLogScaleEnabled());
 		memento.setAutoScale(axis.isAutoScale());
