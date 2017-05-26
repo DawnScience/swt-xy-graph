@@ -282,6 +282,10 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 
 	private IPointStyleProvider fPointStyleProvider;
 
+	/**
+	 * {@link #init(Axis, Axis, IDataProvider)} needs to be called if a trace is
+	 * created with this constructor
+	 */
 	public Trace(String name) {
 		this.setName(name);
 	}
@@ -299,8 +303,8 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	}
 
 	/**
-	 * Must be called if using Trace(String)
-	 * 
+	 * Must be called if using {@link #Trace(String)}
+	 *
 	 * @param xAxis
 	 * @param yAxis
 	 * @param dataProvider
