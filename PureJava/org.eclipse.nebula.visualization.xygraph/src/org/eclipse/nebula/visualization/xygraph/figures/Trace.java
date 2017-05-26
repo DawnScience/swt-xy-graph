@@ -292,14 +292,7 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 
 	public Trace(String name, Axis xAxis, Axis yAxis, IDataProvider dataProvider) {
 		this.setName(name);
-		this.xAxis = xAxis;
-		this.yAxis = yAxis;
-		xAxis.addTrace(this);
-		yAxis.addTrace(this);
-		xAxis.addListener(this);
-		yAxis.addListener(this);
-		setDataProvider(dataProvider);
-		hotSampleist = new ArrayList<ISample>();
+		internalInit(xAxis, yAxis, dataProvider);
 	}
 
 	/**
@@ -310,6 +303,10 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	 * @param dataProvider
 	 */
 	public void init(Axis xAxis, Axis yAxis, IDataProvider dataProvider) {
+		internalInit(xAxis, yAxis, dataProvider);
+	}
+
+	private void internalInit(Axis xAxis, Axis yAxis, IDataProvider dataProvider) {
 		this.xAxis = xAxis;
 		this.yAxis = yAxis;
 		xAxis.addTrace(this);
