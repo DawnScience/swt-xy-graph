@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Oak Ridge National Laboratory.
+ * Copyright (c) 2010, 2017 Oak Ridge National Laboratory and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,8 @@
  ******************************************************************************/
 package org.eclipse.nebula.visualization.xygraph.figures;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -35,8 +37,37 @@ import org.eclipse.swt.widgets.Display;
  * 
  * @author Xihui Chen
  * @author Kay Kasemir - Axis zoom/pan tweaks
+ * @author Laurent PHILIPPE - Add property change event for annotation
+ * @author Matthew Gerring/Baha El-kassaby - Add ability to be notified of mouse
+ *         events without removing old listeners
  */
 public class PlotArea extends Figure {
+
+	// Added by Laurent PHILIPPE
+	private final PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
+
+	@Override
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		// System.out.println("**** PlotArea.addPropertyChangeListener() ****");
+		changeSupport.addPropertyChangeListener(listener);
+	}
+
+	@Override
+	public void addPropertyChangeListener(String property, PropertyChangeListener listener) {
+		// System.out.println("**** PlotArea.addPropertyChangeListener() ****");
+		changeSupport.addPropertyChangeListener(property, listener);
+	}
+
+	@Override
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		changeSupport.removePropertyChangeListener(listener);
+	}
+
+	@Override
+	public void removePropertyChangeListener(String property, PropertyChangeListener listener) {
+		changeSupport.removePropertyChangeListener(property, listener);
+	}
+
 	public static final String BACKGROUND_COLOR = "background_color"; //$NON-NLS-1$
 
 	/**
@@ -49,7 +80,7 @@ public class PlotArea extends Figure {
 	 */
 	public static final int BUTTON2 = 2;
 
-	final protected IXYGraph xyGraph;
+	final private IXYGraph xyGraph;
 	final private List<Trace> traceList = new ArrayList<Trace>();
 	final private List<Grid> gridList = new ArrayList<Grid>();
 	final private List<Annotation> annotationList = new ArrayList<Annotation>();
@@ -58,7 +89,7 @@ public class PlotArea extends Figure {
 
 	private boolean showBorder;
 
-	protected ZoomType zoomType;
+	private ZoomType zoomType;
 
 	private Point start;
 	private Point dynamicStart;
@@ -94,12 +125,14 @@ public class PlotArea extends Figure {
 
 	@Override
 	public void setBackgroundColor(final Color bg) {
+		// System.out.println("**** PlotArea.setBackgroundColor() ****");
 		RGB backRGB = bg.getRGB();
 		revertBackColor = XYGraphMediaFactory.getInstance().getColor(255 - backRGB.red, 255 - backRGB.green,
 				255 - backRGB.blue);
 		Color oldColor = getBackgroundColor();
 		super.setBackgroundColor(bg);
-		firePropertyChange(BACKGROUND_COLOR, oldColor, bg);
+
+		changeSupport.firePropertyChange(BACKGROUND_COLOR, oldColor, bg);
 
 	}
 
@@ -169,6 +202,9 @@ public class PlotArea extends Figure {
 		annotation.setxyGraph(xyGraph);
 		add(annotation);
 		revalidate();
+
+		// Laurent PHILIPPE send event
+		changeSupport.firePropertyChange("annotationList", null, annotation);
 	}
 
 	/**
@@ -187,6 +223,9 @@ public class PlotArea extends Figure {
 		if (result) {
 			remove(annotation);
 			revalidate();
+
+			// Laurent PHILIPPE send event
+			changeSupport.firePropertyChange("annotationList", annotation, null);
 		}
 		return result;
 	}
@@ -268,6 +307,13 @@ public class PlotArea extends Figure {
 	public void setZoomType(final ZoomType zoomType) {
 		this.zoomType = zoomType;
 		setCursor(zoomType.getCursor());
+	}
+
+	/**
+	 * @return the active zoom type
+	 */
+	public ZoomType getZoomType() {
+		return zoomType;
 	}
 
 	/**
@@ -430,22 +476,22 @@ public class PlotArea extends Figure {
 			if (!armed)
 				return;
 			if (dynamicZoomMode)
-				zoomType = zoomType.DYNAMIC_ZOOM;
+				zoomType = ZoomType.DYNAMIC_ZOOM;
 			switch (zoomType) {
 			case DYNAMIC_ZOOM:
 				dynamicZoomMode = true;
 				if (Math.abs(dynamicStart.x - me.x) < 30) {
 					start = new Point(bounds.x, dynamicStart.y);
 					end = new Point(bounds.x + bounds.width, me.getLocation().y);
-					setZoomType(zoomType.VERTICAL_ZOOM);
+					setZoomType(ZoomType.VERTICAL_ZOOM);
 				} else if (Math.abs(dynamicStart.y - me.y) < 30) {
 					start = new Point(dynamicStart.x, bounds.y);
 					end = new Point(me.getLocation().x, bounds.y + bounds.height);
-					setZoomType(zoomType.HORIZONTAL_ZOOM);
+					setZoomType(ZoomType.HORIZONTAL_ZOOM);
 				} else {
 					start = dynamicStart;
 					end = me.getLocation();
-					setZoomType(zoomType.RUBBERBAND_ZOOM);
+					setZoomType(ZoomType.RUBBERBAND_ZOOM);
 				}
 				break;
 			case RUBBERBAND_ZOOM:
@@ -497,46 +543,45 @@ public class PlotArea extends Figure {
 			// If we are in dynamicZoom mode we will zoom like this, for other
 			// zooms is everything like before
 			if (dynamicZoomMode) {
-				if (zoomType != zoomType.VERTICAL_ZOOM)
+				if (zoomType != ZoomType.VERTICAL_ZOOM)
 					for (Axis axis : xyGraph.getXAxisList()) {
 						final double t1 = axis.getPositionValue(start.x, false);
 						final double t2 = axis.getPositionValue(end.x, false);
-						axis.setRange(t1, t2);
+						axis.setRange(t1, t2, true);
 					}
-				if (zoomType != zoomType.HORIZONTAL_ZOOM)
+				if (zoomType != ZoomType.HORIZONTAL_ZOOM)
 					for (Axis axis : xyGraph.getYAxisList()) {
 						final double t1 = axis.getPositionValue(start.y, false);
 						final double t2 = axis.getPositionValue(end.y, false);
-						axis.setRange(t1, t2);
+						axis.setRange(t1, t2, true);
 					}
-				setZoomType(zoomType.DYNAMIC_ZOOM);
+				setZoomType(ZoomType.DYNAMIC_ZOOM);
 			} else
 				switch (zoomType) {
 				case RUBBERBAND_ZOOM:
 					for (Axis axis : xyGraph.getXAxisList()) {
 						final double t1 = axis.getPositionValue(start.x, false);
 						final double t2 = axis.getPositionValue(end.x, false);
-						Range range = getNewRange(axis, t1, t2);
-						axis.setRange(range);
+						axis.setRange(t1, t2, true);
 					}
 					for (Axis axis : xyGraph.getYAxisList()) {
 						final double t1 = axis.getPositionValue(start.y, false);
 						final double t2 = axis.getPositionValue(end.y, false);
-						axis.setRange(getNewRange(axis, t1, t2));
+						axis.setRange(t1, t2, true);
 					}
 					break;
 				case HORIZONTAL_ZOOM:
 					for (Axis axis : xyGraph.getXAxisList()) {
 						final double t1 = axis.getPositionValue(start.x, false);
 						final double t2 = axis.getPositionValue(end.x, false);
-						axis.setRange(getNewRange(axis, t1, t2));
+						axis.setRange(t1, t2, true);
 					}
 					break;
 				case VERTICAL_ZOOM:
 					for (Axis axis : xyGraph.getYAxisList()) {
 						final double t1 = axis.getPositionValue(start.y, false);
 						final double t2 = axis.getPositionValue(end.y, false);
-						axis.setRange(getNewRange(axis, t1, t2));
+						axis.setRange(t1, t2, true);
 					}
 					break;
 				case PANNING:
@@ -553,6 +598,7 @@ public class PlotArea extends Figure {
 				default:
 					break;
 				}
+
 			// mousewheel is pressed and last zoom type was not panning, we set
 			// the zoomtype to the previous state.
 			if (me.button == BUTTON2 && previousZoomType != ZoomType.PANNING) {
@@ -567,26 +613,6 @@ public class PlotArea extends Figure {
 			start = null;
 			end = null;
 			PlotArea.this.repaint();
-		}
-
-		/**
-		 * Get the new Range which will honor its original range direction.
-		 * 
-		 * @param axis
-		 *            the axis whose range should be honored
-		 * @param t1
-		 *            start
-		 * @param t2
-		 *            end
-		 * @return the new range
-		 */
-		private Range getNewRange(Axis axis, final double t1, final double t2) {
-			Range range;
-			if (axis.getRange().isMinBigger()) {
-				range = new Range(t1 > t2 ? t1 : t2, t1 > t2 ? t2 : t1);
-			} else
-				range = new Range(t1 > t2 ? t2 : t1, t1 > t2 ? t1 : t2);
-			return range;
 		}
 
 		/** Pan axis according to start/end from mouse listener */
@@ -724,13 +750,6 @@ public class PlotArea extends Figure {
 			return;
 		for (MouseMotionListener l : auxilliaryMotionListeners)
 			l.mouseDragged(me);
-	}
-
-	/**
-	 * @return the active zoom type
-	 */
-	public ZoomType getZoomType() {
-		return zoomType;
 	}
 
 }
