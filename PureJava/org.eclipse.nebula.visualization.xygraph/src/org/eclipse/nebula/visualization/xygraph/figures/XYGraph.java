@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Oak Ridge National Laboratory.
+ * Copyright (c) 2010, 2017 Oak Ridge National Laboratory and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,6 +49,8 @@ import org.eclipse.swt.widgets.Display;
  * @author Kay Kasemir (performStagger)
  * @author Laurent PHILIPPE (property change support)
  * @author Alex Clayton (added {@link IAxesFactory} factory)
+ * @author Baha El-Kassaby (added
+ *         {@link #getImage(org.eclipse.swt.graphics.Rectangle))})
  */
 public class XYGraph extends Figure implements IXYGraph {
 
@@ -144,7 +146,7 @@ public class XYGraph extends Figure implements IXYGraph {
 	};
 
 	protected boolean transparent = false;
-	protected boolean showLegend = true;
+	private boolean showLegend = true;
 
 	protected Map<Axis, Legend> legendMap;
 
@@ -355,7 +357,8 @@ public class XYGraph extends Figure implements IXYGraph {
 		if (plotArea != null && plotArea.isVisible()) {
 
 			Rectangle plotAreaBound = new Rectangle(primaryXAxis.getBounds().x + primaryXAxis.getMargin(),
-					primaryYAxis.getBounds().y + primaryYAxis.getMargin(), primaryXAxis.getTickLength(),
+					primaryYAxis.getBounds().y + primaryYAxis.getMargin(),
+					primaryXAxis.getTickLength(),
 					primaryYAxis.getTickLength());
 			plotArea.setBounds(plotAreaBound);
 
@@ -417,12 +420,24 @@ public class XYGraph extends Figure implements IXYGraph {
 	 *            true if legend should be shown; false otherwise.
 	 */
 	public void setShowLegend(boolean showLegend) {
+		setShowLegend(showLegend, true);
+	}
+
+	/**
+	 * @param showLegend
+	 * @param activate
+	 *            if true, the legend is also set to visible, false and only
+	 *            the boolean field is set
+	 */
+	public void setShowLegend(boolean showLegend, boolean activate) {
 		this.showLegend = showLegend;
-		for (Axis yAxis : legendMap.keySet()) {
-			Legend legend = legendMap.get(yAxis);
-			legend.setVisible(showLegend);
+		if (activate) {
+			for (Axis yAxis : legendMap.keySet()) {
+				Legend legend = legendMap.get(yAxis);
+				legend.setVisible(showLegend);
+			}
+			revalidate();
 		}
-		revalidate();
 	}
 
 	/**
@@ -471,8 +486,8 @@ public class XYGraph extends Figure implements IXYGraph {
 	 */
 	public void addTrace(Trace trace) {
 		if (trace.getTraceColor() == null) { // Cycle through default colors
-			trace.setTraceColor(XYGraphMediaFactory.getInstance()
-					.getColor(DEFAULT_TRACES_COLOR[plotArea.getTraceList().size() % DEFAULT_TRACES_COLOR.length]));
+			trace.setTraceColor(XYGraphMediaFactory.getInstance().getColor(
+					DEFAULT_TRACES_COLOR[plotArea.getTraceList().size() % DEFAULT_TRACES_COLOR.length]));
 		}
 		if (legendMap.containsKey(trace.getYAxis()))
 			legendMap.get(trace.getYAxis()).addTrace(trace);
@@ -481,7 +496,6 @@ public class XYGraph extends Figure implements IXYGraph {
 			legendMap.get(trace.getYAxis()).addTrace(trace);
 			add(legendMap.get(trace.getYAxis()));
 		}
-
 		plotArea.addTrace(trace);
 		trace.setXYGraph((IXYGraph) this);
 		trace.dataChanged(null);
@@ -505,9 +519,9 @@ public class XYGraph extends Figure implements IXYGraph {
 			for (Axis axis : getAxisList()) {
 				axis.removeTrace(trace);
 			}
-		} catch (Throwable ne) {
-			// Ignored, this is a bug fix for Dawn 1.0
-			// to make the plots rescale after a plot is deleted.
+		} catch (Exception ne) {
+			// Ignored, this is a bug fix to make the plots rescale after a plot
+			// is deleted.
 		}
 		plotArea.removeTrace(trace);
 		revalidate();
@@ -744,12 +758,11 @@ public class XYGraph extends Figure implements IXYGraph {
 
 	/**
 	 * @param trim
+	 *           a SWT Rectangle
 	 * @return Image of the XYFigure. Receiver must dispose.
 	 */
 	public Image getImage(org.eclipse.swt.graphics.Rectangle size) {
-
 		Rectangle orig = new Rectangle(bounds);
-
 		try {
 			setBounds(new Rectangle(0, 0, size.width, size.height));
 			layout();
