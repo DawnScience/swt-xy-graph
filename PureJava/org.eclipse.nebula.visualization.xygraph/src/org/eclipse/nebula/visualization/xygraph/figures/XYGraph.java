@@ -420,24 +420,12 @@ public class XYGraph extends Figure implements IXYGraph {
 	 *            true if legend should be shown; false otherwise.
 	 */
 	public void setShowLegend(boolean showLegend) {
-		setShowLegend(showLegend, true);
-	}
-
-	/**
-	 * @param showLegend
-	 * @param activate
-	 *            if true, the legend is also set to visible, false and only
-	 *            the boolean field is set
-	 */
-	public void setShowLegend(boolean showLegend, boolean activate) {
 		this.showLegend = showLegend;
-		if (activate) {
-			for (Axis yAxis : legendMap.keySet()) {
-				Legend legend = legendMap.get(yAxis);
-				legend.setVisible(showLegend);
-			}
-			revalidate();
+		for (Axis yAxis : legendMap.keySet()) {
+			Legend legend = legendMap.get(yAxis);
+			legend.setVisible(showLegend);
 		}
+		revalidate();
 	}
 
 	/**
