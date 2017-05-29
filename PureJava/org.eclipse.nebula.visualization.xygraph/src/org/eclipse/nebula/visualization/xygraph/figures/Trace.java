@@ -1211,19 +1211,17 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	 *            the xAxis to set
 	 */
 	public void setXAxis(Axis axis) {
-		if (xAxis == axis)
+		xAxis = axis;
+		if (xAxis == axis || axis == null)
 			return;
-		if (xAxis != null) {
-			xAxis.removeListener(this);
-			xAxis.removeTrace(this);
-		}
+		xAxis.removeListener(this);
+		xAxis.removeTrace(this);
 
 		/*
 		 * if(traceDataProvider != null){
 		 * traceDataProvider.removeDataProviderListener(xAxis);
 		 * traceDataProvider.addDataProviderListener(axis); }
 		 */
-		xAxis = axis;
 		xAxis.addTrace(this);
 		xAxis.addListener(this);
 		revalidate();
@@ -1241,10 +1239,9 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	 *            the yAxis to set
 	 */
 	public void setYAxis(Axis axis) {
-
 		Axis old = yAxis;
-
-		if (yAxis == axis) {
+		yAxis = axis;
+		if (yAxis == axis || axis == null) {
 			return;
 		}
 
@@ -1261,16 +1258,13 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 			xyGraph.add(xyGraph.getLegendMap().get(axis));
 		}
 
-		if (yAxis != null) {
-			yAxis.removeListener(this);
-			yAxis.removeTrace(this);
-		}
+		yAxis.removeListener(this);
+		yAxis.removeTrace(this);
 		/*
 		 * if(traceDataProvider != null){
 		 * traceDataProvider.removeDataProviderListener(yAxis);
 		 * traceDataProvider.addDataProviderListener(axis); }
 		 */
-		yAxis = axis;
 		yAxis.addTrace(this);
 		yAxis.addListener(this);
 
@@ -1311,7 +1305,7 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	public void setTraceColor(final Color traceColor) {
 		Color old = this.traceColor;
 		this.traceColor = traceColor;
-		if (Objects.equals(old, traceColor))
+		if (Objects.equals(old, traceColor) || traceColor == null)
 			return;
 		if (!errorBarColorSetFlag)
 			errorBarColor = traceColor;
@@ -1339,7 +1333,7 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	public void setTraceType(TraceType traceType) {
 		TraceType old = this.traceType;
 		this.traceType = traceType;
-		if (old == traceType)
+		if (old == traceType || traceType == null)
 			return;
 		if (xyGraph != null)
 			xyGraph.repaint();
@@ -1358,7 +1352,7 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	public void setBaseLine(BaseLine baseLine) {
 		BaseLine old = this.baseLine;
 		this.baseLine = baseLine;
-		if (old == baseLine)
+		if (old == baseLine || baseLine == null)
 			return;
 		if (xyGraph != null)
 			xyGraph.repaint();
@@ -1371,7 +1365,7 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	public void setPointStyle(PointStyle pointStyle) {
 		PointStyle old = this.pointStyle;
 		this.pointStyle = pointStyle;
-		if (old == pointStyle)
+		if (old == pointStyle || pointStyle == null)
 			return;
 		if (xyGraph != null)
 			xyGraph.repaint();
@@ -1454,7 +1448,7 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	public void setName(String name, boolean fire) {
 		String oldName = this.name;
 		this.name = name;
-		if (Objects.equals(oldName, name))
+		if (Objects.equals(oldName, name) || name == null)
 			return;
 		revalidate();
 		if (xyGraph != null)
