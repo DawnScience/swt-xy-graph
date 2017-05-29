@@ -1211,8 +1211,9 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	 *            the xAxis to set
 	 */
 	public void setXAxis(Axis axis) {
+		Axis old = xAxis;
 		xAxis = axis;
-		if (xAxis == axis || axis == null)
+		if (old == axis || axis == null)
 			return;
 		xAxis.removeListener(this);
 		xAxis.removeTrace(this);
@@ -1239,11 +1240,11 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	 *            the yAxis to set
 	 */
 	public void setYAxis(Axis axis) {
+
 		Axis old = yAxis;
 		yAxis = axis;
-		if (yAxis == axis || axis == null) {
+		if (old == axis || axis == null)
 			return;
-		}
 
 		xyGraph.getLegendMap().get(yAxis).removeTrace(this);
 		if (xyGraph.getLegendMap().get(yAxis).getTraceList().size() <= 0) {
