@@ -722,9 +722,8 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 							predpInRange = xAxis.getRange().inRange(predp.getXValue())
 									&& yAxis.getRange().inRange(predp.getYValue());
 						}
-						if (predp == null) { // No previous data point from
-												// which to
-												// draw a line
+						// No previous data point from which to draw a line
+						if (predp == null) {
 							predp = dp;
 							predpInRange = dpInRange;
 							continue;
@@ -736,8 +735,7 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 						final boolean origin_dpInRange = dpInRange;
 
 						// In 'STEP' modes, if there was a value, now there is
-						// none,
-						// continue that last value until the NaN location
+						// none, continue that last value until the NaN location
 						if (valueIsNaN && !Double.isNaN(predp.getYValue()) && (traceType == TraceType.STEP_HORIZONTALLY
 								|| traceType == TraceType.STEP_VERTICALLY)) {
 							// Patch 'y' of dp, re-compute dpInRange for new 'y'
@@ -758,7 +756,10 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 									predp = dpTuple[0];
 									dp = dpTuple[1];
 								}
-							} else if (!predpInRange || !dpInRange) { // one in and one out
+							} else if (!predpInRange || !dpInRange) { // one in
+																		// and
+																		// one
+																		// out
 								// calculate the intersection point with the
 								// boundary of plot area.
 								if (!predpInRange) {
@@ -800,8 +801,9 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 									plPolyline.addPoint(predpPos);
 
 								if (traceDataProvider.isChronological()) {
-									// Line drawing optimization is available only
-									// when the trace data is ascending sorted on X axis.
+									// Line drawing optimization is available
+									// only when the trace data
+									// is ascending sorted on X axis.
 									if (!predpPos.equals(plPolyline.getLastPoint())
 											&& predpPos.x != plPolyline.getLastPoint().x) {
 										// The line for this trace is not
@@ -809,12 +811,13 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 										// Draw a polyline at this point, and
 										// start to reconstruct a new
 										// polyline for the rest of the trace.
-
 										if (lastInRegion != null) {
 											// There were several points which
-											// have the same X value.
+											// have
+											// the same X value.
 											// Draw lines that connect those
-											// points at once.
+											// points
+											// at once.
 											if (minInRegion != null)
 												plPolyline.addPoint(minInRegion);
 											if (maxInRegion != null)
@@ -905,7 +908,8 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 												lastInRegion = dpPos;
 											} else if (maxInRegion == null) {
 												// At this moment, there are
-												// four points which have the same X value.
+												// four points which have the same
+												// X value.
 												if (minInRegion.y > lastInRegion.y) {
 													maxInRegion = minInRegion;
 													minInRegion = lastInRegion;
@@ -915,7 +919,8 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 												lastInRegion = dpPos;
 											} else {
 												// There are more than four
-												// points which have the same X value.
+												// points which have the same X
+												// value.
 												if (lastInRegion.y > maxInRegion.y) {
 													maxInRegion = lastInRegion;
 												} else if (lastInRegion.y < minInRegion.y) {
@@ -1023,8 +1028,8 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 					}
 				}
 			}
-		} catch (Throwable ne) {
-			ne.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
 		} finally {
 			graphics.popState();
 		}
@@ -1513,8 +1518,8 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	 * could be drawn between inside data and outside data. <b>This method only
 	 * works for chronological data, which means the data is naturally sorted on
 	 * xAxis.</b>
-	 *
-	 * @return the Range of the index or NULL if no sensible range is found.
+	 * 
+	 * @return the Range of the index.
 	 */
 	private Range getIndexRangeOnXAxis() {
 		Range axisRange = xAxis.getRange();
