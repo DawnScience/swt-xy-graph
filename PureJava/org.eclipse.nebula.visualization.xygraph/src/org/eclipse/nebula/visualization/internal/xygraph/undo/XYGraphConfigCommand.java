@@ -1,11 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2010 Oak Ridge National Laboratory.
+ * Copyright (c) 2010, 2017 Oak Ridge National Laboratory and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  ******************************************************************************/
 package org.eclipse.nebula.visualization.internal.xygraph.undo;
+
+import java.util.function.Supplier;
 
 import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
@@ -19,22 +21,43 @@ import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
 public class XYGraphConfigCommand implements IUndoableCommand {
 
 	private IXYGraph xyGraph;
-	protected XYGraphMemento previousXYGraphMem, afterXYGraphMem;
+	private XYGraphMemento previousXYGraphMem, afterXYGraphMem;
 
 	public XYGraphConfigCommand(IXYGraph xyGraph) {
-		this((XYGraph) xyGraph);
+		this(xyGraph, XYGraphMemento::new);
+	}
+
+	/**
+	 * Constructor with a XYGraphMemento {@link Supplier}
+	 *
+	 * @param xyGraph
+	 * @param mementoSupplier
+	 */
+	public XYGraphConfigCommand(IXYGraph xyGraph, Supplier<? extends XYGraphMemento> mementoSupplier) {
+		this((XYGraph) xyGraph, mementoSupplier);
 	}
 
 	/**
 	 * Use {@link #XYGraphConfigCommand(IXYGraph)} instead
-	 * 
+	 *
 	 * @param xyGraph
 	 */
 	@Deprecated
 	public XYGraphConfigCommand(XYGraph xyGraph) {
+		this(xyGraph, XYGraphMemento::new);
+	}
+
+	/**
+	 * Use {@link #XYGraphConfigCommand(IXYGraph, Supplier)} instead
+	 *
+	 * @param xyGraph
+	 * @param mementoSupplier
+	 */
+	@Deprecated
+	public XYGraphConfigCommand(XYGraph xyGraph, Supplier<? extends XYGraphMemento> mementoSupplier) {
 		this.xyGraph = xyGraph;
-		previousXYGraphMem = createXyGraphMemento();
-		afterXYGraphMem = createXyGraphMemento();
+		previousXYGraphMem = mementoSupplier.get();
+		afterXYGraphMem = mementoSupplier.get();
 
 		for (int i = 0; i < xyGraph.getPlotArea().getAnnotationList().size(); i++) {
 			previousXYGraphMem.addAnnotationMemento(new AnnotationMemento());
@@ -50,10 +73,7 @@ public class XYGraphConfigCommand implements IUndoableCommand {
 			previousXYGraphMem.addTraceMemento(new TraceMemento());
 			afterXYGraphMem.addTraceMemento(new TraceMemento());
 		}
-	}
 
-	public XYGraphMemento createXyGraphMemento() {
-		return new XYGraphMemento();
 	}
 
 	public void redo() {
