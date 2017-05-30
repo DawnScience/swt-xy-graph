@@ -1437,6 +1437,16 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	 *            the name of the trace to set
 	 */
 	public void setName(String name) {
+		setName(name, true);
+	}
+
+	/**
+	 * @param name
+	 *            the name of the trace to set
+	 * @param fire
+	 *            if true, a traceNameChanged event is fired
+	 */
+	public void setName(String name, boolean fire) {
 		String oldName = this.name;
 		if (Objects.equals(oldName, name))
 			return;
@@ -1444,7 +1454,8 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 		revalidate();
 		if (xyGraph != null)
 			xyGraph.repaint();
-		fireTraceNameChanged(oldName, this.name);
+		if (fire)
+			fireTraceNameChanged(oldName, this.name);
 	}
 
 	private void fireTraceNameChanged(String oldName, String newName) {
@@ -1768,6 +1779,28 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 
 	public void axisLogScaleChanged(Axis axis, boolean old, boolean logScale) {
 
+	}
+
+	/**
+	 * Remove figures and reset fields
+	 */
+	public void dispose() {
+		if (getParent() != null)
+			getParent().remove(this);
+		removeAll();
+		getHotSampleList().clear();
+		this.name = null;
+		this.traceDataProvider = null;
+		this.xAxis = null;
+		this.yAxis = null;
+		this.traceColor = null;
+		this.traceType = null;
+		this.baseLine = null;
+		this.pointStyle = null;
+		this.yErrorBarType = null;
+		this.xErrorBarType = null;
+		this.errorBarColor = null;
+		this.xyGraph = null;
 	}
 
 }
