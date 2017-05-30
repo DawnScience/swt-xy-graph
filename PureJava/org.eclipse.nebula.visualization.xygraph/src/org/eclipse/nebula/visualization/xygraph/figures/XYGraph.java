@@ -49,8 +49,7 @@ import org.eclipse.swt.widgets.Display;
  * @author Kay Kasemir (performStagger)
  * @author Laurent PHILIPPE (property change support)
  * @author Alex Clayton (added {@link IAxesFactory} factory)
- * @author Baha El-Kassaby (added
- *         {@link #getImage(org.eclipse.swt.graphics.Rectangle))})
+ * @author Baha El-Kassaby/Matthew Gerring (added Diamond Light Source contributions)
  */
 public class XYGraph extends Figure implements IXYGraph {
 
@@ -222,10 +221,12 @@ public class XYGraph extends Figure implements IXYGraph {
 	}
 
 	/**
+	 * This method is called in the constructor to create a plot area
+	 *
 	 * @param xyGraph
 	 * @return a plotArea
 	 */
-	public PlotArea createPlotArea(IXYGraph xyGraph) {
+	protected PlotArea createPlotArea(IXYGraph xyGraph) {
 		return new PlotArea(xyGraph);
 	}
 
