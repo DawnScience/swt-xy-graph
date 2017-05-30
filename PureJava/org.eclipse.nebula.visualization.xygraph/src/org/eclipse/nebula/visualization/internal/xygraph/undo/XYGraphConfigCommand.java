@@ -32,6 +32,8 @@ public class XYGraphConfigCommand implements IUndoableCommand {
 	 *
 	 * @param xyGraph
 	 * @param mementoSupplier
+	 *            A supplier that creates a new XYGraphMemento on each call to
+	 *            the supplier's get method.
 	 */
 	public XYGraphConfigCommand(IXYGraph xyGraph, Supplier<? extends XYGraphMemento> mementoSupplier) {
 		this((XYGraph) xyGraph, mementoSupplier);
@@ -52,6 +54,8 @@ public class XYGraphConfigCommand implements IUndoableCommand {
 	 *
 	 * @param xyGraph
 	 * @param mementoSupplier
+	 *            A supplier that creates a new XYGraphMemento on each call to
+	 *            the supplier's get method.
 	 */
 	@Deprecated
 	public XYGraphConfigCommand(XYGraph xyGraph, Supplier<? extends XYGraphMemento> mementoSupplier) {
@@ -90,6 +94,20 @@ public class XYGraphConfigCommand implements IUndoableCommand {
 
 	public void saveAfterStates() {
 		XYGraphMementoUtil.saveXYGraphPropsToMemento(xyGraph, afterXYGraphMem);
+	}
+
+	/**
+	 * @return previousXYGraphMem
+	 */
+	public XYGraphMemento getPreviousXYGraphMemento() {
+		return previousXYGraphMem;
+	}
+
+	/**
+	 * @return afterXYGraphMem
+	 */
+	public XYGraphMemento getAfterXYGraphMemento() {
+		return afterXYGraphMem;
 	}
 
 	@Override
