@@ -27,7 +27,7 @@ public class NoRepeatsPointsList extends PointList {
 		// error.
 		// We iron this out by ignoring values which are almost the same.
 		if (size() >= 3) {
-			if (x <= last.x + 1 && y <= last.y + 1 && x >= last.x - 1 && y >= last.y - 1) {
+			if (Math.abs(x - last.x) <= 1 && Math.abs(y - last.y) <= 1) {
 				final Point lastb1 = getPoint(size() - 2);
 				if (x == lastb1.x && y == lastb1.y) {
 					return;
