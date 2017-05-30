@@ -1788,7 +1788,8 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 		if (getParent() != null)
 			getParent().remove(this);
 		removeAll();
-		getHotSampleList().clear();
+		if (getHotSampleList() != null)
+			getHotSampleList().clear();
 		this.name = null;
 		this.traceDataProvider = null;
 		this.xAxis = null;
