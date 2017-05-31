@@ -1738,7 +1738,7 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	/**
 	 * @return the xyGraph
 	 */
-	public IXYGraph getIXYGraph() {
+	public IXYGraph getXYGraph() {
 		return xyGraph;
 	}
 

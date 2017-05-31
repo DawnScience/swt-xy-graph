@@ -194,7 +194,7 @@ public class PlotArea extends Figure {
 	 */
 	public void addAnnotation(final Annotation annotation) {
 		annotationList.add(annotation);
-		annotation.setxyGraph(xyGraph);
+		annotation.setXYGraph(xyGraph);
 		add(annotation);
 		revalidate();
 

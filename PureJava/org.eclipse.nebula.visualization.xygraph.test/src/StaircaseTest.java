@@ -1,6 +1,7 @@
 import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.nebula.visualization.xygraph.dataprovider.CircularBufferDataProvider;
 import org.eclipse.nebula.visualization.xygraph.dataprovider.Sample;
+import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.ToolbarArmedXYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace;
 import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
@@ -32,7 +33,7 @@ public class StaircaseTest
         final LightweightSystem lws = new LightweightSystem(shell);
         final ToolbarArmedXYGraph plot = new ToolbarArmedXYGraph(new XYGraph(),
                 XYGraphFlags.SEPARATE_ZOOM | XYGraphFlags.STAGGER);
-        final XYGraph xygraph = plot.getXYGraph();
+        final XYGraph xygraph = (XYGraph) plot.getIXYGraph();
         xygraph.setTransparent(false);
         xygraph.setTitle("You should see a line. Zoom out to see more data");
         lws.setContents(plot);

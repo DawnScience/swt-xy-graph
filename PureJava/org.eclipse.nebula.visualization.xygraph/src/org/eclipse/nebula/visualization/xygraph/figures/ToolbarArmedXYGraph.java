@@ -99,7 +99,7 @@ public class ToolbarArmedXYGraph extends Figure {
 	/**
 	 * @return the xyGraph
 	 */
-	public IXYGraph getIXYGraph() {
+	public IXYGraph getXYGraph() {
 		return xyGraph;
 	}
 

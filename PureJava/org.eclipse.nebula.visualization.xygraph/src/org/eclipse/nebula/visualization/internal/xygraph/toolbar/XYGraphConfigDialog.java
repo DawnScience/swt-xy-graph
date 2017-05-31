@@ -382,7 +382,7 @@ public class XYGraphConfigDialog extends Dialog {
 	/**
 	 * @return a graph
 	 */
-	public IXYGraph getXyGraph() {
+	public IXYGraph getXYGraph() {
 		return xyGraph;
 	}
 

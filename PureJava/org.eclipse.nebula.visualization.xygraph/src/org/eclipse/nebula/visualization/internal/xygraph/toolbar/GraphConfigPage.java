@@ -159,9 +159,9 @@ public class GraphConfigPage {
 	}
 
 	/**
-	 * @return the annotation
+	 * @return the graph
 	 */
-	public IXYGraph getIXYGraph() {
+	public IXYGraph getXYGraph() {
 		return xyGraph;
 	}
 
