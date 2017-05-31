@@ -57,10 +57,6 @@ public abstract class SingleSourceHelper2 {
 		return IMPL.getInternalImageSavePath();
 	}
 
-	public static String getImageSavePath(String[] filter) {
-		return IMPL.getInternalImageSavePath(filter);
-	}
-
 	public static GC getImageGC(final Image image) {
 		if (IMPL == null)
 			return null;
@@ -72,8 +68,6 @@ public abstract class SingleSourceHelper2 {
 	}
 
 	protected abstract String getInternalImageSavePath();
-
-	protected abstract String getInternalImageSavePath(final String[] filterExtensions);
 
 	protected abstract GC internalGetImageGC(final Image image);
 

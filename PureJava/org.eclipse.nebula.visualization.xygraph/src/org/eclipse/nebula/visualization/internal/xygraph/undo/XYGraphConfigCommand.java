@@ -97,14 +97,18 @@ public class XYGraphConfigCommand implements IUndoableCommand {
 	}
 
 	/**
-	 * @return previousXYGraphMem
+	 * Returns the previous graph memento
+	 *
+	 * @return previous graph memento
 	 */
 	public XYGraphMemento getPreviousXYGraphMemento() {
 		return previousXYGraphMem;
 	}
 
 	/**
-	 * @return afterXYGraphMem
+	 * Returns the after graph memento
+	 *
+	 * @return after graph memento
 	 */
 	public XYGraphMemento getAfterXYGraphMemento() {
 		return afterXYGraphMem;

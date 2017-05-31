@@ -7,8 +7,6 @@
  ******************************************************************************/
 package org.eclipse.nebula.visualization.xygraph.util;
 
-import java.lang.reflect.Method;
-
 import org.eclipse.draw2d.FigureUtilities;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.SWTGraphics;
@@ -26,7 +24,6 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Transform;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Shell;
 
 public class SingleSourceHelperImpl extends SingleSourceHelper2 {
 
@@ -90,41 +87,13 @@ public class SingleSourceHelperImpl extends SingleSourceHelper2 {
 		return image;
 	}
 
-	/**
-	 * Use reflection so that we can single source without fragments.
-	 */
-	@Override
-	protected String getInternalImageSavePath(String[] filterExtensions) {
-
-		try { // Swt use reflection
-			Class clazz = getClass().getClassLoader().loadClass("org.eclipse.swt.widgets.FileDialog");
-
-			Object dialog = clazz.getConstructor(Shell.class, int.class)
-					.newInstance(Display.getDefault().getShells()[0], SWT.SAVE);
-
-			Method setFilterNamesMethod = clazz.getMethod("setFilterNames", String[].class);
-			setFilterNamesMethod.invoke(dialog, new Object[] { new String[] { "PNG Files", "All Files (*.*)" } });
-
-			if (filterExtensions == null)
-				filterExtensions = new String[] { "*.png", "*.*" };
-			Method setFilterExtensionsMethod = clazz.getMethod("setFilterExtensions", String[].class);
-			setFilterExtensionsMethod.invoke(dialog, new Object[] { filterExtensions } );
-
-			Method openMethod = clazz.getMethod("open");
-			String path = (String) openMethod.invoke(dialog);
-			return path;
-
-		} catch (Throwable ne) {
-			throw new RuntimeException(ne.getMessage(), ne);
-		}
-	}
-
-	/**
-	 * Use reflection so that we can single source without fragments.
-	 */
 	@Override
 	protected String getInternalImageSavePath() {
-		return getInternalImageSavePath(null);
+		FileDialog dialog = new FileDialog(Display.getDefault().getShells()[0], SWT.SAVE);
+		dialog.setFilterNames(new String[] { "PNG Files", "All Files (*.*)" });
+		dialog.setFilterExtensions(new String[] { "*.png", "*.*" }); // Windows
+		String path = dialog.open();
+		return path;
 	}
 
 	@Override
