@@ -33,7 +33,7 @@ public class StaircaseTest
         final LightweightSystem lws = new LightweightSystem(shell);
         final ToolbarArmedXYGraph plot = new ToolbarArmedXYGraph(new XYGraph(),
                 XYGraphFlags.SEPARATE_ZOOM | XYGraphFlags.STAGGER);
-        final XYGraph xygraph = (XYGraph) plot.getIXYGraph();
+        final XYGraph xygraph = (XYGraph) plot.getXYGraph();
         xygraph.setTransparent(false);
         xygraph.setTitle("You should see a line. Zoom out to see more data");
         lws.setContents(plot);
