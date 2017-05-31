@@ -221,7 +221,8 @@ public class XYGraph extends Figure implements IXYGraph {
 	}
 
 	/**
-	 * This method is called in the constructor to create a plot area
+	 * <b>Warning:</b> This method is called in the constructor to create a plot
+	 * area
 	 *
 	 * @param xyGraph
 	 * @return a plotArea
