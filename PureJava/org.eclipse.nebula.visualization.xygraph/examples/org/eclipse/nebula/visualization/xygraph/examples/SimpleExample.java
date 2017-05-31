@@ -1,5 +1,12 @@
 package org.eclipse.nebula.visualization.xygraph.examples;
 
+/*******************************************************************************
+ * Copyright (c) 2010 Oak Ridge National Laboratory.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ ******************************************************************************/
 import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.nebula.visualization.xygraph.dataprovider.CircularBufferDataProvider;
 import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
@@ -9,6 +16,12 @@ import org.eclipse.nebula.visualization.xygraph.figures.Trace.PointStyle;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+/**
+ * A very simple example.
+ * 
+ * @author Xihui Chen
+ *
+ */
 public class SimpleExample {
 	public static void main(String[] args) {
 		final Shell shell = new Shell();
