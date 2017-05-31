@@ -113,8 +113,6 @@ public class CircularBufferDataProvider extends AbstractDataProvider {
 
 	private int clippingWindow = -1;
 
-	private boolean hasErrors = false;
-
 	public CircularBufferDataProvider(boolean chronological) {
 		super(chronological);
 		traceData = new CircularBuffer<ISample>(100);
@@ -156,15 +154,7 @@ public class CircularBufferDataProvider extends AbstractDataProvider {
 		if (traceData.size() == traceData.getBufferSize() && plotMode == PlotMode.N_STOP)
 			return;
 		traceData.add(sample);
-		if (!hasErrors && sample.getYPlusError() > 0d && sample.getYMinusError() > 0d) {
-			hasErrors = true;
-		}
 		fireDataChange();
-	}
-
-	@Override
-	public boolean hasErrors() {
-		return hasErrors;
 	}
 
 	/**

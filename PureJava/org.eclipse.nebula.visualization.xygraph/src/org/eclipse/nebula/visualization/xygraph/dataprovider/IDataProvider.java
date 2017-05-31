@@ -109,7 +109,7 @@ public interface IDataProvider {
 	public Range getYDataMinMax(boolean positiveOnly);
 
 	/**
-	 * @return true if data is ascending sorted on X axis; false otherwise
+	 * @return <code>true</code> if data is ascending sorted on X axis; false otherwise
 	 */
 	public boolean isChronological();
 
@@ -127,9 +127,13 @@ public interface IDataProvider {
 	public boolean removeDataProviderListener(final IDataProviderListener listener);
 
 	/**
-	 * @return true if the ISample have error information.
-	 * @return
+	 * This method is optional to implement. It should return whether an
+	 * {@link ISample} has errors or not.
+	 *
+	 * @return <code>true</code> if the ISample have error information.
 	 */
-	public boolean hasErrors();
+	public default boolean hasErrors() {
+		return false;
+	}
 
 }
