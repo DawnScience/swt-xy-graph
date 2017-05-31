@@ -158,7 +158,9 @@ public class ColorMapRamp extends Figure {
 	}
 
 	/**
-	 * Sets the Log 10 on or off.
+	 * Sets the Log 10 on or off
+	 *
+	 * @param log
 	 */
 	public void setLog10(boolean log) {
 		this.scale.setLogScale(log);
