@@ -154,10 +154,11 @@ public class IntensityGraphFigure extends Figure implements Introspectable {
 
 		@Override
 		public double get(int i) {
-			if (array.get(i) < 0) {
-				return array.get(i) + offset;
+			double value = array.get(i);
+			if (value < 0) {
+				return value + offset;
 			} else {
-				return array.get(i);
+				return value;
 			}
 		}
 
@@ -451,7 +452,7 @@ public class IntensityGraphFigure extends Figure implements Introspectable {
 				
 				croppedDataArray = cropDataArray(cropLeft, cropRight, cropTop, cropBottom);
 
-				if(unsigned) {
+				if(unsignedBits > 0) {
 					croppedDataArray = new UnsignedPrimitiveArrayWrapper(croppedDataArray, unsignedBits);
 				}
 
@@ -661,7 +662,6 @@ public class IntensityGraphFigure extends Figure implements Introspectable {
 	private int dataWidth, dataHeight;
 	private int cropLeft, cropRight, cropTop, cropBottom;
 	private int unsignedBits;
-	private boolean unsigned;
 //	private double[] dataArray;
 	private IPrimaryArrayWrapper dataArray;
 	
@@ -1036,13 +1036,6 @@ public class IntensityGraphFigure extends Figure implements Introspectable {
 	 */
 	public int getDataWidth() {
 		return dataWidth;
-	}
-
-	/**
-	 * @return <code>true</code> if it is unsigned
-	 */
-	public boolean isUnsigned() {
-		return unsigned;
 	}
 
 	/**
@@ -1462,18 +1455,17 @@ public class IntensityGraphFigure extends Figure implements Introspectable {
 		repaint();
 	}
 
-
 	/**
-	 * @param unsigned true if the data is unsigned
-	 */
-	public void setUnsigned(boolean unsigned) {
-		this.unsigned = unsigned;
-	}
-
-	/**
-	 * @param bits the number of bits in the unsigned data, or zero
+	 * Sets the unsigned bits
+	 *
+	 * @param bits
+	 *            the number of bits in the unsigned data, or zero and has to be
+	 *            <= 1023 (limit for IEEE doubles). If bits <= 0, the data is
+	 *            treated as having signed values.
 	 */
 	public final void setUnsignedBits(int bits) {
+		if (bits > 1023)
+			throw new IllegalArgumentException("The value given is higher than 1023!");
 		this.unsignedBits = bits;
 	}
 
