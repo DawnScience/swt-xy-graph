@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Oak Ridge National Laboratory.
+ * Copyright (c) 2010, 2017 Oak Ridge National Laboratory and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -129,7 +129,7 @@ public class IntensityGraphFigure extends Figure implements Introspectable {
 		 */
 		public String getROIInfo(int xIndex, int yIndex, int width, int height);
 	}	
-	
+
 	/**
 	 * Wraps an array of raw signed data to emulate an unsigned datatype.
 	 *
@@ -141,8 +141,11 @@ public class IntensityGraphFigure extends Figure implements Introspectable {
 
 		/**
 		 * Wrap an array to return unsigned data.
-		 * @param array Array to be wrapped
-		 * @param bits Length of unsigned data, in bits
+		 *
+		 * @param array
+		 *            Array to be wrapped
+		 * @param bits
+		 *            Length of unsigned data, in bits
 		 */
 		public UnsignedPrimitiveArrayWrapper(IPrimaryArrayWrapper array, int bits) {
 			this.array = array;
@@ -151,7 +154,7 @@ public class IntensityGraphFigure extends Figure implements Introspectable {
 
 		@Override
 		public double get(int i) {
-			if(array.get(i) < 0) {
+			if (array.get(i) < 0) {
 				return array.get(i) + offset;
 			} else {
 				return array.get(i);
@@ -447,7 +450,7 @@ public class IntensityGraphFigure extends Figure implements Introspectable {
 					return;
 				
 				croppedDataArray = cropDataArray(cropLeft, cropRight, cropTop, cropBottom);
-				
+
 				if(unsigned) {
 					croppedDataArray = new UnsignedPrimitiveArrayWrapper(croppedDataArray, unsignedBits);
 				}
@@ -1035,10 +1038,16 @@ public class IntensityGraphFigure extends Figure implements Introspectable {
 		return dataWidth;
 	}
 
+	/**
+	 * @return <code>true</code> if it is unsigned
+	 */
 	public boolean isUnsigned() {
 		return unsigned;
 	}
 
+	/**
+	 * @return the unsigned bits
+	 */
 	public int getUnsignedBits() {
 		return unsignedBits;
 	}
@@ -1487,6 +1496,10 @@ public class IntensityGraphFigure extends Figure implements Introspectable {
 			roiMap.get(name).setROIDataBounds(xIndex, yIndex, width, height);
 		else
 			throw new IllegalArgumentException(name + " is not an existing ROI");
+	}
+	
+	public ROIFigure getROI(String name){
+		return roiMap.get(name);
 	}
 	
 	/**
