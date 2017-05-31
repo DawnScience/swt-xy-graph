@@ -359,8 +359,7 @@ public class XYGraph extends Figure implements IXYGraph {
 		if (plotArea != null && plotArea.isVisible()) {
 
 			Rectangle plotAreaBound = new Rectangle(primaryXAxis.getBounds().x + primaryXAxis.getMargin(),
-					primaryYAxis.getBounds().y + primaryYAxis.getMargin(),
-					primaryXAxis.getTickLength(),
+					primaryYAxis.getBounds().y + primaryYAxis.getMargin(), primaryXAxis.getTickLength(),
 					primaryYAxis.getTickLength());
 			plotArea.setBounds(plotAreaBound);
 
