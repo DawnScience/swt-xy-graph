@@ -634,21 +634,10 @@ public class Axis extends LinearScale {
 	}
 
 	/**
-	 * @return xyGraph
+	 * @return the graph
 	 */
 	public IXYGraph getXyGraph() {
 		return xyGraph;
-	}
-
-	/**
-	 * Use {@link #setXyGraph(IXYGraph)} instead
-	 * 
-	 * @param xyGraph
-	 *            the xyGraph to set
-	 */
-	@Deprecated
-	public void setXyGraph(final XYGraph xyGraph) {
-		this.xyGraph = xyGraph;
 	}
 
 	/**
