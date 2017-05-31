@@ -31,12 +31,12 @@ public class XYGraphConfigCommand implements IUndoableCommand {
 	 * Constructor with a XYGraphMemento {@link Supplier}
 	 *
 	 * @param xyGraph
-	 * @param mementoSupplier
+	 * @param mementoFactory
 	 *            A supplier that creates a new XYGraphMemento on each call to
 	 *            the supplier's get method.
 	 */
-	public XYGraphConfigCommand(IXYGraph xyGraph, Supplier<? extends XYGraphMemento> mementoSupplier) {
-		this((XYGraph) xyGraph, mementoSupplier);
+	public XYGraphConfigCommand(IXYGraph xyGraph, Supplier<? extends XYGraphMemento> mementoFactory) {
+		this((XYGraph) xyGraph, mementoFactory);
 	}
 
 	/**
@@ -53,15 +53,15 @@ public class XYGraphConfigCommand implements IUndoableCommand {
 	 * Use {@link #XYGraphConfigCommand(IXYGraph, Supplier)} instead
 	 *
 	 * @param xyGraph
-	 * @param mementoSupplier
+	 * @param mementoFactory
 	 *            A supplier that creates a new XYGraphMemento on each call to
 	 *            the supplier's get method.
 	 */
 	@Deprecated
-	public XYGraphConfigCommand(XYGraph xyGraph, Supplier<? extends XYGraphMemento> mementoSupplier) {
+	public XYGraphConfigCommand(XYGraph xyGraph, Supplier<? extends XYGraphMemento> mementoFactory) {
 		this.xyGraph = xyGraph;
-		previousXYGraphMem = mementoSupplier.get();
-		afterXYGraphMem = mementoSupplier.get();
+		previousXYGraphMem = mementoFactory.get();
+		afterXYGraphMem = mementoFactory.get();
 
 		for (int i = 0; i < xyGraph.getPlotArea().getAnnotationList().size(); i++) {
 			previousXYGraphMem.addAnnotationMemento(new AnnotationMemento());
