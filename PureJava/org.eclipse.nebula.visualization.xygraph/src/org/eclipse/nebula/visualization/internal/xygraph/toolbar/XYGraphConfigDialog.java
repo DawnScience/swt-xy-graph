@@ -345,6 +345,9 @@ public class XYGraphConfigDialog extends Dialog {
 			traceConfigPage.applyChanges();
 		for (AnnotationConfigPage annotationConfigPage : annotationConfigPageList)
 			annotationConfigPage.applyChanges();
+
+		// Add L.PHILIPPE
+		xyGraph.fireConfigChanged();
 	}
 
 	@Override
