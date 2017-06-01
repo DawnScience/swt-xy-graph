@@ -54,19 +54,7 @@ public class XYGraphMementoUtil {
 	 */
 	public static XYGraphMemento createMemento(final IXYGraph xyGraph) {
 
-		final XYGraphMemento XYGraphMem = new XYGraphMemento();
-
-		for (int i = 0; i < xyGraph.getPlotArea().getAnnotationList().size(); i++) {
-			XYGraphMem.addAnnotationMemento(new AnnotationMemento());
-		}
-
-		for (int i = 0; i < xyGraph.getAxisList().size(); i++) {
-			XYGraphMem.addAxisMemento(new AxisMemento());
-		}
-
-		for (int i = 0; i < xyGraph.getPlotArea().getTraceList().size(); i++) {
-			XYGraphMem.addTraceMemento(new TraceMemento());
-		}
+		final XYGraphMemento XYGraphMem = createEmptyMemento(xyGraph);
 
 		saveXYGraphPropsToMemento(xyGraph, XYGraphMem);
 
