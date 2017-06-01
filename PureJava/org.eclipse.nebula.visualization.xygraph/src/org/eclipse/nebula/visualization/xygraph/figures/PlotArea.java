@@ -14,7 +14,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
-import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.MouseEvent;
@@ -263,17 +262,11 @@ public class PlotArea extends Figure {
 			case DYNAMIC_ZOOM:
 			case HORIZONTAL_ZOOM:
 			case VERTICAL_ZOOM:
-				// Instead of XOR which does not always work,
-				// we draw two slighly staggered boxes, one in white,
-				// one in black.
 				graphics.setLineStyle(SWTConstants.LINE_DOT);
 				graphics.setLineWidth(1);
-				graphics.setLineDash(new int[] { 1, 1 });
-				graphics.setForegroundColor(ColorConstants.black);
+				graphics.setForegroundColor(revertBackColor);
 				graphics.drawRectangle(start.x, start.y, end.x - start.x, end.y - start.y);
-
-				graphics.setForegroundColor(ColorConstants.white);
-				graphics.drawRectangle(start.x + 1, start.y + 1, end.x - start.x, end.y - start.y);
+				break;
 
 			default:
 				break;
