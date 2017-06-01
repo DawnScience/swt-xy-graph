@@ -487,8 +487,8 @@ public class CircularBufferDataProvider extends AbstractDataProvider {
 	 */
 	public void setXAxisDateEnabled(boolean xAxisDateEnabled) {
 		if (this.xAxisDateEnabled != xAxisDateEnabled) {
-			clearTrace();
 			this.xAxisDateEnabled = xAxisDateEnabled;
+			clearTrace();
 		}
 	}
 
