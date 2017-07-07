@@ -8,7 +8,6 @@
 package org.eclipse.nebula.visualization.xygraph.preference;
 
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.nebula.visualization.xygraph.util.Preferences;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -38,8 +37,8 @@ public class XYPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		xyc = new Combo(xyg, SWT.RIGHT | SWT.READ_ONLY);
 		xyc.add("Original");
 		xyc.add("Mark 2");
-		if (getPreferenceStore().isDefault(Preferences.TICKS_PROVIDER)
-				|| Preferences.TICKS_PROVIDER_MARK_2.equals(getPreferenceStore().getString(Preferences.TICKS_PROVIDER)))
+		if (getPreferenceStore().isDefault(XYPreferenceConstants.TICKS_PROVIDER)
+				|| XYPreferenceConstants.TICKS_PROVIDER_MARK_2.equals(getPreferenceStore().getString(XYPreferenceConstants.TICKS_PROVIDER)))
 			xyc.select(1);
 		else
 			xyc.select(0);
@@ -53,14 +52,14 @@ public class XYPreferencePage extends PreferencePage implements IWorkbenchPrefer
 
 	@Override
 	public boolean performOk() {
-		getPreferenceStore().setValue(Preferences.TICKS_PROVIDER, xyc.getSelectionIndex() == 0 ? Preferences.TICKS_PROVIDER_ORIGINAL :
-			Preferences.TICKS_PROVIDER_MARK_2);
+		getPreferenceStore().setValue(XYPreferenceConstants.TICKS_PROVIDER, xyc.getSelectionIndex() == 0 ? XYPreferenceConstants.TICKS_PROVIDER_ORIGINAL :
+			XYPreferenceConstants.TICKS_PROVIDER_MARK_2);
 		return super.performOk();
 	}
 
 	@Override
 	protected void performDefaults() {
-		if (Preferences.TICKS_PROVIDER_MARK_2.equals(getPreferenceStore().getDefaultString(Preferences.TICKS_PROVIDER)))
+		if (XYPreferenceConstants.TICKS_PROVIDER_MARK_2.equals(getPreferenceStore().getDefaultString(XYPreferenceConstants.TICKS_PROVIDER)))
 			xyc.select(1);
 		else
 			xyc.select(0);

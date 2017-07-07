@@ -7,18 +7,10 @@
  ******************************************************************************/
 package org.eclipse.nebula.visualization.xygraph.preference;
 
-import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
-import org.eclipse.jface.preference.IPreferenceStore;
+public class XYPreferenceConstants {
 
-public class XYPreferenceInitializer extends AbstractPreferenceInitializer {
+	public static final String TICKS_PROVIDER = "swt.xygraph.ticksProvider";
+	public static final String TICKS_PROVIDER_ORIGINAL = "original";
+	public static final String TICKS_PROVIDER_MARK_2 = "mark2";
 
-	public XYPreferenceInitializer() {
-	}
-
-	@Override
-	public void initializeDefaultPreferences() {
-		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
-
-		store.setDefault(XYPreferenceConstants.TICKS_PROVIDER, XYPreferenceConstants.TICKS_PROVIDER_MARK_2);
-	}
 }
