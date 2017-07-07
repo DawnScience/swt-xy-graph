@@ -7,18 +7,18 @@ package org.eclipse.nebula.visualization.xygraph.examples;
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  ******************************************************************************/
-import java.util.Calendar;
-
-import org.eclipse.draw2d.Figure;
+import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.KeyEvent;
 import org.eclipse.draw2d.KeyListener;
 import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.draw2d.MouseEvent;
 import org.eclipse.draw2d.MouseListener;
+import org.eclipse.draw2d.TreeSearch;
 import org.eclipse.nebula.visualization.xygraph.dataprovider.CircularBufferDataProvider;
 import org.eclipse.nebula.visualization.xygraph.dataprovider.Sample;
 import org.eclipse.nebula.visualization.xygraph.figures.Axis;
 import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
+import org.eclipse.nebula.visualization.xygraph.figures.PlotArea;
 import org.eclipse.nebula.visualization.xygraph.figures.ToolbarArmedXYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace.BaseLine;
@@ -29,12 +29,13 @@ import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.ZoomType;
 import org.eclipse.nebula.visualization.xygraph.linearscale.AbstractScale.LabelSide;
 import org.eclipse.nebula.visualization.xygraph.linearscale.Range;
-import org.eclipse.nebula.visualization.xygraph.util.SingleSourceHelper2;
 import org.eclipse.nebula.visualization.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseWheelListener;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -49,9 +50,35 @@ public class ComprehensiveExample {
 		shell.open();
 
 		final LightweightSystem lws = new LightweightSystem(shell);
-		final ComprehensiveExampleGraph testFigure = new ComprehensiveExampleGraph();
-		lws.setContents(testFigure);
+		final ToolbarArmedXYGraph toolbarArmedXYGraph = createXYGraph();
+		lws.setContents(toolbarArmedXYGraph);
+		shell.addMouseWheelListener(new MouseWheelListener() {
 
+			@Override
+			public void mouseScrolled(org.eclipse.swt.events.MouseEvent e) {
+				IFigure figureUnderMouse = toolbarArmedXYGraph.findFigureAt(e.x, e.y, new TreeSearch() {
+
+					@Override
+					public boolean prune(IFigure figure) {
+						return false;
+					}
+
+					@Override
+					public boolean accept(IFigure figure) {
+						return figure instanceof Axis || figure instanceof PlotArea;
+					}
+				});
+				if (figureUnderMouse instanceof Axis) {
+					Axis axis = ((Axis) figureUnderMouse);
+					double valuePosition = axis.getPositionValue(axis.isHorizontal() ? e.x : e.y, false);
+					axis.zoomInOut(valuePosition, e.count * 0.1 / 3);
+				} else if (figureUnderMouse instanceof PlotArea) {
+					PlotArea plotArea = (PlotArea) figureUnderMouse;
+					plotArea.zoomInOut(true, true, e.x, e.y, e.count * 0.1 / 3);
+				}
+			}
+
+		});
 		shell.setText("Comprehensive Example");
 		final Display display = Display.getDefault();
 		while (!shell.isDisposed()) {
@@ -60,23 +87,15 @@ public class ComprehensiveExample {
 			}
 		}
 	}
-}
 
-class ComprehensiveExampleGraph extends Figure {
-	public Trace trace1;
-	public Trace trace2;
-	public Trace trace3;
-	public IXYGraph xyGraph;
-	public Runnable updater;
-	private double updateIndex = 0;
-	private final CircularBufferDataProvider trace2Provider;
-	boolean running = false;
-	private long t;
-	private final Trace trace4;
-	private final ToolbarArmedXYGraph toolbarArmedXYGraph;
-
-	public ComprehensiveExampleGraph() {
-
+	private static ToolbarArmedXYGraph createXYGraph() {
+		final Trace trace2;
+		final Trace trace3;
+		final IXYGraph xyGraph;
+		Runnable updater;
+		final CircularBufferDataProvider trace2Provider;
+		final Trace trace4;
+		final ToolbarArmedXYGraph toolbarArmedXYGraph;
 		xyGraph = new XYGraph();
 		xyGraph.setTitle("XY Graph Test");
 		xyGraph.setFont(XYGraphMediaFactory.getInstance().getFont(XYGraphMediaFactory.FONT_TAHOMA));
@@ -149,7 +168,6 @@ class ComprehensiveExampleGraph extends Figure {
 		xyGraph.addTrace(trace4);
 
 		toolbarArmedXYGraph = new ToolbarArmedXYGraph(xyGraph);
-		add(toolbarArmedXYGraph);
 
 		// add key listener to XY-Graph. The key pressing will only be monitored
 		// when the
@@ -163,6 +181,7 @@ class ComprehensiveExampleGraph extends Figure {
 			public void mousePressed(final MouseEvent me) {
 				xyGraph.requestFocus();
 			}
+
 		});
 
 		xyGraph.addKeyListener(new KeyListener.Stub() {
@@ -180,7 +199,10 @@ class ComprehensiveExampleGraph extends Figure {
 				if ((ke.getState() == SWT.CONTROL) && (ke.keycode == 's')) {
 					final ImageLoader loader = new ImageLoader();
 					loader.data = new ImageData[] { xyGraph.getImage().getImageData() };
-					final String path = SingleSourceHelper2.getImageSavePath();
+					final FileDialog dialog = new FileDialog(Display.getDefault().getShells()[0], SWT.SAVE);
+					dialog.setFilterNames(new String[] { "PNG Files", "All Files (*.*)" });
+					dialog.setFilterExtensions(new String[] { "*.png", "*.*" }); // Windows
+					final String path = dialog.open();
 					if ((path != null) && !path.equals("")) {
 						loader.save(path, SWT.IMAGE_PNG);
 					}
@@ -216,6 +238,10 @@ class ComprehensiveExampleGraph extends Figure {
 		});
 
 		updater = new Runnable() {
+			private double updateIndex;
+			private long t = System.currentTimeMillis();
+			private boolean running = true;
+
 			public void run() {
 				t += 60000;
 				trace3Provider.setCurrentYData(Math.cos(updateIndex), t);
@@ -240,14 +266,6 @@ class ComprehensiveExampleGraph extends Figure {
 		};
 
 		Display.getCurrent().timerExec(1000, updater);
-		running = true;
-		t = Calendar.getInstance().getTimeInMillis();
+		return toolbarArmedXYGraph;
 	}
-
-	@Override
-	protected void layout() {
-		toolbarArmedXYGraph.setBounds(bounds.getCopy().shrink(5, 5));
-		super.layout();
-	}
-
 }
