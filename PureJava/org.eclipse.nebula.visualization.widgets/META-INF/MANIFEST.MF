@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: SWT XYGraph Widgets
+Bundle-Name: Nebula Visualization Widgets
 Bundle-SymbolicName: org.eclipse.nebula.visualization.widgets
 Bundle-Version: 2.1.0.qualifier
-Bundle-Vendor: Xihui Chen (ztyaner11@gmail.com)
+Bundle-Vendor: Eclipse Nebula
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.eclipse.swt;bundle-version="3.7.1",
  org.eclipse.nebula.visualization.xygraph;bundle-version="1.1.0"
