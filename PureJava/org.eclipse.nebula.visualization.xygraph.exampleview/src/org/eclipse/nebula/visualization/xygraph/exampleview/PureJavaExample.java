@@ -42,16 +42,13 @@ public class PureJavaExample {
 
 		xyGraph.getPrimaryXAxis().setShowMajorGrid(true);
 		xyGraph.getPrimaryYAxis().setShowMajorGrid(true);
-		xyGraph.getPrimaryYAxis().setLogScale(true);
 
 		// create a trace data provider, which will provide the data to the
 		// trace.
 		CircularBufferDataProvider traceDataProvider = new CircularBufferDataProvider(false);
 		traceDataProvider.setBufferSize(100);
-//		traceDataProvider.setCurrentXDataArray(new double[] { 10, 23, 34, 45, 56, 78, 88, 99 });
-//		traceDataProvider.setCurrentYDataArray(new double[] { 11, 44, 55, 45, 88, 98, 52, 23 });
-		traceDataProvider.setCurrentXDataArray(new double[] { 0, 1, 2, 3, 4, 5, });
-		traceDataProvider.setCurrentYDataArray(new double[] { 31, 1, 1.5e-3, 1.3e-4, 1.2e-6, 0});
+		traceDataProvider.setCurrentXDataArray(new double[] { 10, 23, 34, 45, 56, 78, 88, 99 });
+		traceDataProvider.setCurrentYDataArray(new double[] { 11, 44, 55, 45, 88, 98, 52, 23 });
 
 		// create the trace
 		Trace trace = new Trace("Trace1-XY Plot", xyGraph.getPrimaryXAxis(), xyGraph.getPrimaryYAxis(), traceDataProvider);

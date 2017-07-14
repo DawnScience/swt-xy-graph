@@ -1,5 +1,0 @@
-This plugin is single sourced meaning that it is used in the same version in the RAP and SWT Dawn products.
-
-This means that imports such as org.eclipse.swt and org.eclipse.draw2d are package imports.
-It also means that constructors to classes like Cursor which do not have an equivalent in RAP 
-are called using reflection and allowed to fail in the RAP product.

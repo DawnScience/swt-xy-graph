@@ -55,9 +55,6 @@ public class IntensityGraphExample {
 		}
 
 		//Configure
-		intensityGraph.getXAxis().setVisible(false);
-		intensityGraph.getYAxis().setVisible(false);
-
 		intensityGraph.setMax(100);
 		intensityGraph.setMin(-100);
 		intensityGraph.setDataHeight(DataHeight);
